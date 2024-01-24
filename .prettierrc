@@ -6,7 +6,6 @@
 	"trailingComma": "es5",
 	"printWidth": 100,
 	"plugins": [
-		"prettier-plugin-svelte",
 		"./node_modules/prettier-plugin-jsdoc/dist/index.js"
 	],
 	"pluginSearchDirs": [
@@ -14,12 +13,6 @@
 	],
 	"proseWrap": "always",
 	"overrides": [
-		{
-			"files": "*.svelte",
-			"options": {
-				"parser": "svelte"
-			}
-		},
 		{
 			"files": [
 				"*.md",
