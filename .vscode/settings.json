@@ -1,0 +1,21 @@
+{
+	"workbench.editor.labelFormat": "short",
+	"editor.formatOnPaste": false,
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": "explicit",
+		"source.fixAll": "explicit"
+	},
+	"markdownlint.config": {
+		"default": true,
+		"MD033": false
+	},
+	"files.associations": {
+		"*.svx": "markdown",
+		"*.mdx": "markdown",
+		"*.json": "jsonc"
+	},
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"typescript.preferences.quoteStyle": "single",
+}
