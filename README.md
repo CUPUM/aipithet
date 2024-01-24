@@ -1,6 +1,6 @@
 # Aipithet
 
-Aipithet is a second take on the labeling platform.
+Aipithet is a second take on the AI-EDI labeling platform.
 
 ## Getting Started
 
