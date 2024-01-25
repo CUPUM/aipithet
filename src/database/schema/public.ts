@@ -1,8 +1,16 @@
-import { integer, pgTable, primaryKey, text, timestamp } from 'drizzle-orm/pg-core';
-import { ROLE_DEFAULT, role } from '../custom-types';
+import {
+	foreignKey,
+	integer,
+	interval,
+	pgTable,
+	primaryKey,
+	text,
+	timestamp,
+} from 'drizzle-orm/pg-core';
+import { ROLE_DEFAULT, lang, role } from '../custom-types';
 import { generateNanoid } from '../utils';
 import { roles, users } from './auth';
-import { langColumn, translationReference } from './i18n';
+import { langColumn, langs, translationReference } from './i18n';
 
 /**
  * Images types for images uploaded by users.
@@ -32,7 +40,7 @@ export const imageTypesT = pgTable(
 /**
  * Collections of images created by users.
  */
-export const imagePools = pgTable('image_pools', {
+export const imagesPools = pgTable('image_pools', {
 	id: text('id')
 		.default(generateNanoid({ length: 12 }))
 		.primaryKey(),
@@ -52,7 +60,7 @@ export const imagePoolsT = pgTable(
 	'image_pools_t',
 	{
 		...langColumn,
-		id: translationReference('id', imagePools.id),
+		id: translationReference('id', imagesPools.id),
 		name: text('name'),
 		description: text('description'),
 	},
@@ -66,10 +74,10 @@ export const imagePoolsT = pgTable(
 /**
  * Collaborators who gain editing rights on image pools even if they are not their creators.
  */
-export const imagePoolsUsers = pgTable(
+export const imagesPoolsEditors = pgTable(
 	'image_pools_users',
 	{
-		imagePoolId: text('image_pool_id').references(() => imagePools.id, {
+		imagePoolId: text('image_pool_id').references(() => imagesPools.id, {
 			onDelete: 'cascade',
 			onUpdate: 'cascade',
 		}),
@@ -89,6 +97,30 @@ export const imagePoolsUsers = pgTable(
 	}
 );
 
+export const imagesPrompts = pgTable('images_prompts', {
+	id: text('id').default(generateNanoid()).primaryKey(),
+	originalLang: lang('original_lang').references(() => langs.lang, {
+		onDelete: 'set null',
+		onUpdate: 'cascade',
+	}),
+});
+
+export const imagesPromptsT = pgTable(
+	'images_prompts_t',
+	{
+		...langColumn,
+		id: translationReference('id', imagesPrompts.id),
+		prompt: text('prompt').notNull(),
+		title: text('title'),
+		description: text('description'),
+	},
+	(table) => {
+		return {
+			pk: primaryKey({ columns: [table.lang, table.id] }),
+		};
+	}
+);
+
 /**
  * Images uploaded by users. Each image can be used in multiple pools.
  */
@@ -97,15 +129,13 @@ export const images = pgTable('images', {
 		.default(generateNanoid({ length: 12 }))
 		.primaryKey(),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-	imagePoolId: text('image_pool_id')
-		.references(() => imagePools.id, {
-			onDelete: 'cascade',
-			onUpdate: 'cascade',
-		})
-		.notNull(),
 	storageName: text('storage_name').notNull().unique(),
 	width: integer('width').notNull(),
 	height: integer('height').notNull(),
+	promptId: text('prompt_id').references(() => imagesPrompts.id, {
+		onDelete: 'set null',
+		onUpdate: 'cascade',
+	}),
 });
 
 export const imagesT = pgTable(
@@ -122,16 +152,134 @@ export const imagesT = pgTable(
 	}
 );
 
-export const imagesPrompts = pgTable('images_prompts', {
+/**
+ * Through this table, images can be used across multiple pools (many:many).
+ */
+export const imagesToPools = pgTable(
+	'images_to_pools',
+	{
+		poolId: text('image_pool_id').references(() => imagesPools.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		imageId: text('image_id').references(() => images.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+	},
+	(table) => {
+		return {
+			pk: primaryKey({ columns: [table.imageId, table.poolId] }),
+		};
+	}
+);
+
+export const labelingSurveys = pgTable('labeling_surveys', {
 	id: text('id').default(generateNanoid()).primaryKey(),
 });
 
-export const imagesPromptsT = pgTable('images_prompts_t', {});
+export const labelingSurveysT = pgTable(
+	'labeling_surveys_t',
+	{
+		...langColumn,
+		id: translationReference('id', labelingSurveys.id),
+		title: text('title'),
+		summary: text('summary'),
+		description: text('description'),
+	},
+	(table) => {
+		return {
+			pk: primaryKey({ columns: [table.lang, table.id] }),
+		};
+	}
+);
 
-export const labelingSurveys = pgTable('labeling_surveys', {});
+export const labelingSurveysEditors = pgTable(
+	'labeling_surveys_editors',
+	{
+		surveyId: text('survey_id').references(() => labelingSurveys.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		userId: text('user_id').references(() => users.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		role: role('role')
+			.references(() => roles.role, { onDelete: 'set default', onUpdate: 'cascade' })
+			.notNull()
+			.default(ROLE_DEFAULT),
+	},
+	(table) => {
+		return {
+			pk: primaryKey({ columns: [table.userId, table.surveyId] }),
+		};
+	}
+);
 
-export const labelingSurveysT = pgTable('labeling_surveys_t', {});
+export const labelingSurveysParticipants = pgTable(
+	'labeling_survey_participants',
+	{
+		surveyId: text('survey_id').references(() => labelingSurveys.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		userId: text('user_id').references(() => users.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	},
+	(table) => {
+		return {
+			pk: primaryKey({ columns: [table.surveyId, table.userId] }),
+		};
+	}
+);
 
-export const labelingSurveysChapters = pgTable('labeling_surveys_chapters', {});
+export const labelingSurveysChapters = pgTable('labeling_surveys_chapters', {
+	id: text('id').default(generateNanoid()).primaryKey(),
+	surveyId: text('survey_id').references(() => labelingSurveys.id, {
+		onDelete: 'cascade',
+		onUpdate: 'cascade',
+	}),
+});
 
-export const labelingSurveysChaptersT = pgTable('labeling_surveys_chapters_t', {});
+export const labelingSurveysChaptersT = pgTable(
+	'labeling_surveys_chapters_t',
+	{
+		...langColumn,
+		id: translationReference('id', labelingSurveysChapters.id),
+		title: text('title'),
+		description: text('description'),
+	},
+	(table) => {
+		return {
+			pk: primaryKey({ columns: [table.lang, table.id] }),
+		};
+	}
+);
+
+export const labelingSurveysAnswers = pgTable(
+	'labeling_surveys_answers',
+	{
+		id: text('id')
+			.default(generateNanoid({ length: 12 }))
+			.primaryKey(),
+		surveyId: text('survey_id'),
+		userId: text('participant_id'),
+		duration: interval('duration').notNull(),
+		// Add more fields
+	},
+	(table) => {
+		return {
+			fk: foreignKey({
+				columns: [table.userId, table.surveyId],
+				foreignColumns: [labelingSurveysParticipants.userId, labelingSurveysParticipants.surveyId],
+				name: 'labeling_surveys_participants_fk',
+			})
+				.onDelete('cascade')
+				.onUpdate('cascade'),
+		};
+	}
+);
