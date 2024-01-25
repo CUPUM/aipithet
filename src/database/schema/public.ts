@@ -8,9 +8,9 @@ import {
 	timestamp,
 } from 'drizzle-orm/pg-core';
 import { ROLE_DEFAULT, lang, role } from '../custom-types';
-import { generateNanoid } from '../utils';
+import { generateNanoid, langColumn } from '../utils';
 import { roles, users } from './auth';
-import { langColumn, langs, translationReference } from './i18n';
+import { langs } from './i18n';
 
 /**
  * Images types for images uploaded by users.
@@ -26,7 +26,12 @@ export const imageTypesT = pgTable(
 	'image_types_t',
 	{
 		...langColumn,
-		id: translationReference('id', imageTypes.id),
+		id: text('id')
+			.references(() => imageTypes.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
 		title: text('title'),
 		description: text('description'),
 	},
@@ -56,11 +61,16 @@ export const imagesPools = pgTable('image_pools', {
 /**
  * Translation fields for collections of images.
  */
-export const imagePoolsT = pgTable(
+export const imagesPoolsT = pgTable(
 	'image_pools_t',
 	{
 		...langColumn,
-		id: translationReference('id', imagesPools.id),
+		id: text('id')
+			.references(() => imagesPools.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
 		name: text('name'),
 		description: text('description'),
 	},
@@ -109,7 +119,12 @@ export const imagesPromptsT = pgTable(
 	'images_prompts_t',
 	{
 		...langColumn,
-		id: translationReference('id', imagesPrompts.id),
+		id: text('id')
+			.references(() => imagesPrompts.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
 		prompt: text('prompt').notNull(),
 		title: text('title'),
 		description: text('description'),
@@ -142,7 +157,12 @@ export const imagesT = pgTable(
 	'images_t',
 	{
 		...langColumn,
-		id: translationReference('id', images.id),
+		id: text('id')
+			.references(() => images.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
 		description: text('description'),
 	},
 	(table) => {
@@ -182,7 +202,12 @@ export const labelingSurveysT = pgTable(
 	'labeling_surveys_t',
 	{
 		...langColumn,
-		id: translationReference('id', labelingSurveys.id),
+		id: text('id')
+			.references(() => labelingSurveys.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
 		title: text('title'),
 		summary: text('summary'),
 		description: text('description'),
@@ -249,7 +274,12 @@ export const labelingSurveysChaptersT = pgTable(
 	'labeling_surveys_chapters_t',
 	{
 		...langColumn,
-		id: translationReference('id', labelingSurveysChapters.id),
+		id: text('id')
+			.references(() => labelingSurveysChapters.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
 		title: text('title'),
 		description: text('description'),
 	},
