@@ -1,3 +1,4 @@
+import { regconfig } from 'drizzle-orm-helpers';
 import {
 	foreignKey,
 	integer,
@@ -7,10 +8,10 @@ import {
 	text,
 	timestamp,
 } from 'drizzle-orm/pg-core';
-import { ROLE_DEFAULT, lang, role } from '../custom-types';
+import { ROLE_DEFAULT } from '../constants';
+import { role } from '../custom-types';
 import { generateNanoid, langColumn } from '../utils';
 import { roles, users } from './auth';
-import { langs } from './i18n';
 
 /**
  * Images types for images uploaded by users.
@@ -47,7 +48,7 @@ export const imageTypesT = pgTable(
  */
 export const imagesPools = pgTable('image_pools', {
 	id: text('id')
-		.default(generateNanoid({ length: 12 }))
+		.default(generateNanoid({ size: 12 }))
 		.primaryKey(),
 	createdById: text('created_by_id')
 		.notNull()
@@ -109,10 +110,7 @@ export const imagesPoolsEditors = pgTable(
 
 export const imagesPrompts = pgTable('images_prompts', {
 	id: text('id').default(generateNanoid()).primaryKey(),
-	originalLang: lang('original_lang').references(() => langs.lang, {
-		onDelete: 'set null',
-		onUpdate: 'cascade',
-	}),
+	originalLang: regconfig('original_lang').notNull(),
 });
 
 export const imagesPromptsT = pgTable(
@@ -141,7 +139,7 @@ export const imagesPromptsT = pgTable(
  */
 export const images = pgTable('images', {
 	id: text('id')
-		.default(generateNanoid({ length: 12 }))
+		.default(generateNanoid({ size: 12 }))
 		.primaryKey(),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	storageName: text('storage_name').notNull().unique(),
@@ -294,7 +292,7 @@ export const labelingSurveysAnswers = pgTable(
 	'labeling_surveys_answers',
 	{
 		id: text('id')
-			.default(generateNanoid({ length: 12 }))
+			.default(generateNanoid({ size: 12 }))
 			.primaryKey(),
 		surveyId: text('survey_id'),
 		userId: text('participant_id'),

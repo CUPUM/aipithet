@@ -1,50 +1,21 @@
 import { langSchema } from '@/i18n/validation';
-import { AnyColumn, Column, ColumnBuilderBase, SQL, sql } from 'drizzle-orm';
-import { lang } from './custom-types';
-import { langs } from './schema/i18n';
+import { createGenerateNanoid, createGetRegconfig, regconfig } from 'drizzle-orm-helpers';
+import { LANG_COLUMN_NAME, LangColumnName, NANOID_DEFAULT_LENGTH, REGCONFIGS } from './constants';
+import { extensionsSchema } from './schema/extensions';
 
-export type InferColumnDataType<T extends Column> = T['_']['notNull'] extends true
-	? T['_']['data']
-	: T['_']['data'] | null;
+export const generateNanoid = createGenerateNanoid({
+	schemaName: extensionsSchema.schemaName,
+	defaultLength: NANOID_DEFAULT_LENGTH,
+});
 
-export type InferSQLDataType<T extends SQL | SQL.Aliased> =
-	T extends SQL<infer U> ? U : T extends SQL.Aliased<infer U> ? U : never;
-
-export type InferColumnType<T extends (...config: never[]) => ColumnBuilderBase> = AnyColumn<
-	Pick<ReturnType<T>['_'], 'data' | 'dataType'>
->;
-
-export function generateNanoid({
-	optimized = false,
-	length = 8,
-	alphabet,
-}: {
-	optimized?: boolean;
-	length?: number;
-	/**
-	 * PG extension defaults set to '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-	 */
-	alphabet?: string;
-} = {}) {
-	const opts: (string | number)[] = [length];
-	if (alphabet) {
-		opts.push(alphabet);
-	}
-	return sql.raw(`"extensions"."nanoid${optimized ? '_optimized' : ''}"(${opts.join(',')})`);
-	// return sql`extensions.nanoid${optimized ? '_optimized' : ''}(${opts.join(',')})`;
-}
+export const getRegconfig = createGetRegconfig(REGCONFIGS);
 
 export const langColumn = {
-	lang: lang('lang')
-		.references(() => langs.lang, {
-			onDelete: 'cascade',
-			onUpdate: 'cascade',
-		})
-		.notNull(),
+	[LANG_COLUMN_NAME]: regconfig('lang'),
 };
 
-export type LangColumn = typeof langColumn;
+export type LangColumn = Pick<typeof langColumn, LangColumnName>;
 
 export const langColumnSchema = {
-	lang: langSchema,
-} satisfies Record<keyof typeof langColumn, unknown>;
+	[LANG_COLUMN_NAME]: langSchema,
+};
