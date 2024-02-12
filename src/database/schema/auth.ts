@@ -1,7 +1,7 @@
-import { boolean, pgSchema, text, timestamp } from 'drizzle-orm/pg-core';
-import { USER_ID_LENGTH } from '../constants';
-import { ROLE_DEFAULT, role } from '../custom-types';
-import { generateNanoid } from '../utils';
+import { boolean, pgSchema, primaryKey, text, timestamp, unique } from 'drizzle-orm/pg-core';
+import { LANG_COLUMN_NAME, ROLE_DEFAULT, USER_ID_LENGTH } from '../constants';
+import { role } from '../custom-types';
+import { generateNanoid, langColumn } from '../utils';
 
 export const authSchema = pgSchema('auth');
 
@@ -12,10 +12,10 @@ export const roles = authSchema.table('roles', {
 export const rolesTranslations = authSchema.table(
 	'user_roles_t',
 	{
-		...translationLangColumn,
-		role: userRole('role')
+		...langColumn,
+		role: role('role')
 			.notNull()
-			.references(() => userRoles.role, {
+			.references(() => roles.role, {
 				onDelete: 'cascade',
 				onUpdate: 'cascade',
 			}),
@@ -25,7 +25,7 @@ export const rolesTranslations = authSchema.table(
 	(table) => {
 		return {
 			pk: primaryKey({ columns: [table.role, table.lang] }),
-			unq: unique().on(table.lang, table.name),
+			unq: unique().on(table[LANG_COLUMN_NAME], table.name),
 		};
 	}
 );
@@ -45,6 +45,7 @@ export const users = authSchema.table('users', {
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 	email: text('email').unique(),
 	emailVerified: boolean('email_verified').default(false).notNull(),
+	hashedPassword: text('hashed_password'),
 });
 
 export const sessions = authSchema.table('sessions', {
@@ -55,6 +56,4 @@ export const sessions = authSchema.table('sessions', {
 	expiresAt: timestamp('exipires_at', { withTimezone: true, mode: 'date' }).notNull(),
 });
 
-export const oauthUsers = authSchema.table('oauth_users', {});
-
-export const invitationCodes = authSchema.table('invitation_codes', {});
+export const emailConfirmationCodes = authSchema.table('email_confirmation_codes', {});

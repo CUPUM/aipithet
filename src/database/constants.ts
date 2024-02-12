@@ -1,6 +1,9 @@
 import { AvailableLanguageTag } from '@/i18n/generated/runtime';
 import { ValueOf } from 'next/dist/shared/lib/constants';
 
+/**
+ * Mapping app language tags to Postgres regconfigs.
+ */
 export const REGCONFIGS = {
 	fr: 'french',
 	en: 'english',

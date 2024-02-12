@@ -19,3 +19,7 @@ export type LangColumn = Pick<typeof langColumn, LangColumnName>;
 export const langColumnSchema = {
 	[LANG_COLUMN_NAME]: langSchema,
 };
+
+export function withTranslationsSchema() {}
+
+export function withTranslations() {}

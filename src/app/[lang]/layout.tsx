@@ -1,7 +1,7 @@
 import LanguageProvider from '@/i18n/LanguageProvider';
 import { availableLanguageTags, languageTag } from '@/i18n/generated/runtime';
 import type { Metadata } from 'next';
-import '../globals.css';
+import './globals.css';
 
 export const metadata: Metadata = {
 	title: 'Create Next App',
