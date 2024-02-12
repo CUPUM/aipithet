@@ -1,4 +1,4 @@
-import { langSchema } from '@/i18n/validation';
+import { langSchema } from '@/lib/i18n/validation';
 import { createGenerateNanoid, createGetRegconfig, regconfig } from 'drizzle-orm-helpers';
 import { LANG_COLUMN_NAME, LangColumnName, NANOID_DEFAULT_LENGTH, REGCONFIGS } from './constants';
 import { extensionsSchema } from './schema/extensions';

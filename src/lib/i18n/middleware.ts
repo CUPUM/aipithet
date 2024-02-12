@@ -1,4 +1,4 @@
-import { REGCONFIGS } from '@/database/constants';
+import { REGCONFIGS } from '@/lib/database/constants';
 import { NextRequest, NextResponse } from 'next/server';
 import { LANG_HEADER_NAME, REGCONFIG_HEADER_NAME } from './constants';
 import { isAvailableLanguageTag, sourceLanguageTag } from './generated/runtime';

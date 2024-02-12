@@ -1,4 +1,4 @@
-import { ROLES, Role } from '@/database/constants';
+import { ROLES, Role } from '@/lib/database/constants';
 import { cookies } from 'next/headers';
 import { RedirectType, notFound, redirect } from 'next/navigation';
 import { cache } from 'react';

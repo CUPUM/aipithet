@@ -17,5 +17,8 @@
 		"*.json": "jsonc"
 	},
 	"typescript.tsdk": "node_modules/typescript/lib",
-	"typescript.preferences.quoteStyle": "single"
+	"typescript.preferences.quoteStyle": "single",
+	"tailwindCSS.experimental.classRegex": [
+		"tw\\`(.*)\\`;?" // tw`...`
+	]
 }

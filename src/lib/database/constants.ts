@@ -1,4 +1,4 @@
-import { AvailableLanguageTag } from '@/i18n/generated/runtime';
+import { AvailableLanguageTag } from '@/lib/i18n/generated/runtime';
 import { ValueOf } from 'next/dist/shared/lib/constants';
 
 /**

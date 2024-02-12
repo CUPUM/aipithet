@@ -1,5 +1,5 @@
-import { db } from '@/database/db';
-import { sessions, users } from '@/database/schema/auth';
+import { db } from '@/lib/database/db';
+import { sessions, users } from '@/lib/database/schema/auth';
 import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle';
 import { InferSelectModel } from 'drizzle-orm';
 import { Lucia } from 'lucia';
