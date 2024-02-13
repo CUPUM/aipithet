@@ -12,15 +12,16 @@
 		"isolatedModules": true,
 		"jsx": "preserve",
 		"incremental": true,
+		"verbatimModuleSyntax": true,
 		"plugins": [
 			{
 				"name": "next"
 			}
 		],
 		"paths": {
-			"@/*": ["./src/*"],
 			"@translations/*": ["./src/lib/i18n/generated/*"],
-			"@components/*": ["./src/lib/components/*"]
+			"@components/*": ["./src/lib/components/*"],
+			"@lib/*": ["./src/lib/*"]
 		}
 	},
 	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
