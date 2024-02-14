@@ -2,5 +2,8 @@
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"helloWorld": "Bonjour monde",
 	"navbar_toggle_theme": "Changer de thème",
-	"navbar_change_language": "Changer de langue"
+	"navbar_change_language": "Changer de langue",
+	"theme_light": "Clair",
+	"theme_dark": "Sombre",
+	"theme_system": "Système (auto)"
 }
