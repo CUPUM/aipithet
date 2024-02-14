@@ -1,21 +1,41 @@
-import { Regconfig } from '@/lib/database/constants';
-import { headers } from 'next/headers';
-import { REGCONFIG_HEADER_NAME } from './constants';
-import { AvailableLanguageTag, availableLanguageTags, languageTag } from './generated/runtime';
+import type { Url } from 'next/dist/shared/lib/router/router';
+import type { Writable } from 'type-fest';
+import type { AvailableLanguageTag } from './generated/runtime';
+import { availableLanguageTags, languageTag } from './generated/runtime';
 
-/**
- * Get a request's regconfig.
- */
-export function regconfig() {
-	return headers().get(REGCONFIG_HEADER_NAME) as Regconfig;
-}
+type StringWithLang<
+	H extends string,
+	L extends AvailableLanguageTag,
+> = `/${L extends undefined ? AvailableLanguageTag : L}${H}`;
 
 /**
  * Prepend lang param to a unlocalized href. Defaults to using the current language tag if no lang
  * param is provided.
  */
-export function withLang<H extends string, L extends AvailableLanguageTag>(href: H, lang?: L) {
-	return `/${lang ?? (languageTag() as L extends undefined ? AvailableLanguageTag : L)}${href}` as const;
+export function withLang<
+	const H extends Url,
+	L extends AvailableLanguageTag,
+	R = H extends string
+		? StringWithLang<H, L>
+		: Writable<{
+				[K in keyof H]: K extends 'pathname' | 'href'
+					? H[K] extends string
+						? StringWithLang<H[K], L>
+						: H[K]
+					: never;
+			}>,
+>(href: H, lang?: L): R {
+	if (typeof href === 'string') {
+		// return `/${lang ?? (languageTag() as L extends undefined ? AvailableLanguageTag : L)}${href}` as const;
+		return `/${lang ?? languageTag()}${href}` as R;
+	}
+	if (href.href) {
+		href.href = withLang(href.href, lang);
+	}
+	if (href.pathname) {
+		href.pathname = withLang(href.pathname, lang);
+	}
+	return href as unknown as R;
 }
 
 /**

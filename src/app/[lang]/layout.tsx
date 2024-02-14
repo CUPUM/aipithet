@@ -1,7 +1,7 @@
-import Navbar from '@/lib/components/Navbar';
-import LanguageProvider from '@/lib/i18n/LanguageProvider';
-import { languageTag } from '@/lib/i18n/generated/runtime';
-import ThemeProvider from '@/lib/theme/ThemeProvider';
+import Navbar from '@components/navbar';
+import { languageTag } from '@lib/i18n/generated/runtime';
+import LanguageProvider from '@lib/i18n/language-provider';
+import ThemeProvider from '@lib/theme/theme-provider';
 import type { Metadata } from 'next';
 import { Figtree, Spline_Sans_Mono } from 'next/font/google';
 import './globals.css';
@@ -37,13 +37,8 @@ export default function RootLayout({
 				className={`${fontSans.variable} ${fontMono.variable}`}
 				suppressHydrationWarning
 			>
-				<body>
-					<ThemeProvider
-						attribute="data-theme"
-						defaultTheme="system"
-						enableSystem
-						disableTransitionOnChange
-					>
+				<body className="flex flex-col w-full">
+					<ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
 						<Navbar />
 						{children}
 					</ThemeProvider>
