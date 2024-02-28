@@ -7,7 +7,7 @@ import ws from 'ws';
 neonConfig.webSocketConstructor = ws;
 
 const pool = new Pool({
-	host: process.env.DB_HOST,
+	host: process.env.DB_HOST_POOLED,
 	database: process.env.DB_NAME,
 	user: process.env.DB_USER,
 	password: process.env.DB_PASSWORD,

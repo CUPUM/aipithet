@@ -1,4 +1,5 @@
 import Navbar from '@components/navbar';
+import UserProvider from '@lib/auth/user-provider-client';
 import { languageTag } from '@lib/i18n/generated/runtime';
 import LanguageProvider from '@lib/i18n/language-provider';
 import ThemeProvider from '@lib/theme/theme-provider';
@@ -25,11 +26,12 @@ export const metadata: Metadata = {
 	description: 'The EDI oriented labeling platform',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	// const { user } = await validate();
 	return (
 		<LanguageProvider>
 			<html
@@ -38,10 +40,12 @@ export default function RootLayout({
 				suppressHydrationWarning
 			>
 				<body className="flex flex-col w-full">
-					<ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
-						<Navbar />
-						{children}
-					</ThemeProvider>
+					<UserProvider user={null}>
+						<ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
+							<Navbar />
+							{children}
+						</ThemeProvider>
+					</UserProvider>
 				</body>
 			</html>
 		</LanguageProvider>

@@ -3,10 +3,9 @@ import { Input } from '@components/primitives/input';
 export default function Page() {
 	return (
 		<form>
-			<h1>Signup</h1>
+			<h1>Signin</h1>
 			<Input name="email" type="email" />
 			<Input name="password" type="password" />
-			<Input name="confirmPassword" type="password" />
 		</form>
 	);
 }

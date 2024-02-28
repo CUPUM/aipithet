@@ -1,8 +1,8 @@
-import { CaretLeft, CaretRight, DotsThree } from '@phosphor-icons/react';
-import * as React from 'react';
-
-import { ButtonProps, buttonVariants } from '@components/primitives/button';
+import type { ButtonProps } from '@components/primitives/button';
+import { buttonVariants } from '@components/primitives/button';
 import { cn } from '@components/utils';
+import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
+import * as React from 'react';
 
 const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
 	<nav
@@ -56,7 +56,7 @@ const PaginationPrevious = ({
 		className={cn('gap-1 pl-2.5', className)}
 		{...props}
 	>
-		<CaretLeft className="h-4 w-4" />
+		<ChevronLeft className="h-4 w-4" />
 		<span>Previous</span>
 	</PaginationLink>
 );
@@ -70,7 +70,7 @@ const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof Pag
 		{...props}
 	>
 		<span>Next</span>
-		<CaretRight className="h-4 w-4" />
+		<ChevronRight className="h-4 w-4" />
 	</PaginationLink>
 );
 PaginationNext.displayName = 'PaginationNext';
@@ -81,7 +81,7 @@ const PaginationEllipsis = ({ className, ...props }: React.ComponentProps<'span'
 		className={cn('flex h-9 w-9 items-center justify-center', className)}
 		{...props}
 	>
-		<DotsThree className="h-4 w-4" />
+		<MoreHorizontal className="h-4 w-4" />
 		<span className="sr-only">More pages</span>
 	</span>
 );

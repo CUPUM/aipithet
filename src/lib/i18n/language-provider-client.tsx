@@ -1,5 +1,6 @@
 'use client';
-import { AvailableLanguageTag, setLanguageTag } from '@lib/i18n/generated/runtime';
+import type { AvailableLanguageTag } from '@lib/i18n/generated/runtime';
+import { setLanguageTag } from '@lib/i18n/generated/runtime';
 
 // export const LangContext = createContext(languageTag());
 

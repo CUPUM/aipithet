@@ -8,9 +8,9 @@ namespace NodeJS {
 		DB_NAME: string;
 		DB_PORT: string;
 		RESEND_API_KEY: string;
-		STORAGE_ACCESS_KEY: string;
-		STORAGE_SECRET_KEY: string;
-		STORAGE_BUCKET_NAME: string;
-		STORAGE_BUCKET_REGION: string;
+		S3_ACCESS_KEY: string;
+		S3_SECRET_KEY: string;
+		S3_BUCKET_NAME: string;
+		S3_BUCKET_REGION: string;
 	}
 }

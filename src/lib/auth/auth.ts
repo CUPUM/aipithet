@@ -1,7 +1,7 @@
 import { db } from '@lib/database/db';
 import { sessions, users } from '@lib/database/schema/auth';
 import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle';
-import { InferSelectModel } from 'drizzle-orm';
+import type { InferSelectModel } from 'drizzle-orm';
 import { Lucia } from 'lucia';
 
 const adapter = new DrizzlePostgreSQLAdapter(db, sessions, users);

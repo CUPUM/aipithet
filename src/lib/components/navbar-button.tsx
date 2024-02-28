@@ -12,7 +12,7 @@ const NavbarButton = forwardRef(function NavbarButtonBase<
 			// @ts-ignore:next-line
 			ref={ref}
 			className={cn(
-				'flex flex-row shrink-0 px-4 rounded-full bg-accent justify-center items-center ring-ring h-12 font-medium',
+				'inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-11 px-4',
 				className
 			)}
 			{...restProps}

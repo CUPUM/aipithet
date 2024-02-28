@@ -1,7 +1,8 @@
+import { ROLE_DEFAULT } from '@lib/auth/constants';
+import { nanoid } from 'drizzle-orm-helpers/pg';
 import { boolean, pgSchema, primaryKey, text, timestamp, unique } from 'drizzle-orm/pg-core';
-import { LANG_COLUMN_NAME, ROLE_DEFAULT, USER_ID_LENGTH } from '../constants';
+import { LANG_COLUMN, LANG_COLUMN_NAME, USER_ID_LENGTH } from '../constants';
 import { role } from '../custom-types';
-import { generateNanoid, langColumn } from '../utils';
 
 export const authSchema = pgSchema('auth');
 
@@ -12,7 +13,7 @@ export const roles = authSchema.table('roles', {
 export const rolesTranslations = authSchema.table(
 	'user_roles_t',
 	{
-		...langColumn,
+		...LANG_COLUMN,
 		role: role('role')
 			.notNull()
 			.references(() => roles.role, {
@@ -32,7 +33,7 @@ export const rolesTranslations = authSchema.table(
 
 export const users = authSchema.table('users', {
 	id: text('id')
-		.default(generateNanoid({ size: USER_ID_LENGTH }))
+		.default(nanoid({ size: USER_ID_LENGTH }))
 		.primaryKey(),
 	role: role('role')
 		.references(() => roles.role, {
@@ -56,4 +57,6 @@ export const sessions = authSchema.table('sessions', {
 	expiresAt: timestamp('exipires_at', { withTimezone: true, mode: 'date' }).notNull(),
 });
 
-export const emailConfirmationCodes = authSchema.table('email_confirmation_codes', {});
+export const emailConfirmationCodes = authSchema.table('email_confirmation_codes', {
+	code: text('code').notNull(),
+});

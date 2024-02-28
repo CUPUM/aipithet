@@ -5,5 +5,9 @@
 	"navbar_change_language": "Changer de langue",
 	"theme_light": "Clair",
 	"theme_dark": "Sombre",
-	"theme_system": "Système (auto)"
+	"theme_system": "Système (auto)",
+	"home": "Accueil",
+	"signout": "Me déconnecter",
+	"signin": "Me connecter",
+	"signup": "Créer un compte"
 }

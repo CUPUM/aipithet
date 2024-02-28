@@ -1,4 +1,4 @@
-import { AvailableLanguageTag } from './generated/runtime';
+import type { AvailableLanguageTag } from './generated/runtime';
 
 export const LANG_HEADER_NAME = 'aipithet-language-tag';
 

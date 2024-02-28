@@ -1,4 +1,5 @@
-import { regconfig } from 'drizzle-orm-helpers';
+import { ROLE_DEFAULT } from '@lib/auth/constants';
+import { nanoid } from 'drizzle-orm-helpers/pg';
 import {
 	foreignKey,
 	integer,
@@ -8,16 +9,15 @@ import {
 	text,
 	timestamp,
 } from 'drizzle-orm/pg-core';
-import { ROLE_DEFAULT } from '../constants';
-import { role } from '../custom-types';
-import { generateNanoid, langColumn } from '../utils';
+import { LANG_COLUMN } from '../constants';
+import { lang, role } from '../custom-types';
 import { roles, users } from './auth';
 
 /**
  * Images types for images uploaded by users.
  */
 export const imageTypes = pgTable('image_types', {
-	id: text('id').default(generateNanoid()).primaryKey(),
+	id: text('id').default(nanoid()).primaryKey(),
 });
 
 /**
@@ -26,7 +26,7 @@ export const imageTypes = pgTable('image_types', {
 export const imageTypesT = pgTable(
 	'image_types_t',
 	{
-		...langColumn,
+		...LANG_COLUMN,
 		id: text('id')
 			.references(() => imageTypes.id, {
 				onDelete: 'cascade',
@@ -48,7 +48,7 @@ export const imageTypesT = pgTable(
  */
 export const imagesPools = pgTable('image_pools', {
 	id: text('id')
-		.default(generateNanoid({ size: 12 }))
+		.default(nanoid({ size: 15 }))
 		.primaryKey(),
 	createdById: text('created_by_id')
 		.notNull()
@@ -65,7 +65,7 @@ export const imagesPools = pgTable('image_pools', {
 export const imagesPoolsT = pgTable(
 	'image_pools_t',
 	{
-		...langColumn,
+		...LANG_COLUMN,
 		id: text('id')
 			.references(() => imagesPools.id, {
 				onDelete: 'cascade',
@@ -109,14 +109,13 @@ export const imagesPoolsEditors = pgTable(
 );
 
 export const imagesPrompts = pgTable('images_prompts', {
-	id: text('id').default(generateNanoid()).primaryKey(),
-	originalLang: regconfig('original_lang').notNull(),
+	id: text('id').default(nanoid()).primaryKey(),
+	originalLang: lang('original_lang').notNull(),
 });
-
 export const imagesPromptsT = pgTable(
 	'images_prompts_t',
 	{
-		...langColumn,
+		...LANG_COLUMN,
 		id: text('id')
 			.references(() => imagesPrompts.id, {
 				onDelete: 'cascade',
@@ -138,9 +137,7 @@ export const imagesPromptsT = pgTable(
  * Images uploaded by users. Each image can be used in multiple pools.
  */
 export const images = pgTable('images', {
-	id: text('id')
-		.default(generateNanoid({ size: 12 }))
-		.primaryKey(),
+	id: text('id').default(nanoid()).primaryKey(),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	storageName: text('storage_name').notNull().unique(),
 	width: integer('width').notNull(),
@@ -150,11 +147,10 @@ export const images = pgTable('images', {
 		onUpdate: 'cascade',
 	}),
 });
-
 export const imagesT = pgTable(
 	'images_t',
 	{
-		...langColumn,
+		...LANG_COLUMN,
 		id: text('id')
 			.references(() => images.id, {
 				onDelete: 'cascade',
@@ -193,13 +189,12 @@ export const imagesToPools = pgTable(
 );
 
 export const labelingSurveys = pgTable('labeling_surveys', {
-	id: text('id').default(generateNanoid()).primaryKey(),
+	id: text('id').default(nanoid()).primaryKey(),
 });
-
 export const labelingSurveysT = pgTable(
 	'labeling_surveys_t',
 	{
-		...langColumn,
+		...LANG_COLUMN,
 		id: text('id')
 			.references(() => labelingSurveys.id, {
 				onDelete: 'cascade',
@@ -260,8 +255,10 @@ export const labelingSurveysParticipants = pgTable(
 	}
 );
 
+export const labelingSurveyCriterias = pgTable('labeling_survey_criteria', {});
+
 export const labelingSurveysChapters = pgTable('labeling_surveys_chapters', {
-	id: text('id').default(generateNanoid()).primaryKey(),
+	id: text('id').default(nanoid()).primaryKey(),
 	surveyId: text('survey_id').references(() => labelingSurveys.id, {
 		onDelete: 'cascade',
 		onUpdate: 'cascade',
@@ -271,7 +268,7 @@ export const labelingSurveysChapters = pgTable('labeling_surveys_chapters', {
 export const labelingSurveysChaptersT = pgTable(
 	'labeling_surveys_chapters_t',
 	{
-		...langColumn,
+		...LANG_COLUMN,
 		id: text('id')
 			.references(() => labelingSurveysChapters.id, {
 				onDelete: 'cascade',
@@ -291,9 +288,7 @@ export const labelingSurveysChaptersT = pgTable(
 export const labelingSurveysAnswers = pgTable(
 	'labeling_surveys_answers',
 	{
-		id: text('id')
-			.default(generateNanoid({ size: 12 }))
-			.primaryKey(),
+		id: text('id').default(nanoid()).primaryKey(),
 		surveyId: text('survey_id'),
 		userId: text('participant_id'),
 		duration: interval('duration').notNull(),

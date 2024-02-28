@@ -1,5 +1,9 @@
+import type { Role } from '@lib/auth/constants';
+import { ROLE_DEFAULT } from '@lib/auth/constants';
+import { isRole } from '@lib/auth/validation';
+import type { AvailableLanguageTag } from '@translations/runtime';
+import { isAvailableLanguageTag } from '@translations/runtime';
 import { customType } from 'drizzle-orm/pg-core';
-import { ROLE_DEFAULT, Role, isRole } from './constants';
 
 /**
  * Implementing our own db-level role type in sync with UserRole in lieu of using a pgEnum to avoid
@@ -18,5 +22,28 @@ export const role = customType<{ data: Role }>({
 	},
 	toDriver(value) {
 		return value;
+	},
+});
+
+/**
+ * AvailableLanguageTag code custom type.
+ *
+ * @see {@link AvailableLanguageTag}
+ */
+export const lang = customType<{ data: AvailableLanguageTag; driverData: string }>({
+	dataType() {
+		return 'text';
+	},
+	fromDriver(value) {
+		if (isAvailableLanguageTag(value)) {
+			return value;
+		}
+		throw new Error(`Value returned by database driver (${value}) is not a valid lang`);
+	},
+	toDriver(value) {
+		if (isAvailableLanguageTag(value)) {
+			return value;
+		}
+		throw new Error(`Tried to input wrong value for AvailableLanguageTag (${value}).`);
 	},
 });

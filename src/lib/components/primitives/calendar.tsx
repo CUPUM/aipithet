@@ -2,7 +2,7 @@
 
 import { buttonVariants } from '@components/primitives/button';
 import { cn } from '@components/utils';
-import { CaretLeft, CaretRight } from '@phosphor-icons/react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import * as React from 'react';
 import { DayPicker } from 'react-day-picker';
 
@@ -46,8 +46,8 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
 				...classNames,
 			}}
 			components={{
-				IconLeft: ({ ...props }) => <CaretLeft {...props} className="h-4 w-4" />,
-				IconRight: ({ ...props }) => <CaretRight {...props} className="h-4 w-4" />,
+				IconLeft: ({ ...props }) => <ChevronLeft {...props} className="h-4 w-4" />,
+				IconRight: ({ ...props }) => <ChevronRight {...props} className="h-4 w-4" />,
 			}}
 			{...props}
 		/>
