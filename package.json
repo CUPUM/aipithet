@@ -2,10 +2,12 @@
 	"name": "aipithet",
 	"version": "0.1.0",
 	"private": true,
+	"packageManager": "^pnpm@8.15.0",
 	"scripts": {
-		"dev": "next dev -p 8888",
-		"build": "next build",
-		"start": "next start",
+		"paraglide-compile": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/i18n/generated",
+		"dev": "next dev -p 8888 & pnpm paraglide-compile --watch",
+		"build": "pnpm paraglide-compile && next build",
+		"postinstall": "pnpm paraglide-compile",
 		"lint": "next lint",
 		"db:run": "",
 		"db:generate": "",
@@ -13,7 +15,6 @@
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^3.3.4",
-		"@inlang/paraglide-js-adapter-next": "^0.2.0",
 		"@lucia-auth/adapter-drizzle": "^1.0.2",
 		"@neondatabase/serverless": "^0.9.0",
 		"@radix-ui/react-alert-dialog": "^1.0.5",

@@ -4,7 +4,7 @@ import NextLink from 'next/link';
 import type { ComponentProps } from 'react';
 import { forwardRef, useMemo } from 'react';
 import type { OverrideProperties } from 'type-fest';
-import { withLang } from './utils';
+import { withLang } from './utilities';
 
 const Link = forwardRef(function LangLink<H extends Url, L extends AvailableLanguageTag>(
 	{

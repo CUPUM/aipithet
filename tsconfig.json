@@ -20,7 +20,6 @@
 		],
 		"paths": {
 			"@translations/*": ["./src/lib/i18n/generated/*"],
-			"@components/*": ["./src/lib/components/*"],
 			"@lib/*": ["./src/lib/*"]
 		}
 	},

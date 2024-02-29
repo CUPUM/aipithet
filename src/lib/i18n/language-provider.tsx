@@ -1,4 +1,5 @@
-import { AvailableLanguageTag, languageTag, setLanguageTag } from '@lib/i18n/generated/runtime';
+import type { AvailableLanguageTag } from '@lib/i18n/generated/runtime';
+import { languageTag, setLanguageTag } from '@lib/i18n/generated/runtime';
 import { headers } from 'next/headers';
 import { LANG_HEADER_NAME } from './constants';
 import { ClientLanguageProvider } from './language-provider-client';

@@ -1,9 +1,7 @@
-import { paraglide } from '@inlang/paraglide-js-adapter-next';
-
 /**
  * @type {import('next').NextConfig}
  */
-const nextConfig = paraglide({
+const nextConfig = {
 	webpack: (config) => {
 		// https://lucia-auth.com/getting-started/nextjs-app
 		config.externals.push('@node-rs/argon2', '@node-rs/bcrypt');
@@ -17,10 +15,6 @@ const nextConfig = paraglide({
 			},
 		];
 	},
-	paraglide: {
-		project: './project.inlang',
-		outdir: './src/lib/i18n/generated',
-	},
-});
+};
 
 export default nextConfig;

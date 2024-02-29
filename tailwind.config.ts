@@ -1,5 +1,7 @@
 import type { Config } from 'tailwindcss';
 import { fontFamily } from 'tailwindcss/defaultTheme';
+import plugin from 'tailwindcss/plugin';
+import { availableLanguageTags } from './src/lib/i18n/generated/runtime';
 
 const config = {
 	darkMode: ['selector', '[data-theme="dark"]'],
@@ -74,7 +76,15 @@ const config = {
 			},
 		},
 	},
-	plugins: [require('tailwindcss-animate')],
+	plugins: [
+		require('tailwindcss-animate'),
+		plugin(({ addVariant }) => {
+			addVariant('light', '[data-theme="light"] &');
+			availableLanguageTags.forEach((tag) => {
+				addVariant(tag, `[lang="${tag}"] &`);
+			});
+		}),
+	],
 } satisfies Config;
 
 export default config;

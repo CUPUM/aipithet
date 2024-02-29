@@ -1,4 +1,4 @@
-import { Input } from '@components/primitives/input';
+import { Input } from '@lib/components/primitives/input';
 
 export default function Page() {
 	return (

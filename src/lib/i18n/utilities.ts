@@ -9,8 +9,9 @@ type StringWithLang<
 > = `/${L extends undefined ? AvailableLanguageTag : L}${H}`;
 
 /**
- * Prepend lang param to a unlocalized href. Defaults to using the current language tag if no lang
- * param is provided.
+ * Prepend lang param to an href. If the given href already comprises a lang param, it will be
+ * removed and recomputed accordingly. Defaults to using the current language tag if no lang param
+ * is provided.
  */
 export function withLang<
 	const H extends Url,
@@ -27,13 +28,13 @@ export function withLang<
 >(href: H, lang?: L): R {
 	if (typeof href === 'string') {
 		// return `/${lang ?? (languageTag() as L extends undefined ? AvailableLanguageTag : L)}${href}` as const;
-		return `/${lang ?? languageTag()}${href}` as R;
+		return `/${lang ?? languageTag()}${removeLang(href)}` as R;
 	}
 	if (href.href) {
-		href.href = withLang(href.href, lang);
+		href.href = withLang(removeLang(href.href), lang);
 	}
 	if (href.pathname) {
-		href.pathname = withLang(href.pathname, lang);
+		href.pathname = withLang(removeLang(href.pathname), lang);
 	}
 	return href as unknown as R;
 }

@@ -1,9 +1,9 @@
-import Navbar from '@components/navbar';
 import UserProvider from '@lib/auth/user-provider-client';
-import { languageTag } from '@lib/i18n/generated/runtime';
+import Navbar from '@lib/components/navbar';
 import LanguageProvider from '@lib/i18n/language-provider';
 import ThemeProvider from '@lib/theme/theme-provider';
-import type { Metadata } from 'next';
+import * as m from '@translations/messages';
+import { languageTag } from '@translations/runtime';
 import { Figtree, Spline_Sans_Mono } from 'next/font/google';
 import './globals.css';
 
@@ -21,10 +21,12 @@ const fontMono = Spline_Sans_Mono({
 	variable: '--font-mono', // Keep in sync with tailwind.config.js
 });
 
-export const metadata: Metadata = {
-	title: 'Aipithet',
-	description: 'The EDI oriented labeling platform',
-};
+export async function generateMetadata() {
+	return {
+		title: 'Aipithet',
+		description: m.app_description(),
+	};
+}
 
 export default async function RootLayout({
 	children,

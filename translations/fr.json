@@ -1,13 +1,15 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"helloWorld": "Bonjour monde",
-	"navbar_toggle_theme": "Changer de thème",
-	"navbar_change_language": "Changer de langue",
+	"navbar_choose_theme": "Choisissez un thème",
+	"navbar_choose_language": "Choisissez une langue",
 	"theme_light": "Clair",
 	"theme_dark": "Sombre",
 	"theme_system": "Système (auto)",
 	"home": "Accueil",
 	"signout": "Me déconnecter",
 	"signin": "Me connecter",
-	"signup": "Créer un compte"
+	"signup": "Créer un compte",
+	"app_description": "Votre plateforme d'annotation axée sur l'ÉDI",
+	"settings": "Paramètres"
 }
