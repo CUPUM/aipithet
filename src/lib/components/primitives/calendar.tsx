@@ -1,7 +1,7 @@
 'use client';
 
-import { buttonVariants } from '@components/primitives/button';
-import { cn } from '@components/utils';
+import { buttonVariants } from '@lib/components/primitives/button';
+import { cn } from '@lib/components/utilities';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import * as React from 'react';
 import { DayPicker } from 'react-day-picker';

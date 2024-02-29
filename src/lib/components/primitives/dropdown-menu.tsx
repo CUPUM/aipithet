@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@components/utils';
+import { cn } from '@lib/components/utilities';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { Check, ChevronRight, Circle } from 'lucide-react';
 import * as React from 'react';
@@ -142,7 +142,11 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
 	<DropdownMenuPrimitive.Label
 		ref={ref}
-		className={cn('px-2 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
+		className={cn(
+			'px-3 py-2 text-xs font-medium text-muted-foreground',
+			inset && 'pl-8',
+			className
+		)}
 		{...props}
 	/>
 ));
@@ -154,7 +158,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<DropdownMenuPrimitive.Separator
 		ref={ref}
-		className={cn('-mx-1 my-1 h-px bg-muted', className)}
+		className={cn('-mx-2 my-3 h-px bg-border', className)}
 		{...props}
 	/>
 ));

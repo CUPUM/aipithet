@@ -1,6 +1,7 @@
 import Link from '@lib/i18n/Link';
-import { forwardRef, type ComponentProps, type ForwardedRef } from 'react';
-import { cn } from './utils';
+import type { ComponentProps, ForwardedRef } from 'react';
+import { forwardRef } from 'react';
+import { cn } from './utilities';
 
 const NavbarButton = forwardRef(function NavbarButtonBase<
 	T extends ComponentProps<typeof Link> | ComponentProps<'button'>,

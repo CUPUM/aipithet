@@ -2,9 +2,18 @@
 
 import { useUser } from '@lib/auth/user-provider-client';
 import Link from '@lib/i18n/Link';
-import { removeLang } from '@lib/i18n/utils';
 import * as m from '@translations/messages';
-import { Languages, LogIn, LogOut, Monitor, Moon, Sun, User, UserPlus } from 'lucide-react';
+import {
+	Languages,
+	LogIn,
+	LogOut,
+	Monitor,
+	Moon,
+	Settings,
+	Sun,
+	User,
+	UserPlus,
+} from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
@@ -14,7 +23,10 @@ import NavbarButton from './navbar-button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from './primitives/dropdown-menu';
 
@@ -58,62 +70,80 @@ export function NavbarUserMenu() {
 	);
 }
 
-export function NavbarLangSwitch() {
+function NavbarLangSwitch() {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
-	const noLang = useMemo(() => removeLang(`${pathname}`), [pathname, searchParams]);
+	const currentUrl = useMemo(
+		() => `${pathname}${searchParams.size ? `?${searchParams.toString()}` : ''}`,
+		[pathname, searchParams]
+	);
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<NavbarButton className="aspect-square px-0">
-					<Languages className="h-[1.25em] w-[1.25em]" strokeWidth={2.5} />
-					<span className="sr-only">{m.navbar_change_language()}</span>
-				</NavbarButton>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent collisionPadding={12}>
-				{availableLanguageTags.map((tag) => (
-					<DropdownMenuItem key={tag} asChild>
-						<Link href={noLang} hrefLang={tag}>
-							{LANG_NAMES[tag]}
-						</Link>
-					</DropdownMenuItem>
-				))}
-			</DropdownMenuContent>
-		</DropdownMenu>
+		<DropdownMenuGroup>
+			<DropdownMenuLabel>{m.navbar_choose_language()}</DropdownMenuLabel>
+			{availableLanguageTags.map((lang) => (
+				<DropdownMenuItem key={lang} asChild data-current>
+					<Link href={currentUrl} hrefLang={lang} className="justify-between">
+						{LANG_NAMES[lang]}
+						<Languages
+							className={`h-[1.25em] w-[1.25em] opacity-0 ${lang}:opacity-100`}
+							strokeWidth={2.5}
+						/>
+					</Link>
+				</DropdownMenuItem>
+			))}
+		</DropdownMenuGroup>
 	);
 }
 
-export function NavbarThemeToggle() {
-	const { setTheme } = useTheme();
+function NavbarThemeToggle() {
+	const { theme, setTheme } = useTheme();
+	console.log(theme);
 
+	return (
+		<DropdownMenuGroup>
+			<DropdownMenuLabel>{m.navbar_choose_theme()}</DropdownMenuLabel>
+			<DropdownMenuItem onClick={() => setTheme('light')}>
+				<Sun
+					className="h-[1.25em] w-[1.25em] mr-2 opacity-25 light:opacity-100"
+					strokeWidth={2.75}
+				/>
+				{m.theme_light()}
+			</DropdownMenuItem>
+			<DropdownMenuItem onClick={() => setTheme('dark')}>
+				<Moon
+					className="h-[1.25em] w-[1.25em] mr-2 opacity-25 dark:opacity-100"
+					strokeWidth={2.5}
+				/>
+				{m.theme_dark()}
+			</DropdownMenuItem>
+			<DropdownMenuItem
+				onClick={() => setTheme('system')}
+				className="group"
+				data-selected={theme === 'system' || undefined}
+			>
+				<Monitor
+					className="h-[1.25em] w-[1.25em] mr-2 opacity-25 group-data-[selected]:opacity-100"
+					strokeWidth={2.5}
+				/>
+				{m.theme_system()}
+			</DropdownMenuItem>
+		</DropdownMenuGroup>
+	);
+}
+
+export function NavbarSettingsMenu() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<NavbarButton className="aspect-square px-0">
-					<Sun
-						className="h-[1.35em] w-[1.35em] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
-						strokeWidth={2.5}
-					/>
-					<Moon
-						className="absolute h-[1.25em] w-[1.25em] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
-						strokeWidth={2.5}
-					/>
-					<span className="sr-only">{m.navbar_toggle_theme()}</span>
+					<Settings className="h-[1.25em] w-[1.25em]" strokeWidth={2.5} />
+					<span className="sr-only">{m.settings()}</span>
 				</NavbarButton>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent collisionPadding={12}>
-				<DropdownMenuItem onClick={() => setTheme('light')}>
-					<Sun className="h-[1.25em] w-[1.25em] mr-2" strokeWidth={2.5} />
-					{m.theme_light()}
-				</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => setTheme('dark')}>
-					<Moon className="h-[1.25em] w-[1.25em] mr-2" strokeWidth={2.5} />
-					{m.theme_dark()}
-				</DropdownMenuItem>
-				<DropdownMenuItem onClick={() => setTheme('system')}>
-					<Monitor className="h-[1.25em] w-[1.25em] mr-2" strokeWidth={2.5} />
-					{m.theme_system()}
-				</DropdownMenuItem>
+				<NavbarLangSwitch />
+				<DropdownMenuSeparator />
+				<NavbarThemeToggle />
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

@@ -1,6 +1,6 @@
-import type { ButtonProps } from '@components/primitives/button';
-import { buttonVariants } from '@components/primitives/button';
-import { cn } from '@components/utils';
+import type { ButtonProps } from '@lib/components/primitives/button';
+import { buttonVariants } from '@lib/components/primitives/button';
+import { cn } from '@lib/components/utilities';
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 import * as React from 'react';
 

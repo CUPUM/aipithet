@@ -1,6 +1,6 @@
 import { Home } from 'lucide-react';
 import NavbarButton from './navbar-button';
-import { NavbarLangSwitch, NavbarThemeToggle, NavbarUserMenu } from './navbar-client';
+import { NavbarSettingsMenu, NavbarUserMenu } from './navbar-client';
 
 export default function Navbar() {
 	return (
@@ -11,8 +11,7 @@ export default function Navbar() {
 				</NavbarButton>
 			</nav>
 			<nav className="flex flex-row gap-2">
-				<NavbarLangSwitch />
-				<NavbarThemeToggle />
+				<NavbarSettingsMenu />
 				<NavbarUserMenu />
 			</nav>
 		</header>
