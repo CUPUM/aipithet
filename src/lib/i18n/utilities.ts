@@ -1,12 +1,24 @@
 import type { Url } from 'next/dist/shared/lib/router/router';
+import type { RedirectType } from 'next/navigation';
+import {
+	permanentRedirect as nextPermanentRedirect,
+	redirect as nextRedirect,
+} from 'next/navigation';
 import type { Writable } from 'type-fest';
 import type { AvailableLanguageTag } from './generated/runtime';
-import { availableLanguageTags, languageTag } from './generated/runtime';
+import { availableLanguageTags, isAvailableLanguageTag, languageTag } from './generated/runtime';
 
 type StringWithLang<
 	H extends string,
 	L extends AvailableLanguageTag,
 > = `/${L extends undefined ? AvailableLanguageTag : L}${H}`;
+
+export function getUrlLang<U extends string>(url: `/${AvailableLanguageTag}${U}` | U) {
+	const [_, maybeLang] = url.split('/');
+	if (isAvailableLanguageTag(maybeLang)) {
+		return maybeLang;
+	}
+}
 
 /**
  * Prepend lang param to an href. If the given href already comprises a lang param, it will be
@@ -14,38 +26,54 @@ type StringWithLang<
  * is provided.
  */
 export function withLang<
-	const H extends Url,
+	const U extends Url,
 	L extends AvailableLanguageTag,
-	R = H extends string
-		? StringWithLang<H, L>
+	R = U extends string
+		? StringWithLang<U, L>
 		: Writable<{
-				[K in keyof H]: K extends 'pathname' | 'href'
-					? H[K] extends string
-						? StringWithLang<H[K], L>
-						: H[K]
+				[K in keyof U]: K extends 'pathname' | 'href'
+					? U[K] extends string
+						? StringWithLang<U[K], L>
+						: U[K]
 					: never;
 			}>,
->(href: H, lang?: L): R {
-	if (typeof href === 'string') {
+>(url: U, lang?: L): R {
+	if (typeof url === 'string') {
 		// return `/${lang ?? (languageTag() as L extends undefined ? AvailableLanguageTag : L)}${href}` as const;
-		return `/${lang ?? languageTag()}${removeLang(href)}` as R;
+		return `/${lang ?? languageTag()}${removeLang(url)}` as R;
 	}
-	if (href.href) {
-		href.href = withLang(removeLang(href.href), lang);
+	if (url.href) {
+		url.href = withLang(removeLang(url.href), lang);
 	}
-	if (href.pathname) {
-		href.pathname = withLang(removeLang(href.pathname), lang);
+	if (url.pathname) {
+		url.pathname = withLang(removeLang(url.pathname), lang);
 	}
-	return href as unknown as R;
+	return url as unknown as R;
 }
 
 /**
  * Remove an app-oriented href's lang param.
  */
-export function removeLang<H extends string>(href: `/${AvailableLanguageTag}${H}` | H) {
-	const [_, maybeLang, ...rest] = href.split('/');
+export function removeLang<U extends string>(url: `/${AvailableLanguageTag}${U}` | U) {
+	const [_, maybeLang, ...rest] = url.split('/');
 	if (availableLanguageTags.includes(maybeLang as AvailableLanguageTag)) {
-		return `/${rest.join('/')}` as H;
+		return `/${rest.join('/')}` as U;
 	}
-	return href as H;
+	return url as U;
+}
+
+/**
+ * Use this redirect helper to ensure proper localization. Until next un-becomes stupid and adds a
+ * respectable way to detect redirect responses from middlewares...
+ */
+export function redirect(url: string, type?: RedirectType) {
+	return nextRedirect(withLang(url), type);
+}
+
+/**
+ * Use this redirect helper to ensure proper localization. Until next un-becomes stupid and adds a
+ * respectable way to detect redirect responses from middlewares...
+ */
+export function permanentRedirect(url: string, type?: RedirectType) {
+	return nextPermanentRedirect(withLang(url), type);
 }

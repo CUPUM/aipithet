@@ -4,6 +4,7 @@ import { useUser } from '@lib/auth/user-provider-client';
 import Link from '@lib/i18n/Link';
 import * as m from '@translations/messages';
 import {
+	BoxSelect,
 	Languages,
 	LogIn,
 	LogOut,
@@ -17,9 +18,6 @@ import {
 import { useTheme } from 'next-themes';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
-import { LANG_NAMES } from '../i18n/constants';
-import { availableLanguageTags } from '../i18n/generated/runtime';
-import NavbarButton from './navbar-button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -28,7 +26,10 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from './primitives/dropdown-menu';
+} from '../../lib/components/primitives/dropdown-menu';
+import { LANG_NAMES } from '../../lib/i18n/constants';
+import { availableLanguageTags, languageTag } from '../../lib/i18n/generated/runtime';
+import NavbarButton from './navbar-button';
 
 export function NavbarUserMenu() {
 	function signout() {
@@ -58,9 +59,9 @@ export function NavbarUserMenu() {
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem asChild>
-							<Link href="/signin">
+							<Link href="/login">
 								<LogIn className="h-[1.25em] w-[1.25em] mr-2" strokeWidth={2.5} />
-								{m.signin()}
+								{m.login()}
 							</Link>
 						</DropdownMenuItem>
 					</>
@@ -81,13 +82,22 @@ function NavbarLangSwitch() {
 		<DropdownMenuGroup>
 			<DropdownMenuLabel>{m.navbar_choose_language()}</DropdownMenuLabel>
 			{availableLanguageTags.map((lang) => (
-				<DropdownMenuItem key={lang} asChild data-current>
-					<Link href={currentUrl} hrefLang={lang} className="justify-between">
-						{LANG_NAMES[lang]}
+				<DropdownMenuItem
+					key={lang}
+					asChild
+					data-selected={lang === languageTag() || undefined}
+					className="group data-[selected]:font-semibold"
+				>
+					<Link href={currentUrl} hrefLang={lang}>
+						<BoxSelect
+							strokeWidth={2.5}
+							className="h-[1.25em] w-[1.25em] mr-3 opacity-25 group-data-[selected]:hidden"
+						/>
 						<Languages
-							className={`h-[1.25em] w-[1.25em] opacity-0 ${lang}:opacity-100`}
+							className="h-[1.25em] w-[1.25em] mr-3 hidden group-data-[selected]:block"
 							strokeWidth={2.5}
 						/>
+						{LANG_NAMES[lang]}
 					</Link>
 				</DropdownMenuItem>
 			))}
@@ -96,33 +106,42 @@ function NavbarLangSwitch() {
 }
 
 function NavbarThemeToggle() {
-	const { theme, setTheme } = useTheme();
+	const { theme, setTheme, resolvedTheme } = useTheme();
 	console.log(theme);
 
 	return (
 		<DropdownMenuGroup>
 			<DropdownMenuLabel>{m.navbar_choose_theme()}</DropdownMenuLabel>
-			<DropdownMenuItem onClick={() => setTheme('light')}>
+			<DropdownMenuItem
+				onClick={() => setTheme('light')}
+				className="light:font-semibold"
+				onSelect={(e) => e.preventDefault()}
+			>
 				<Sun
-					className="h-[1.25em] w-[1.25em] mr-2 opacity-25 light:opacity-100"
+					className="h-[1.25em] w-[1.25em] mr-3 opacity-25 light:opacity-100"
 					strokeWidth={2.75}
 				/>
 				{m.theme_light()}
 			</DropdownMenuItem>
-			<DropdownMenuItem onClick={() => setTheme('dark')}>
+			<DropdownMenuItem
+				onClick={() => setTheme('dark')}
+				className="dark:font-semibold"
+				onSelect={(e) => e.preventDefault()}
+			>
 				<Moon
-					className="h-[1.25em] w-[1.25em] mr-2 opacity-25 dark:opacity-100"
+					className="h-[1.25em] w-[1.25em] mr-3 opacity-25 dark:opacity-100"
 					strokeWidth={2.5}
 				/>
 				{m.theme_dark()}
 			</DropdownMenuItem>
 			<DropdownMenuItem
-				onClick={() => setTheme('system')}
+				onClick={() => setTheme(theme === 'system' ? resolvedTheme ?? 'system' : 'system')}
 				className="group"
 				data-selected={theme === 'system' || undefined}
+				onSelect={(e) => e.preventDefault()}
 			>
 				<Monitor
-					className="h-[1.25em] w-[1.25em] mr-2 opacity-25 group-data-[selected]:opacity-100"
+					className="h-[1.25em] w-[1.25em] mr-3 opacity-25 group-data-[selected]:opacity-100"
 					strokeWidth={2.5}
 				/>
 				{m.theme_system()}

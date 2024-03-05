@@ -1,8 +1,9 @@
-import { ROLES, Role } from '@lib/database/constants';
 import { cookies } from 'next/headers';
 import { RedirectType, notFound, redirect } from 'next/navigation';
 import { cache } from 'react';
 import { auth } from './auth';
+import type { Role } from './constants';
+import { ROLES } from './constants';
 
 /**
  * CRUD operations.
@@ -49,7 +50,7 @@ export const validate = cache(async () => {
 export const authorize = cache(async (key?: PermissionKey) => {
 	const { user, session } = await validate();
 	if (!user) {
-		redirect('/login', RedirectType.push);
+		redirect('/signin', RedirectType.push);
 	}
 	if (key && !(PERMISSIONS[key] as Role[]).includes(user.role as Role)) {
 		notFound();

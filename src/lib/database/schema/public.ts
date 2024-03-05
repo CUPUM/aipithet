@@ -9,9 +9,9 @@ import {
 	text,
 	timestamp,
 } from 'drizzle-orm/pg-core';
-import { LANG_COLUMN } from '../constants';
 import { lang, role } from '../custom-types';
 import { roles, users } from './auth';
+import { LANG_COLUMN } from './i18n';
 
 /**
  * Images types for images uploaded by users.

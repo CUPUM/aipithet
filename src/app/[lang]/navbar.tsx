@@ -6,7 +6,7 @@ export default function Navbar() {
 	return (
 		<header className="flex flex-row gap-2 p-3 justify-between self-stretch">
 			<nav className="flex flex-row gap-2">
-				<NavbarButton className="aspect-square px-0">
+				<NavbarButton href="/" className="aspect-square px-0">
 					<Home className="h-[1.25em] w-[1.25em]" strokeWidth={2.5} />
 				</NavbarButton>
 			</nav>

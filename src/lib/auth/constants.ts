@@ -12,3 +12,5 @@ export const ROLES_ARR = Object.values(ROLES);
 
 export const ROLE_DEFAULT = ROLES.PARTICIPANT;
 export type RoleDefault = typeof ROLE_DEFAULT;
+
+export const USER_PASSWORD_MIN = 8;
