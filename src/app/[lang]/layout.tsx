@@ -1,3 +1,4 @@
+import { validate } from '@lib/auth/authorization';
 import UserProvider from '@lib/auth/user-provider-client';
 import LanguageProvider from '@lib/i18n/language-provider';
 import ThemeProvider from '@lib/theme/theme-provider';
@@ -33,16 +34,16 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	// const { user } = await validate();
+	const { user } = await validate();
 	return (
 		<LanguageProvider>
-			<html
-				lang={languageTag()}
-				className={`${fontSans.variable} ${fontMono.variable} h-full`}
-				suppressHydrationWarning
-			>
-				<body className="flex flex-col w-full h-full">
-					<UserProvider user={null}>
+			<UserProvider user={user}>
+				<html
+					lang={languageTag()}
+					className={`${fontSans.variable} ${fontMono.variable} h-full`}
+					suppressHydrationWarning
+				>
+					<body className="flex flex-col w-full h-full">
 						<ThemeProvider
 							attribute="data-theme"
 							defaultTheme="system"
@@ -52,9 +53,9 @@ export default async function RootLayout({
 							<Navbar />
 							{children}
 						</ThemeProvider>
-					</UserProvider>
-				</body>
-			</html>
+					</body>
+				</html>
+			</UserProvider>
 		</LanguageProvider>
 	);
 }

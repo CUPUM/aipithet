@@ -17,6 +17,6 @@ const scriptClient = pg({
 /**
  * Db client to use for running migration and seed scripts.
  */
-export const scriptDb = pgDrizzle(scriptClient);
+export const scriptDb = pgDrizzle(scriptClient, { logger: true });
 
 export type ScriptDb = typeof scriptDb;

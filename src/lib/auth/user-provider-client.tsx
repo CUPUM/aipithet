@@ -1,10 +1,14 @@
-// auth/client.tsx
 'use client';
 
-import { type User } from 'lucia';
-import { createContext, useContext, type ReactNode } from 'react';
+import type { User } from 'lucia';
+import type { ReactNode } from 'react';
+import { createContext, useContext } from 'react';
 
 const UserContext = createContext<User | null>(null);
+
+export function useUser() {
+	return useContext(UserContext);
+}
 
 export default function UserProvider({
 	children,
@@ -14,8 +18,4 @@ export default function UserProvider({
 	user: User | null;
 }) {
 	return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
-}
-
-export function useUser() {
-	return useContext(UserContext);
 }

@@ -58,6 +58,7 @@ export async function signup(state: unknown, formData: FormData) {
 			react: VerifyEmailTemplate({ code }),
 		});
 	} catch (err) {
+		console.error(err);
 		throw new Error('Database error while trying to create new user. :(');
 	}
 	return redirect('/verify-email');

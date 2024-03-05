@@ -4,11 +4,10 @@ import { headers } from 'next/headers';
 import { LANG_HEADER_NAME } from './constants';
 import { ClientLanguageProvider } from './language-provider-client';
 
-setLanguageTag(() => {
-	return headers().get(LANG_HEADER_NAME) as AvailableLanguageTag;
-});
-
-export default function LanguageProvider(props: { children: React.ReactNode }) {
+export default async function LanguageProvider(props: { children: React.ReactNode }) {
+	setLanguageTag(() => {
+		return headers().get(LANG_HEADER_NAME) as AvailableLanguageTag;
+	});
 	return (
 		<>
 			<ClientLanguageProvider language={languageTag()} />

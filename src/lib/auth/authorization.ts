@@ -1,5 +1,6 @@
+import { redirect } from '@lib/i18n/utilities';
 import { cookies } from 'next/headers';
-import { RedirectType, notFound, redirect } from 'next/navigation';
+import { RedirectType, notFound } from 'next/navigation';
 import { cache } from 'react';
 import { auth } from './auth';
 import type { Role } from './constants';
@@ -50,7 +51,7 @@ export const validate = cache(async () => {
 export const authorize = cache(async (key?: PermissionKey) => {
 	const { user, session } = await validate();
 	if (!user) {
-		redirect('/signin', RedirectType.push);
+		return redirect('/signin', RedirectType.push);
 	}
 	if (key && !(PERMISSIONS[key] as Role[]).includes(user.role as Role)) {
 		notFound();

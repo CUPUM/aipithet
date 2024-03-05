@@ -1,6 +1,7 @@
 'use client';
 
 import { useUser } from '@lib/auth/user-provider-client';
+import { Spinner } from '@lib/components/primitives/spinner';
 import Link from '@lib/i18n/Link';
 import * as m from '@translations/messages';
 import {
@@ -17,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useTransition } from 'react';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -29,38 +30,52 @@ import {
 } from '../../lib/components/primitives/dropdown-menu';
 import { LANG_NAMES } from '../../lib/i18n/constants';
 import { availableLanguageTags, languageTag } from '../../lib/i18n/generated/runtime';
+import { logout } from './(auth)/server';
 import NavbarButton from './navbar-button';
 
 export function NavbarUserMenu() {
-	function signout() {
-		console.log('Implement server action');
-	}
-
 	const user = useUser();
+	const [isPending, startTransition] = useTransition();
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<NavbarButton className="aspect-square px-0">
-					<User className="h-[1.25em] w-[1.25em]" strokeWidth={2.5} />
+					{user ? (
+						<span className="uppercase">{user.email.charAt(0)}</span>
+					) : (
+						<User className="h-[1.25em] w-[1.25em]" strokeWidth={2.5} />
+					)}
 				</NavbarButton>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent collisionPadding={12}>
 				{user ? (
-					<DropdownMenuItem onClick={signout}>
-						<LogOut className="h-[1.25em] w-[1.25em] mr-2" strokeWidth={2.5} />
-						{m.signout()}
-					</DropdownMenuItem>
+					<>
+						<DropdownMenuItem
+							onClick={() => {
+								startTransition(() => logout());
+							}}
+							disabled={isPending}
+						>
+							{isPending ? (
+								<Spinner className="h-[1.25em] w-[1.25em] mr-3" />
+							) : (
+								<LogOut className="h-[1.25em] w-[1.25em] opacity-50 mr-3" strokeWidth={2.5} />
+							)}
+							{m.signout()}
+						</DropdownMenuItem>
+					</>
 				) : (
 					<>
 						<DropdownMenuItem asChild>
 							<Link href="/signup">
-								<UserPlus className="h-[1.25em] w-[1.25em] mr-2" strokeWidth={2.5} />
+								<UserPlus className="h-[1.25em] w-[1.25em] opacity-50 mr-3" strokeWidth={2.5} />
 								{m.signup()}
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem asChild>
 							<Link href="/login">
-								<LogIn className="h-[1.25em] w-[1.25em] mr-2" strokeWidth={2.5} />
+								<LogIn className="h-[1.25em] w-[1.25em] opacity-50 mr-3" strokeWidth={2.5} />
 								{m.login()}
 							</Link>
 						</DropdownMenuItem>
@@ -107,7 +122,6 @@ function NavbarLangSwitch() {
 
 function NavbarThemeToggle() {
 	const { theme, setTheme, resolvedTheme } = useTheme();
-	console.log(theme);
 
 	return (
 		<DropdownMenuGroup>

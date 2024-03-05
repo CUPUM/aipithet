@@ -1,3 +1,4 @@
+import { isRedirectError } from 'next/dist/client/components/redirect';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { LANG_HEADER_NAME } from './constants';
@@ -14,16 +15,22 @@ function middleware(request: NextRequest) {
 			: sourceLanguageTag;
 	const headers = new Headers(request.headers);
 	headers.set(LANG_HEADER_NAME, lang);
-	const response = NextResponse.next({ request: { headers } });
-	const redirectUrl = response.headers.get('x-middleware-request-x-action-redirect');
-	if (redirectUrl) {
-		const redirectLang = getUrlLang(redirectUrl);
-		if (!redirectLang) {
-			// const redirectUrlWithLang = withLang(redirectUrl, lang);
-			// Figure out how to redirect properly
+	try {
+		const response = NextResponse.next({ request: { headers } });
+		const redirectUrl = response.headers.get('x-middleware-request-x-action-redirect');
+		if (redirectUrl) {
+			const redirectLang = getUrlLang(redirectUrl);
+			if (!redirectLang) {
+				// const redirectUrlWithLang = withLang(redirectUrl, lang);
+				// Figure out how to redirect properly
+			}
+		}
+		return response;
+	} catch (error) {
+		if (isRedirectError(error)) {
+			console.log('REDIRECT ERROR YO!');
 		}
 	}
-	return response;
 }
 
 export default middleware;

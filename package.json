@@ -11,7 +11,8 @@
 		"postinstall": "pnpm paraglide-compile",
 		"lint": "next lint",
 		"db:generate": "pnpm drizzle-kit generate:pg",
-		"db:migrate": "tsx ./scripts/migrate.ts "
+		"db:migrate": "tsx ./scripts/migrate.ts ",
+		"db:seed": "tsx ./scripts/seed.ts "
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^3.3.4",
@@ -41,11 +42,12 @@
 		"@radix-ui/react-toggle-group": "^1.0.4",
 		"@radix-ui/react-tooltip": "^1.0.7",
 		"@react-email/components": "^0.0.15",
+		"bufferutil": "^4.0.8",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.0",
 		"date-fns": "^3.3.1",
 		"drizzle-orm": "^0.29.4",
-		"drizzle-orm-helpers": "^0.5.6",
+		"drizzle-orm-helpers": "^0.5.7",
 		"drizzle-zod": "^0.5.1",
 		"embla-carousel-react": "8.0.0",
 		"lucia": "^3.0.1",
@@ -70,7 +72,7 @@
 		"@inlang/paraglide-js": "1.2.7",
 		"@types/node": "^20.11.24",
 		"@types/react": "^18.2.63",
-		"@types/react-dom": "^18.2.19",
+		"@types/react-dom": "^18.2.20",
 		"@types/ws": "^8.5.10",
 		"@typescript-eslint/eslint-plugin": "^7.1.1",
 		"@typescript-eslint/parser": "^7.1.1",
