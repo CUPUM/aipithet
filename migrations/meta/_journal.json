@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1709659080562,
+      "tag": "0000_magenta_hawkeye",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1709659243680,
+      "tag": "0001_left_vulcan",
+      "breakpoints": true
+    }
+  ]
+}
