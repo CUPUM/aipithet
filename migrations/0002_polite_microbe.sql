@@ -1,0 +1,1 @@
+ALTER TABLE "auth"."email_confirmation_codes" ALTER COLUMN "expires_at" SET DEFAULT (now() + (interval '5 minutes'));

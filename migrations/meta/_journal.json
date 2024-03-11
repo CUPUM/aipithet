@@ -15,6 +15,27 @@
       "when": 1709659243680,
       "tag": "0001_left_vulcan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1709829507524,
+      "tag": "0002_polite_microbe",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1709958966088,
+      "tag": "0003_unknown_deathstrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1710197248865,
+      "tag": "0004_omniscient_sleepwalker",
+      "breakpoints": true
     }
   ]
 }
