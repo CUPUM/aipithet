@@ -5,46 +5,61 @@ import { emailPasswordLoginSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { users } from '@lib/database/schema/auth';
 import { redirect } from '@lib/i18n/utilities';
+import * as m from '@translations/messages';
 import { eq } from 'drizzle-orm';
-import { getColumns } from 'drizzle-orm-helpers';
+import { isRedirectError } from 'next/dist/client/components/redirect';
 import { cookies } from 'next/headers';
 import { Argon2id } from 'oslo/password';
+import { NEVER, ZodIssueCode } from 'zod';
 
 export async function login(state: unknown, formData: FormData) {
-	const data = Object.fromEntries(formData);
-	const parsed = emailPasswordLoginSchema.safeParse(data);
-	if (!parsed.success) {
-		return {
-			errors: parsed.error.flatten().fieldErrors,
-		};
-	}
 	try {
-		const { id, emailVerified, role, hashedPassword } = getColumns(users);
-		const [user] = await db
-			.select({ emailVerified, id, role, hashedPassword })
-			.from(users)
-			.where(eq(users.email, parsed.data.email));
-		if (!user) {
+		const data = Object.fromEntries(formData);
+		const parsed = await emailPasswordLoginSchema
+			.transform(async (data, ctx) => {
+				const [user] = await db
+					.select({
+						emailVerified: users.emailVerified,
+						id: users.id,
+						role: users.role,
+						hashedPassword: users.hashedPassword,
+					})
+					.from(users)
+					.where(eq(users.email, data.email));
+				if (!user) {
+					ctx.addIssue({
+						code: ZodIssueCode.custom,
+						message: m.login_invalid_credentials(),
+					});
+					return NEVER;
+				}
+				const validPassword = await new Argon2id().verify(user.hashedPassword, data.password);
+				if (!validPassword) {
+					ctx.addIssue({
+						code: ZodIssueCode.custom,
+						message: m.login_invalid_credentials(),
+					});
+					return NEVER;
+				}
+				return user;
+			})
+			.safeParseAsync(data);
+		if (!parsed.success) {
 			return {
-				message: 'Invalid email or password',
-				type: 'error',
+				errors: parsed.error.format(),
 			};
 		}
-		const validPassword = await new Argon2id().verify(user.hashedPassword, parsed.data.password);
-		if (!validPassword) {
-			return {
-				message: 'Invalid email or password',
-				type: 'error',
-			};
-		}
-		const session = await auth.createSession(user.id, {});
+		const session = await auth.createSession(parsed.data.id, {});
 		const sessionCookie = auth.createSessionCookie(session.id);
 		cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-		if (!user.emailVerified) {
-			return redirect('/verify-email');
+		if (!parsed.data.emailVerified) {
+			redirect('/verify-email');
 		}
-		return redirect('/');
+		redirect('/');
 	} catch (err) {
+		if (isRedirectError(err)) {
+			throw err;
+		}
 		throw new Error('Server error when attempting to login.');
 	}
 }

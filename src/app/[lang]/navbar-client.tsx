@@ -5,7 +5,7 @@ import { Spinner } from '@lib/components/primitives/spinner';
 import Link from '@lib/i18n/Link';
 import * as m from '@translations/messages';
 import {
-	BoxSelect,
+	CircleDashed,
 	Languages,
 	LogIn,
 	LogOut,
@@ -38,7 +38,7 @@ export function NavbarUserMenu() {
 	const [isPending, startTransition] = useTransition();
 
 	return (
-		<DropdownMenu>
+		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
 				<NavbarButton className="aspect-square px-0">
 					{user ? (
@@ -104,7 +104,7 @@ function NavbarLangSwitch() {
 					className="group data-[selected]:font-semibold"
 				>
 					<Link href={currentUrl} hrefLang={lang}>
-						<BoxSelect
+						<CircleDashed
 							strokeWidth={2.5}
 							className="h-[1.25em] w-[1.25em] mr-3 opacity-25 group-data-[selected]:hidden"
 						/>
@@ -166,7 +166,7 @@ function NavbarThemeToggle() {
 
 export function NavbarSettingsMenu() {
 	return (
-		<DropdownMenu>
+		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
 				<NavbarButton className="aspect-square px-0">
 					<Settings className="h-[1.25em] w-[1.25em]" strokeWidth={2.5} />

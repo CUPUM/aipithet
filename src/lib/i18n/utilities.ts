@@ -5,6 +5,7 @@ import {
 	redirect as nextRedirect,
 } from 'next/navigation';
 import type { Writable } from 'type-fest';
+import { LANG_HEADER_NAME } from './constants';
 import type { AvailableLanguageTag } from './generated/runtime';
 import { availableLanguageTags, isAvailableLanguageTag, languageTag } from './generated/runtime';
 
@@ -13,10 +14,17 @@ type StringWithLang<
 	L extends AvailableLanguageTag,
 > = `/${L extends undefined ? AvailableLanguageTag : L}${H}`;
 
-export function getUrlLang<U extends string>(url: `/${AvailableLanguageTag}${U}` | U) {
+export function getPathnameLang<U extends string>(url: `/${AvailableLanguageTag}${U}` | U) {
 	const [_, maybeLang] = url.split('/');
 	if (isAvailableLanguageTag(maybeLang)) {
 		return maybeLang;
+	}
+}
+
+export function getHeadersLang<H extends Headers>(headers: H) {
+	const header = headers.get(LANG_HEADER_NAME);
+	if (isAvailableLanguageTag(header)) {
+		return header;
 	}
 }
 
@@ -65,6 +73,8 @@ export function removeLang<U extends string>(url: `/${AvailableLanguageTag}${U}`
 /**
  * Use this redirect helper to ensure proper localization. Until next un-becomes stupid and adds a
  * respectable way to detect redirect responses from middlewares...
+ *
+ * @see https://github.com/vercel/next.js/issues/58281
  */
 export function redirect(url: string, type?: RedirectType) {
 	return nextRedirect(withLang(url), type);
@@ -73,6 +83,8 @@ export function redirect(url: string, type?: RedirectType) {
 /**
  * Use this redirect helper to ensure proper localization. Until next un-becomes stupid and adds a
  * respectable way to detect redirect responses from middlewares...
+ *
+ * @see https://github.com/vercel/next.js/issues/58281
  */
 export function permanentRedirect(url: string, type?: RedirectType) {
 	return nextPermanentRedirect(withLang(url), type);

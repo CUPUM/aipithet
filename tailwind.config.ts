@@ -68,17 +68,49 @@ const config = {
 					from: { height: 'var(--radix-accordion-content-height)' },
 					to: { height: '0' },
 				},
+				'fly-down': {
+					from: {
+						opacity: '0',
+						translate: '0px -0.3em',
+					},
+					to: {
+						translate: '0px 0em',
+					},
+				},
+				'fly-up': {
+					from: {
+						opacity: '0',
+						translate: '0px 0.3em',
+					},
+					to: {
+						translate: '0px 0em',
+					},
+				},
 			},
 			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out',
+				'accordion-down': 'accordion-down 0.25s ease-out',
+				'accordion-up': 'accordion-up 0.25s ease-out',
+				'fly-down': 'fly-down 0.4s ease-out',
+				'fly-up': 'fly-up 0.4s ease-out',
 			},
 		},
 	},
 	plugins: [
 		require('tailwindcss-animate'),
-		plugin(({ addVariant }) => {
+		plugin(({ addVariant, matchUtilities, theme }) => {
 			addVariant('light', '[data-theme="light"] &');
+			matchUtilities(
+				{
+					'animation-delay': (value) => {
+						return {
+							'animation-delay': value,
+						};
+					},
+				},
+				{
+					values: theme('transitionDelay'),
+				}
+			);
 			// availableLanguageTags.forEach((tag) => {
 			// 	addVariant(tag, `[lang="${tag}"] &`);
 			// });

@@ -51,7 +51,7 @@ export const validate = cache(async () => {
 export const authorize = cache(async (key?: PermissionKey) => {
 	const { user, session } = await validate();
 	if (!user) {
-		return redirect('/signin', RedirectType.push);
+		return redirect('/login', RedirectType.push);
 	}
 	if (key && !(PERMISSIONS[key] as Role[]).includes(user.role as Role)) {
 		notFound();

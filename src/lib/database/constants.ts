@@ -1,3 +1,5 @@
+export const EMPTY_FORMATTED_ERRORS = { errors: { _errors: [] } };
+
 export const LANG_COLUMN_NAME = 'lang';
 export type LangColumnName = typeof LANG_COLUMN_NAME;
 

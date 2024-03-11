@@ -1,5 +1,6 @@
 import { ROLE_DEFAULT } from '@lib/auth/constants';
-import { nanoid } from 'drizzle-orm-helpers/pg';
+import { add } from 'drizzle-orm-helpers';
+import { interval, nanoid, now } from 'drizzle-orm-helpers/pg';
 import { boolean, pgSchema, primaryKey, text, timestamp, unique } from 'drizzle-orm/pg-core';
 import { EMAIL_CONFIRMATION_CODE_LENGTH, LANG_COLUMN_NAME, USER_ID_LENGTH } from '../constants';
 import { role } from '../custom-types';
@@ -52,10 +53,9 @@ export const sessions = authSchema.table('sessions', {
 	expiresAt: timestamp('exipires_at', { withTimezone: true }).notNull(),
 });
 
-export const emailConfirmationCodes = authSchema.table('email_confirmation_codes', {
+export const emailVerificationCodes = authSchema.table('email_verification_codes', {
 	userId: text('user_id')
 		.references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' })
-		.notNull()
 		.primaryKey(),
 	code: text('code')
 		.default(
@@ -66,5 +66,25 @@ export const emailConfirmationCodes = authSchema.table('email_confirmation_codes
 		)
 		.notNull(),
 	email: text('email').notNull(),
-	expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+	expiresAt: timestamp('expires_at', { withTimezone: true })
+		.notNull()
+		.default(add(now(), interval({ minutes: 5 })).inlineParams()),
+});
+
+export const passwordResets = authSchema.table('password_resets', {
+	userId: text('user_id')
+		.references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' })
+		.primaryKey(),
+	temporaryPassword: text('temporary_password')
+		.notNull()
+		.default(
+			nanoid({
+				size: 16,
+				alphabet:
+					'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789^çàèé.,ÉÀÈÙù!@#$%?&*()_+',
+			})
+		),
+	expiresAt: timestamp('expires_at', { withTimezone: true })
+		.notNull()
+		.default(add(now(), interval({ minutes: 15 })).inlineParams()),
 });

@@ -2,13 +2,11 @@ import type { LangSchema } from '@lib/i18n/validation';
 import type { AvailableLanguageTag } from '@translations/runtime';
 import { availableLanguageTags } from '@translations/runtime';
 import { createInsertSchema } from 'drizzle-zod';
-import type { AnyZodObject, ZodObject, ZodSchema, ZodTypeAny } from 'zod';
+import type { ZodObject, ZodSchema, ZodTypeAny } from 'zod';
 import { z } from 'zod';
 import type { LangColumnName } from './constants';
 import { LANG_COLUMN_NAME } from './constants';
 import { labelingSurveys, labelingSurveysT } from './schema/public';
-
-export type SchemaErrors<T extends AnyZodObject> = z.infer<T>;
 
 /**
  * Extend the insert schema of a given ressource table with its corresponding translations. The

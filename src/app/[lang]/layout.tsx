@@ -4,23 +4,9 @@ import LanguageProvider from '@lib/i18n/language-provider';
 import ThemeProvider from '@lib/theme/theme-provider';
 import * as m from '@translations/messages';
 import { languageTag } from '@translations/runtime';
-import { Figtree, Spline_Sans_Mono } from 'next/font/google';
+import { fontMono, fontSans } from './fonts';
 import './globals.css';
 import Navbar from './navbar';
-
-const fontSans = Figtree({
-	display: 'swap', // For some reason setting 'swap' here breaks the font.
-	weight: 'variable',
-	subsets: ['latin-ext'],
-	variable: '--font-sans', // Keep in sync with tailwind.config.js
-});
-
-const fontMono = Spline_Sans_Mono({
-	display: 'swap',
-	weight: 'variable',
-	subsets: ['latin-ext'],
-	variable: '--font-mono', // Keep in sync with tailwind.config.js
-});
 
 export async function generateMetadata() {
 	return {
@@ -34,12 +20,13 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const lang = languageTag();
 	const { user } = await validate();
 	return (
 		<LanguageProvider>
 			<UserProvider user={user}>
 				<html
-					lang={languageTag()}
+					lang={lang}
 					className={`${fontSans.variable} ${fontMono.variable} h-full`}
 					suppressHydrationWarning
 				>

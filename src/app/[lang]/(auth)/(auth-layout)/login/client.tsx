@@ -1,12 +1,10 @@
 'use client';
 
-import { Button } from '@lib/components/primitives/button';
-import { FieldMessage } from '@lib/components/primitives/field-message';
+import { Button, ButtonIcon, ButtonIconSpace } from '@lib/components/primitives/button';
+import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
 import LabeledField from '@lib/components/primitives/labeled-field';
-import { Spinner } from '@lib/components/primitives/spinner';
-import Link from '@lib/i18n/Link';
 import * as m from '@translations/messages';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useState } from 'react';
@@ -15,33 +13,25 @@ import { login } from './server';
 
 function SubmitButton() {
 	const { pending } = useFormStatus();
-
 	return (
-		<Button className="gap-2" disabled={pending} data-loading={pending} type="submit">
-			{pending ? (
-				<Spinner className="w-[1.25em] h-[1.25em]" />
-			) : (
-				<LogIn className="opacity-50 w-[1.25em] h-[1.25em]" />
-			)}
+		<Button disabled={pending} data-loading={pending} type="submit">
+			<ButtonIcon icon={LogIn} loading={pending} />
 			{m.login()}
-			<span className="w-[1.25em] select-none" />
+			<ButtonIconSpace />
 		</Button>
 	);
 }
 
 export function LoginForm() {
-	const [formState, formAction] = useFormState(login, { errors: {} });
+	const [formState, formAction] = useFormState(login, undefined);
 	const [showPassword, setShowPassword] = useState(false);
-
 	return (
 		<form action={formAction} className="flex flex-col gap-4">
 			<h1 className="text-3xl font-medium mb-4">{m.login()}</h1>
 			<LabeledField>
 				<Label htmlFor="email">{m.email()}</Label>
 				<Input type="email" id="email" name="email" />
-				{formState.errors?.email && (
-					<FieldMessage type="error">{formState.errors.email.join(' ')}</FieldMessage>
-				)}
+				<ErrorMessages errors={formState?.errors?.email?._errors} />
 			</LabeledField>
 			<LabeledField>
 				<Label htmlFor="password">{m.password()}</Label>
@@ -51,25 +41,21 @@ export function LoginForm() {
 						type={showPassword ? 'text' : 'password'}
 						id="password"
 						name="password"
+						defaultValue={2}
 					/>
 					<Button
 						variant="outline"
-						className="aspect-square p-0"
+						className="aspect-square"
 						type="button"
 						onClick={() => setShowPassword(!showPassword)}
 					>
-						{showPassword ? (
-							<EyeOff className="w-[1.25em] h-[1.25em]" />
-						) : (
-							<Eye className="w-[1.25em] h-[1.25em]" />
-						)}
+						<ButtonIcon icon={showPassword ? EyeOff : Eye} />
 					</Button>
 				</div>
+				<ErrorMessages errors={formState?.errors?.password?._errors} />
 			</LabeledField>
+			<ErrorMessages errors={formState?.errors._errors} />
 			<SubmitButton />
-			<Button asChild variant="link">
-				<Link href="/signup">{m.signup()}</Link>
-			</Button>
 		</form>
 	);
 }
