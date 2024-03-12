@@ -1,26 +1,16 @@
 'use client';
 
-import { Button, ButtonIcon, ButtonIconSpace } from '@lib/components/primitives/button';
+import { ButtonIconSpace, LoadingButtonIcon } from '@lib/components/primitives/button';
 import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
 import LabeledField from '@lib/components/primitives/labeled-field';
+import { SubmitButton } from '@lib/components/submit-button';
 import * as m from '@translations/messages';
 import { RefreshCw } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { resetPassword } from './server';
-
-function SubmitButton() {
-	const { pending } = useFormStatus();
-	return (
-		<Button disabled={pending} data-loading={pending} type="submit">
-			<ButtonIcon icon={RefreshCw} loading={pending} />
-			{m.reset()}
-			<ButtonIconSpace />
-		</Button>
-	);
-}
 
 export function ResetPasswordForm() {
 	const [formState, formAction] = useFormState(resetPassword, undefined);
@@ -39,7 +29,11 @@ export function ResetPasswordForm() {
 				<ErrorMessages errors={formState?.errors?.email?._errors} />
 			</LabeledField>
 			<ErrorMessages errors={formState?.errors?._errors} />
-			<SubmitButton />
+			<SubmitButton>
+				<LoadingButtonIcon icon={RefreshCw} />
+				{m.reset()}
+				<ButtonIconSpace />
+			</SubmitButton>
 		</form>
 	);
 }

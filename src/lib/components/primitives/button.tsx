@@ -50,15 +50,13 @@ Button.displayName = 'Button';
 export { Button, buttonVariants };
 
 export function ButtonIcon({
-	icon,
-	loading,
+	icon: Icon,
 	className,
 	strokeWidth = 2.35,
 	...restProps
-}: { icon: LucideIcon; loading?: boolean } & LucideProps) {
-	const Rendered = loading ? Spinner : icon;
+}: { icon: LucideIcon } & LucideProps) {
 	return (
-		<Rendered
+		<Icon
 			{...restProps}
 			className={cn(
 				'w-[1.25em] h-[1.25em] opacity-40 group-hover/button:opacity-80 group-[.aspect-square]/button:opacity-80 transition-all',
@@ -66,6 +64,32 @@ export function ButtonIcon({
 			)}
 			strokeWidth={strokeWidth}
 		/>
+	);
+}
+
+/**
+ * A button icon replaced with loading spinner when parent button has loading state.
+ */
+export function LoadingButtonIcon({
+	className,
+	icon,
+	...iconProps
+}: React.ComponentProps<typeof ButtonIcon>) {
+	return (
+		<>
+			<Spinner
+				{...iconProps}
+				className={cn(
+					'w-[1.25em] h-[1.25em] hidden group-data-[loading=true]/button:block',
+					className
+				)}
+			/>
+			<ButtonIcon
+				{...iconProps}
+				icon={icon}
+				className={cn('group-data-[loading=true]/button:hidden animate-puff-grow', className)}
+			/>
+		</>
 	);
 }
 

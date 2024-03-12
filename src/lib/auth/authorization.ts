@@ -47,6 +47,9 @@ export const validate = cache(async () => {
 /**
  * Authorize a request, i.e. throw an error if no session/user is authenticated. Whenever a
  * permission key is provided, throw an error if user lacks required role.
+ *
+ * @returns User and Session if found, else the default behavior throws a redirect to the `/login`
+ *   route.
  */
 export const authorize = cache(async (key?: PermissionKey) => {
 	const { user, session } = await validate();

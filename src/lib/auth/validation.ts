@@ -7,13 +7,18 @@ export function isRole(maybeRole: unknown): maybeRole is Role {
 	return ROLES_ARR.includes(maybeRole as Role);
 }
 
+export const emailSchema = z.string().trim().email(m.email_invalid());
+export const hintlessPasswordSchema = z.string().trim().min(1, m.password_missing());
+export const passwordSchema = z.string().trim().min(USER_PASSWORD_MIN, m.password_too_short());
+export const passwordConfirmSchema = z.string().trim().min(1, m.password_confirmation_missing());
+
 export const emailPasswordSignupSchema = z
 	.object({
-		email: z.string().trim().email(m.email_invalid()),
-		password: z.string().trim().min(USER_PASSWORD_MIN, m.password_too_short()),
-		passwordConfirm: z.string().trim().min(1, m.password_confirmation_missing()),
+		email: emailSchema,
+		password: passwordSchema,
+		passwordConfirm: passwordConfirmSchema,
 	})
-	.superRefine(({ passwordConfirm, password }, ctx) => {
+	.superRefine(({ password, passwordConfirm }, ctx) => {
 		if (passwordConfirm !== password) {
 			ctx.addIssue({
 				code: ZodIssueCode.custom,
@@ -24,19 +29,35 @@ export const emailPasswordSignupSchema = z
 	});
 
 export const emailPasswordLoginSchema = z.object({
-	email: z.string().trim().email(m.email_invalid()),
-	password: z.string().trim().min(1, m.password_missing()),
+	email: emailSchema,
+	password: hintlessPasswordSchema,
 });
 
 export const passwordResetSchema = z.object({
-	email: z.string().trim().email(m.email_invalid()),
+	email: emailSchema,
 });
+
+export const finalizePasswordResetSchema = z
+	.object({
+		token: z.string().trim().min(1, m.password_reset_token_invalid()),
+		newPassword: passwordSchema,
+		newPasswordConfirm: passwordConfirmSchema,
+	})
+	.superRefine(({ newPassword, newPasswordConfirm }, ctx) => {
+		if (newPasswordConfirm !== newPassword) {
+			ctx.addIssue({
+				code: ZodIssueCode.custom,
+				path: ['newPasswordConfirm'],
+				message: m.password_confirm_not_matching(),
+			});
+		}
+	});
 
 export const passwordUpdateSchema = z
 	.object({
-		password: z.string().trim().min(1, m.password_missing()),
-		newPassword: z.string().trim().min(USER_PASSWORD_MIN, m.password_too_short()),
-		newPasswordConfirm: z.string().trim().min(1, m.password_confirmation_missing()),
+		password: hintlessPasswordSchema,
+		newPassword: passwordSchema,
+		newPasswordConfirm: passwordConfirmSchema,
 	})
 	.superRefine(({ newPasswordConfirm, newPassword }, ctx) => {
 		if (newPasswordConfirm !== newPassword) {

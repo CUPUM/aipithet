@@ -51,7 +51,7 @@ export function Template(props: { children: ReactNode }) {
 						}}
 					></style>
 				</Head>
-				<Container className="whitespace-pre-line">
+				<Container>
 					{props.children}
 					<Hr className="mt-8" />
 					<Section className="text-center">

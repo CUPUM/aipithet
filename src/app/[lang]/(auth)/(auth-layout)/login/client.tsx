@@ -1,26 +1,21 @@
 'use client';
 
-import { Button, ButtonIcon, ButtonIconSpace } from '@lib/components/primitives/button';
+import {
+	Button,
+	ButtonIcon,
+	ButtonIconSpace,
+	LoadingButtonIcon,
+} from '@lib/components/primitives/button';
 import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
 import LabeledField from '@lib/components/primitives/labeled-field';
+import { SubmitButton } from '@lib/components/submit-button';
 import * as m from '@translations/messages';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormState } from 'react-dom';
 import { login } from './server';
-
-function SubmitButton() {
-	const { pending } = useFormStatus();
-	return (
-		<Button disabled={pending} data-loading={pending} type="submit">
-			<ButtonIcon icon={LogIn} loading={pending} />
-			{m.login()}
-			<ButtonIconSpace />
-		</Button>
-	);
-}
 
 export function LoginForm() {
 	const [formState, formAction] = useFormState(login, undefined);
@@ -55,7 +50,11 @@ export function LoginForm() {
 				<ErrorMessages errors={formState?.errors?.password?._errors} />
 			</LabeledField>
 			<ErrorMessages errors={formState?.errors._errors} />
-			<SubmitButton />
+			<SubmitButton>
+				<LoadingButtonIcon icon={LogIn} />
+				{m.login()}
+				<ButtonIconSpace />
+			</SubmitButton>
 		</form>
 	);
 }

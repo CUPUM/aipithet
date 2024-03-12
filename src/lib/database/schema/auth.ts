@@ -71,11 +71,11 @@ export const emailVerificationCodes = authSchema.table('email_verification_codes
 		.default(add(now(), interval({ minutes: 5 })).inlineParams()),
 });
 
-export const passwordResets = authSchema.table('password_resets', {
+export const passwordResetTokens = authSchema.table('password_reset_tokens', {
 	userId: text('user_id')
 		.references(() => users.id, { onDelete: 'cascade', onUpdate: 'cascade' })
 		.primaryKey(),
-	temporaryPassword: text('temporary_password')
+	token: text('token')
 		.notNull()
 		.default(
 			nanoid({
@@ -86,5 +86,5 @@ export const passwordResets = authSchema.table('password_resets', {
 		),
 	expiresAt: timestamp('expires_at', { withTimezone: true })
 		.notNull()
-		.default(add(now(), interval({ minutes: 15 })).inlineParams()),
+		.default(add(now(), interval({ hours: 1 })).inlineParams()),
 });

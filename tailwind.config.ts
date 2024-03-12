@@ -86,12 +86,32 @@ const config = {
 						translate: '0px 0em',
 					},
 				},
+				'puff-grow': {
+					from: {
+						opacity: '0',
+						scale: '0.9',
+					},
+					to: {
+						scale: '1',
+					},
+				},
+				'puff-shrink': {
+					from: {
+						opacity: '0',
+						scale: '1.1',
+					},
+					to: {
+						scale: '1',
+					},
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.25s ease-out',
 				'accordion-up': 'accordion-up 0.25s ease-out',
 				'fly-down': 'fly-down 0.4s ease-out',
 				'fly-up': 'fly-up 0.4s ease-out',
+				'puff-grow': 'puff-grow 0.4s ease-out',
+				'puff-shrink': 'puff-shrink 0.4s ease-out',
 			},
 		},
 	},

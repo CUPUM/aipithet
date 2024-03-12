@@ -1,10 +1,16 @@
+import { validate } from '@lib/auth/authorization';
 import { Button, ButtonIcon } from '@lib/components/primitives/button';
 import Link from '@lib/i18n/Link';
+import { redirect } from '@lib/i18n/utilities';
 import * as m from '@translations/messages';
 import { ShieldQuestion, UserPlus } from 'lucide-react';
 import { LoginForm } from './client';
 
 export default async function Page() {
+	const { user } = await validate();
+	if (user) {
+		redirect('/i');
+	}
 	return (
 		<>
 			<LoginForm />

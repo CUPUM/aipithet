@@ -212,8 +212,8 @@ export const labelingSurveysT = pgTable(
 	}
 );
 
-export const labelingSurveysEditors = pgTable(
-	'labeling_surveys_editors',
+export const labelingSurveysUsers = pgTable(
+	'labeling_surveys_users',
 	{
 		surveyId: text('survey_id').references(() => labelingSurveys.id, {
 			onDelete: 'cascade',
@@ -227,25 +227,6 @@ export const labelingSurveysEditors = pgTable(
 			.references(() => roles.role, { onDelete: 'set default', onUpdate: 'cascade' })
 			.notNull()
 			.default(ROLE_DEFAULT),
-	},
-	(table) => {
-		return {
-			pk: primaryKey({ columns: [table.userId, table.surveyId] }),
-		};
-	}
-);
-
-export const labelingSurveysParticipants = pgTable(
-	'labeling_survey_participants',
-	{
-		surveyId: text('survey_id').references(() => labelingSurveys.id, {
-			onDelete: 'cascade',
-			onUpdate: 'cascade',
-		}),
-		userId: text('user_id').references(() => users.id, {
-			onDelete: 'cascade',
-			onUpdate: 'cascade',
-		}),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	},
 	(table) => {
@@ -254,6 +235,8 @@ export const labelingSurveysParticipants = pgTable(
 		};
 	}
 );
+
+// export const labelingSurveysInvitations = pgTable('labeling_surveys_invitations', {})
 
 export const labelingSurveyCriterias = pgTable('labeling_survey_criteria', {});
 
@@ -291,15 +274,15 @@ export const labelingSurveysAnswers = pgTable(
 		id: text('id').default(nanoid()).primaryKey(),
 		surveyId: text('survey_id'),
 		userId: text('participant_id'),
-		duration: interval('duration').notNull(),
+		timeToAnswer: interval('time_to_answer').notNull(),
 		// Add more fields
 	},
 	(table) => {
 		return {
 			fk: foreignKey({
 				columns: [table.userId, table.surveyId],
-				foreignColumns: [labelingSurveysParticipants.userId, labelingSurveysParticipants.surveyId],
-				name: 'labeling_surveys_participants_fk',
+				foreignColumns: [labelingSurveysUsers.userId, labelingSurveysUsers.surveyId],
+				name: 'labeling_surveys_users_fk',
 			})
 				.onDelete('cascade')
 				.onUpdate('cascade'),
