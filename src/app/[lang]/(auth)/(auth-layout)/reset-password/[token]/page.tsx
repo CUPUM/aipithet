@@ -1,5 +1,6 @@
 import { auth } from '@lib/auth/auth';
 import { validate } from '@lib/auth/authorization';
+import { hashPassword } from '@lib/auth/utilities';
 import { finalizePasswordResetSchema } from '@lib/auth/validation';
 import { Button, ButtonIcon } from '@lib/components/primitives/button';
 import { db } from '@lib/database/db';
@@ -11,18 +12,12 @@ import { and, eq, gte } from 'drizzle-orm';
 import { now } from 'drizzle-orm-helpers/pg';
 import { LogIn, UserPlus } from 'lucide-react';
 import { cookies } from 'next/headers';
-import { Argon2id } from 'oslo/password';
 import { BackButton, FinalizePasswordResetForm } from './client';
 
-export default async function Page(props: { params: { token: string } }) {
-	const { user } = await validate();
-	if (user) {
-		redirect('/i/settings#password');
-	}
-
-	async function finalizePasswordReset(state: unknown, formData: FormData) {
+export function finalizePasswordReset(token: string) {
+	return async function finalizePasswordReset(state: unknown, formData: FormData) {
 		'use server';
-		formData.set('token', decodeURIComponent(props.params.token));
+		formData.set('token', decodeURIComponent(token));
 		const data = Object.entries(formData);
 		const parsed = finalizePasswordResetSchema.safeParse(data);
 		if (!parsed.success) {
@@ -41,7 +36,7 @@ export default async function Page(props: { params: { token: string } }) {
 			if (!tokenUser) {
 				throw new Error(m.password_reset_token_invalid());
 			}
-			const hashedPassword = await new Argon2id().hash(parsed.data.newPassword);
+			const hashedPassword = await hashPassword(parsed.data.newPassword);
 			return await tx
 				.update(users)
 				.set({ hashedPassword, updatedAt: now() })
@@ -55,6 +50,13 @@ export default async function Page(props: { params: { token: string } }) {
 		const sessionCookie = auth.createSessionCookie(session.id);
 		cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 		redirect('/i');
+	};
+}
+
+export default async function Page(props: { params: { token: string } }) {
+	const { user } = await validate();
+	if (user) {
+		redirect('/i/settings#password');
 	}
 
 	return (
@@ -62,7 +64,7 @@ export default async function Page(props: { params: { token: string } }) {
 			<section className="mb-4 flex flex-row flex-wrap gap-2 justify-between animate-fly-up">
 				<BackButton />
 			</section>
-			<FinalizePasswordResetForm formAction={finalizePasswordReset} />
+			<FinalizePasswordResetForm formAction={finalizePasswordReset(props.params.token)} />
 			<section className="mt-4 flex flex-row flex-wrap gap-2 justify-between animate-fly-down">
 				<Button asChild variant="link" size="sm">
 					<Link href="/signup">

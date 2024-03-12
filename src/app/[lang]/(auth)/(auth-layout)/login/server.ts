@@ -1,6 +1,7 @@
 'use server';
 
 import { auth } from '@lib/auth/auth';
+import { verifyPassword } from '@lib/auth/utilities';
 import { emailPasswordLoginSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { users } from '@lib/database/schema/auth';
@@ -9,7 +10,6 @@ import * as m from '@translations/messages';
 import { eq } from 'drizzle-orm';
 import { isRedirectError } from 'next/dist/client/components/redirect';
 import { cookies } from 'next/headers';
-import { Argon2id } from 'oslo/password';
 import { NEVER, ZodIssueCode } from 'zod';
 
 export async function login(state: unknown, formData: FormData) {
@@ -33,7 +33,7 @@ export async function login(state: unknown, formData: FormData) {
 					});
 					return NEVER;
 				}
-				const validPassword = await new Argon2id().verify(user.hashedPassword, data.password);
+				const validPassword = await verifyPassword(user.hashedPassword, data.password);
 				if (!validPassword) {
 					ctx.addIssue({
 						code: ZodIssueCode.custom,

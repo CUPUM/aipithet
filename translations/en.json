@@ -44,5 +44,8 @@
 	"signup_credentials_unavailable": "An account already uses this email",
 	"password_reset_token_invalid": "The URL used is either invalid or outdated",
 	"password_new": "New password",
-	"update_my_password": "update_my_password"
+	"update_my_password": "update_my_password",
+	"password_reset_see_mailbox": "Please look in your mailbox to proceed.",
+	"password_reset_success": "Your password was successfully reinitialized!",
+	"password_reset_see_mailbox_button": "Go to my mailbox"
 }

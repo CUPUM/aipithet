@@ -1,6 +1,7 @@
 'use server';
 
 import { auth } from '@lib/auth/auth';
+import { hashPassword } from '@lib/auth/utilities';
 import { emailPasswordSignupSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { emailVerificationCodes, users } from '@lib/database/schema/auth';
@@ -10,7 +11,6 @@ import { redirect } from '@lib/i18n/utilities';
 import * as m from '@translations/messages';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
-import { Argon2id } from 'oslo/password';
 import { ZodIssueCode } from 'zod';
 
 export async function signup(state: unknown, formData: FormData) {
@@ -36,23 +36,29 @@ export async function signup(state: unknown, formData: FormData) {
 		if (!parsed.success) {
 			return { errors: parsed.error.format() };
 		}
-		const hashedPassword = await new Argon2id().hash(parsed.data.password);
+		const hashedPassword = await hashPassword(parsed.data.password);
 		const { id, code, expiresAt } = await db.transaction(async (tx) => {
-			const [{ id }] = await tx
+			const [inserted] = await tx
 				.insert(users)
 				.values({
 					hashedPassword,
 					email: parsed.data.email,
 				})
 				.returning({ id: users.id });
-			const [{ code, expiresAt }] = await tx
+			if (!inserted) {
+				return tx.rollback();
+			}
+			const [verification] = await tx
 				.insert(emailVerificationCodes)
-				.values({ userId: id, email: parsed.data.email })
+				.values({ userId: inserted.id, email: parsed.data.email })
 				.returning({
 					code: emailVerificationCodes.code,
 					expiresAt: emailVerificationCodes.expiresAt,
 				});
-			return { id, code, expiresAt };
+			if (!verification) {
+				return tx.rollback();
+			}
+			return { ...inserted, ...verification };
 		});
 		const session = await auth.createSession(id, {});
 		const sessionCookie = auth.createSessionCookie(session.id);

@@ -13,8 +13,9 @@ import LabeledField from '@lib/components/primitives/labeled-field';
 import { SubmitButton } from '@lib/components/submit-button';
 import * as m from '@translations/messages';
 import { ArrowLeft, Check } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useFormState } from 'react-dom';
+import type { finalizePasswordReset } from './page';
 
 export function BackButton() {
 	const router = useRouter();
@@ -28,22 +29,21 @@ export function BackButton() {
 }
 
 export function FinalizePasswordResetForm(props: {
-	formAction: (state: unknown, formData: FormData) => Promise<unknown>;
+	formAction: ReturnType<typeof finalizePasswordReset>;
 }) {
 	const [formState, formAction] = useFormState(props.formAction, undefined);
-	const param = useParams();
 	return (
 		<form action={formAction} className="flex flex-col gap-4">
 			<h1 className="text-3xl font-medium mb-4">{m.reset_password()}</h1>
 			<LabeledField>
 				<Label htmlFor="newPassword">{m.password_new()}</Label>
 				<Input type="password" name="newPassword" id="newPassword" />
-				<ErrorMessages errors={formState} />
+				<ErrorMessages errors={formState?.errors.newPassword?._errors} />
 			</LabeledField>
 			<LabeledField>
 				<Label htmlFor="newPasswordConfirm">{m.confirm_password()}</Label>
 				<Input type="password" name="newPasswordConfirm" id="newPasswordConfirm" />
-				<ErrorMessages errors={formState} />
+				<ErrorMessages errors={formState?.errors.newPasswordConfirm?._errors} />
 			</LabeledField>
 			<SubmitButton>
 				<LoadingButtonIcon icon={Check} />

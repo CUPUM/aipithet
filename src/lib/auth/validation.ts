@@ -59,10 +59,11 @@ export const passwordUpdateSchema = z
 		newPassword: passwordSchema,
 		newPasswordConfirm: passwordConfirmSchema,
 	})
-	.superRefine(({ newPasswordConfirm, newPassword }, ctx) => {
+	.superRefine(({ newPassword, newPasswordConfirm }, ctx) => {
 		if (newPasswordConfirm !== newPassword) {
 			ctx.addIssue({
 				code: ZodIssueCode.custom,
+				path: ['newPasswordConfirm'],
 				message: m.password_confirm_not_matching(),
 			});
 		}

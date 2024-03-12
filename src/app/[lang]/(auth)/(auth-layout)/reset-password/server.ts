@@ -5,7 +5,6 @@ import { db } from '@lib/database/db';
 import { passwordResetTokens, users } from '@lib/database/schema/auth';
 import ResetPasswordTemplate from '@lib/email/templates/reset-password';
 import { resend } from '@lib/email/transporter';
-import { redirect } from '@lib/i18n/utilities';
 import * as m from '@translations/messages';
 import { eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
@@ -55,5 +54,7 @@ export async function resetPassword(state: unknown, formData: FormData) {
 		console.error(err);
 		throw new Error('Error when trying to reset password.');
 	}
-	redirect('/reset-password/finalize');
+	return {
+		finalize: true,
+	};
 }

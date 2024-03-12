@@ -46,5 +46,8 @@
 	"password_reset_key_missing": "Lien URL désuet ou invalide",
 	"password_reset_token_invalid": "Lien URL désuet ou invalide",
 	"password_new": "Nouveau mot de passe",
-	"update_my_password": "Mettre mon mot de passe à jour"
+	"update_my_password": "Mettre mon mot de passe à jour",
+	"password_reset_see_mailbox": "Consultez votre boîte de réception afin de poursuivre.",
+	"password_reset_success": "Votre mot de passe a été réinitialisé avec succès!",
+	"password_reset_see_mailbox_button": "Ouvrir ma boîte de courriel"
 }
