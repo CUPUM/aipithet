@@ -36,6 +36,13 @@
       "when": 1710197248865,
       "tag": "0004_omniscient_sleepwalker",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1710258880419,
+      "tag": "0005_spooky_starbolt",
+      "breakpoints": true
     }
   ]
 }
