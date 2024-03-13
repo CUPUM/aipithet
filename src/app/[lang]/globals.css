@@ -28,15 +28,15 @@
 
 	[data-theme='dark'] {
 		--background: 240 4% 7%;
-		--foreground: 0 0% 98%;
+		--foreground: 0 0% 94%;
 		--card: 270 5% 7%;
-		--card-foreground: 0 0% 98%;
+		--card-foreground: 0 0% 94%;
 		--popover: 270 5% 7%;
-		--popover-foreground: 0 0% 98%;
+		--popover-foreground: 0 0% 94%;
 		--primary: 258 100% 65%;
 		--primary-foreground: 0 0% 98%;
 		--secondary: 255 5% 15%;
-		--secondary-foreground: 0 0% 98%;
+		--secondary-foreground: 0 0% 94%;
 		--muted: 260 5% 20%;
 		--muted-foreground: 255 5% 49%;
 		--accent: 258 25% 14%;

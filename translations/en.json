@@ -48,5 +48,6 @@
 	"password_reset_see_mailbox": "Please look in your mailbox to proceed.",
 	"password_reset_success": "Your password was successfully reinitialized!",
 	"password_reset_see_mailbox_button": "Go to my mailbox",
-	"my_account": "My account"
+	"my_account": "My account",
+	"insufficient_permissions": "You do not have sufficient permissions to complete this action or to access necessary data."
 }

@@ -1,5 +1,6 @@
 import { ROLE_DEFAULT } from '@lib/auth/constants';
-import { nanoid } from 'drizzle-orm-helpers/pg';
+import { add } from 'drizzle-orm-helpers';
+import { nanoid, now, interval as timeInterval } from 'drizzle-orm-helpers/pg';
 import {
 	foreignKey,
 	integer,
@@ -190,6 +191,13 @@ export const imagesToPools = pgTable(
 
 export const labelingSurveys = pgTable('labeling_surveys', {
 	id: text('id').default(nanoid()).primaryKey(),
+	createdById: text('created_by_id').references(() => users.id, {
+		onDelete: 'set null',
+		onUpdate: 'cascade',
+	}),
+	dueAt: timestamp('due_at', { withTimezone: true }),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 export const labelingSurveysT = pgTable(
 	'labeling_surveys_t',
@@ -236,7 +244,16 @@ export const labelingSurveysUsers = pgTable(
 	}
 );
 
-// export const labelingSurveysInvitations = pgTable('labeling_surveys_invitations', {})
+export const labelingSurveysInvitations = pgTable('labeling_surveys_invitations', {
+	surveyId: text('survey_id').references(() => labelingSurveys.id, {
+		onDelete: 'cascade',
+		onUpdate: 'cascade',
+	}),
+	code: text('code').default(nanoid()).notNull(),
+	expiresAt: timestamp('expires_at')
+		.default(add(now(), timeInterval({ months: 1 })).inlineParams())
+		.notNull(),
+});
 
 export const labelingSurveyCriterias = pgTable('labeling_survey_criteria', {});
 

@@ -59,7 +59,7 @@ export function ButtonIcon({
 		<Icon
 			{...restProps}
 			className={cn(
-				'w-[1.25em] h-[1.25em] opacity-40 group-hover/button:opacity-80 group-[.aspect-square]/button:opacity-80 transition-all',
+				'w-[1.25em] h-[1.25em] opacity-40 group-hover/button:opacity-80 group-[.aspect-square]/button:opacity-80 transition-all group-aria-[current]/button:opacity-100 group-aria-[current]/button:animate-pulse',
 				className
 			)}
 			strokeWidth={strokeWidth}

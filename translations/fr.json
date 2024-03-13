@@ -50,5 +50,6 @@
 	"password_reset_see_mailbox": "Consultez votre boîte de réception afin de poursuivre.",
 	"password_reset_success": "Votre mot de passe a été réinitialisé avec succès!",
 	"password_reset_see_mailbox_button": "Ouvrir ma boîte de courriel",
-	"my_account": "Mon compte"
+	"my_account": "Mon compte",
+	"insufficient_permissions": "Vous ne détenez pas les permissions requises pour compléter cette action ou accéder aux données."
 }

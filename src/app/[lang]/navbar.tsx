@@ -6,9 +6,9 @@ export default function Navbar() {
 	return (
 		<header className="flex flex-row gap-2 p-3 justify-between self-stretch">
 			<nav className="flex flex-row gap-2">
-				<NavbarButton href="/" className="text-primary">
-					<Tag className="h-[1.25em] w-[1.25em]" strokeWidth={3.5} />
-					<span className="font-bold tracking-wide">Aipithet</span>
+				<NavbarButton href="/" className="border-[2px] border-accent px-5">
+					<Tag className="h-[1.25em] w-[1.25em]" strokeWidth={3} />
+					<span className="font-bold">Aipithet</span>
 				</NavbarButton>
 			</nav>
 			<nav className="flex flex-row gap-2">

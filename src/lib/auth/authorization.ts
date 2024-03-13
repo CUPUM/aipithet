@@ -1,6 +1,7 @@
 import { redirect } from '@lib/i18n/utilities';
+import * as m from '@translations/messages';
 import { cookies } from 'next/headers';
-import { RedirectType, notFound } from 'next/navigation';
+import { RedirectType } from 'next/navigation';
 import { cache } from 'react';
 import { auth } from './auth';
 import type { Role } from './constants';
@@ -16,6 +17,7 @@ type Operation = 'create' | 'read' | 'update' | 'delete';
  */
 const PERMISSIONS = {
 	'surveys.create': [ROLES.ADMIN, ROLES.SUPER_EDITOR, ROLES.EDITOR],
+	'surveys.invite.create': [ROLES.ADMIN, ROLES.SUPER_EDITOR, ROLES.EDITOR],
 } as const satisfies Record<`${string}.${Operation}`, Role[]>;
 
 type PermissionKey = keyof typeof PERMISSIONS;
@@ -57,7 +59,7 @@ export const authorize = cache(async (key?: PermissionKey) => {
 		return redirect('/login', RedirectType.push);
 	}
 	if (key && !(PERMISSIONS[key] as Role[]).includes(user.role as Role)) {
-		notFound();
+		throw new Error(m.insufficient_permissions());
 	}
 	return {
 		user,

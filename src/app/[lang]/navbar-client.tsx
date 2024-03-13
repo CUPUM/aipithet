@@ -5,6 +5,7 @@ import Link from '@lib/i18n/Link';
 import * as m from '@translations/messages';
 import {
 	CircleDashed,
+	Home,
 	Languages,
 	LogIn,
 	LogOut,
@@ -54,6 +55,12 @@ export function NavbarUserMenu() {
 				{user ? (
 					<>
 						<DropdownMenuGroup>
+							<DropdownMenuItem asChild>
+								<Link href="/">
+									<DropdownMenuItemIcon icon={Home} />
+									{m.home()}
+								</Link>
+							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
 								<Link href="/i">
 									<DropdownMenuItemIcon icon={UserCircle} />

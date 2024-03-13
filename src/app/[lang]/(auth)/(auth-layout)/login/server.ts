@@ -55,7 +55,7 @@ export async function login(state: unknown, formData: FormData) {
 		if (!parsed.data.emailVerified) {
 			redirect('/verify-email');
 		}
-		redirect('/');
+		redirect('/i');
 	} catch (err) {
 		if (isRedirectError(err)) {
 			throw err;
