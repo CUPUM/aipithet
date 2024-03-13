@@ -18,9 +18,10 @@ export function finalizePasswordReset(token: string) {
 	return async function finalizePasswordReset(state: unknown, formData: FormData) {
 		'use server';
 		formData.set('token', decodeURIComponent(token));
-		const data = Object.entries(formData);
+		const data = Object.fromEntries(formData);
 		const parsed = finalizePasswordResetSchema.safeParse(data);
 		if (!parsed.success) {
+			console.log('fail');
 			return { errors: parsed.error.format() };
 		}
 		const [updated] = await db.transaction(async (tx) => {

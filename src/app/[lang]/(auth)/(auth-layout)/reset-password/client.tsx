@@ -28,20 +28,25 @@ export function ResetPasswordForm() {
 	}, [formState]);
 	if (formState?.finalize) {
 		return (
-			<article className="flex flex-col gap-4 animate-fly-up">
-				<div className="absolute inset-[10%]">
-					<ScatteredNodes pool={[]} />
+			<>
+				<div className="absolute inset-0 -z-10 opacity-20">
+					<ScatteredNodes
+						pool={['✉️', '📨', '🔑']}
+						className="animate-in zoom-in-75 duration-500 ease-out fill-mode-both fade-in-0 transition-all"
+					/>
 				</div>
-				<h1 className="text-3xl font-medium mb-4">{m.password_reset_success()}</h1>
-				<p>{m.password_reset_see_mailbox()}</p>
-				<Button asChild variant="outline">
-					<a href="mailto:">
-						<ButtonIcon icon={MailSearch} />
-						{m.password_reset_see_mailbox_button()}
-						<ButtonIconSpace />
-					</a>
-				</Button>
-			</article>
+				<article className="flex flex-col gap-4 animate-fly-up">
+					<h1 className="text-3xl font-medium mb-4">{m.password_reset_success()}</h1>
+					<p>{m.password_reset_see_mailbox()}</p>
+					<Button asChild variant="outline">
+						<a href="mailto:">
+							<ButtonIcon icon={MailSearch} />
+							{m.password_reset_see_mailbox_button()}
+							<ButtonIconSpace />
+						</a>
+					</Button>
+				</article>
+			</>
 		);
 	}
 	return (
