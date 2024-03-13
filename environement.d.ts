@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 namespace NodeJS {
 	interface ProcessEnv {
-		DOMAIN_NAME: string;
+		VERCEL_URL: string;
 		DB_USER: string;
 		DB_PASSWORD: string;
 		DB_HOST: string;

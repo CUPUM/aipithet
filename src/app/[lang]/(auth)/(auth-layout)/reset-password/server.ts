@@ -3,6 +3,7 @@
 import { passwordResetSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { passwordResetTokens, users } from '@lib/database/schema/auth';
+import { SENDERS } from '@lib/email/constants';
 import ResetPasswordTemplate from '@lib/email/templates/reset-password';
 import { resend } from '@lib/email/transporter';
 import * as m from '@translations/messages';
@@ -45,7 +46,7 @@ export async function resetPassword(state: unknown, formData: FormData) {
 			throw new Error('No inserted password reset row was returned.');
 		}
 		await resend.emails.send({
-			from: `Aipithet <${process.env.RESEND_DOMAIN}>`,
+			from: SENDERS.DEFAULT,
 			to: [parsed.data.email],
 			subject: m.reset_password_email_subject(),
 			react: ResetPasswordTemplate(inserted),

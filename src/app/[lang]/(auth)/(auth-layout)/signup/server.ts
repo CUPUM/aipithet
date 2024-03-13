@@ -5,6 +5,7 @@ import { hashPassword } from '@lib/auth/utilities';
 import { emailPasswordSignupSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { emailVerificationCodes, users } from '@lib/database/schema/auth';
+import { SENDERS } from '@lib/email/constants';
 import VerifyEmailTemplate from '@lib/email/templates/verify-email';
 import { resend } from '@lib/email/transporter';
 import { redirect } from '@lib/i18n/utilities';
@@ -64,7 +65,7 @@ export async function signup(state: unknown, formData: FormData) {
 		const sessionCookie = auth.createSessionCookie(session.id);
 		cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 		await resend.emails.send({
-			from: `Aipithet <${process.env.RESEND_DOMAIN}>`,
+			from: SENDERS.DEFAULT,
 			to: [parsed.data.email],
 			subject: 'Verify your email',
 			react: VerifyEmailTemplate({ code, expiresAt }),

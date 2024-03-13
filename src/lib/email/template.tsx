@@ -57,7 +57,7 @@ export function Template(props: { children: ReactNode }) {
 					<Section className="text-center">
 						<Link
 							hrefLang={lang}
-							href={`${process.env.DOMAIN_NAME}/${withLang('/verify-email')}`}
+							href={`${process.env.VERCEL_URL}/${withLang('/verify-email')}`}
 							className="text-slate-500 text-xs font-sans"
 						>
 							Aipithet

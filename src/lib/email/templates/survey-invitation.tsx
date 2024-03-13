@@ -22,7 +22,7 @@ export default function ResetPasswordTemplate(props: { token: string; expiresAt:
 				</Text>
 				<Button
 					className="text-sm font-sans font-medium text-slate-100 bg-violet-700 rounded-[1em] px-5 py-4"
-					href={`${process.env.DOMAIN_NAME}/${withLang(`/reset-password/${encodeURIComponent(props.token)}`)}`}
+					href={`${process.env.VERCEL_URL}/${withLang(`/reset-password/${encodeURIComponent(props.token)}`)}`}
 					hrefLang={lang}
 				>
 					{m.reset_password_email_button()}
@@ -34,7 +34,7 @@ export default function ResetPasswordTemplate(props: { token: string; expiresAt:
 				</Text>
 				<Button
 					className="text-sm font-sans font-medium text-slate-600 border border-solid border-slate-300 rounded-[1em] px-5 py-4"
-					href={`${process.env.DOMAIN_NAME}/${withLang('/reset-password')}`}
+					href={`${process.env.VERCEL_URL}/${withLang('/reset-password')}`}
 					hrefLang={lang}
 				>
 					{m.reset_password()}

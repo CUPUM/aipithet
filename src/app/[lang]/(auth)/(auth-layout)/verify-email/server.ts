@@ -4,6 +4,7 @@ import { authorize } from '@lib/auth/authorization';
 import { emailVerificationSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { emailVerificationCodes, users } from '@lib/database/schema/auth';
+import { SENDERS } from '@lib/email/constants';
 import VerifyEmailTemplate from '@lib/email/templates/verify-email';
 import { resend } from '@lib/email/transporter';
 import { redirect } from '@lib/i18n/utilities';
@@ -14,7 +15,7 @@ import { excluded, now } from 'drizzle-orm-helpers/pg';
 export async function sendEmailVerificationCode() {
 	const { user } = await authorize();
 	try {
-		const [{ code, expiresAt }] = await db
+		const [inserted] = await db
 			.insert(emailVerificationCodes)
 			.values({ userId: user.id, email: user.email })
 			.onConflictDoUpdate({
@@ -25,11 +26,14 @@ export async function sendEmailVerificationCode() {
 				code: emailVerificationCodes.code,
 				expiresAt: emailVerificationCodes.expiresAt,
 			});
+		if (!inserted) {
+			throw new Error('No verification code was returned');
+		}
 		await resend.emails.send({
-			from: `Aipithet <${process.env.RESEND_DOMAIN}>`,
+			from: SENDERS.DEFAULT,
 			to: [user.email],
 			subject: 'Verify your email',
-			react: VerifyEmailTemplate({ code, expiresAt }),
+			react: VerifyEmailTemplate(inserted),
 		});
 	} catch (err) {
 		console.error(err);
