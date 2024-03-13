@@ -2,8 +2,10 @@
 
 import { cn } from '@lib/components/utilities';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import type { LucideIcon, LucideProps } from 'lucide-react';
 import { Check, ChevronRight, Circle } from 'lucide-react';
 import * as React from 'react';
+import { Spinner } from './spinner';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -80,7 +82,7 @@ const DropdownMenuItem = React.forwardRef<
 	<DropdownMenuPrimitive.Item
 		ref={ref}
 		className={cn(
-			'relative flex cursor-pointer select-none items-center rounded-sm px-4 py-3 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+			'group/menu-item relative flex flex-row gap-3 cursor-pointer select-none items-center rounded-sm px-4 py-3 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
 			inset && 'pl-8',
 			className
 		)}
@@ -88,6 +90,50 @@ const DropdownMenuItem = React.forwardRef<
 	/>
 ));
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
+
+export function DropdownMenuItemIcon({
+	icon: Icon,
+	className,
+	strokeWidth = 2.25,
+	...restProps
+}: { icon: LucideIcon } & LucideProps) {
+	return (
+		<Icon
+			{...restProps}
+			className={cn(
+				'w-[1.2em] h-[1.2em] opacity-40 group-hover/menu-item:opacity-80 group-[.aspect-square]/menu-item:opacity-80 transition-all',
+				className
+			)}
+			strokeWidth={strokeWidth}
+		/>
+	);
+}
+
+/**
+ * A button icon replaced with loading spinner when parent button has loading state.
+ */
+export function DropdownMenuItemIconLoading({
+	className,
+	icon,
+	...iconProps
+}: React.ComponentProps<typeof DropdownMenuItemIcon>) {
+	return (
+		<>
+			<Spinner
+				{...iconProps}
+				className={cn(
+					'w-[1.2em] h-[1.2em] hidden group-data-[loading=true]/menu-item:block',
+					className
+				)}
+			/>
+			<DropdownMenuItemIcon
+				{...iconProps}
+				icon={icon}
+				className={cn('group-data-[loading=true]/menu-item:hidden animate-puff-grow', className)}
+			/>
+		</>
+	);
+}
 
 const DropdownMenuCheckboxItem = React.forwardRef<
 	React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,

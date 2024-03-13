@@ -36,7 +36,6 @@ export function LoginForm() {
 						type={showPassword ? 'text' : 'password'}
 						id="password"
 						name="password"
-						defaultValue={2}
 					/>
 					<Button
 						variant="outline"

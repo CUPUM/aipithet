@@ -47,5 +47,6 @@
 	"update_my_password": "update_my_password",
 	"password_reset_see_mailbox": "Please look in your mailbox to proceed.",
 	"password_reset_success": "Your password was successfully reinitialized!",
-	"password_reset_see_mailbox_button": "Go to my mailbox"
+	"password_reset_see_mailbox_button": "Go to my mailbox",
+	"my_account": "My account"
 }

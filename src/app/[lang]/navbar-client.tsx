@@ -1,7 +1,6 @@
 'use client';
 
 import { useUser } from '@lib/auth/user-provider-client';
-import { Spinner } from '@lib/components/primitives/spinner';
 import Link from '@lib/i18n/Link';
 import * as m from '@translations/messages';
 import {
@@ -14,6 +13,7 @@ import {
 	Settings,
 	Sun,
 	User,
+	UserCircle,
 	UserPlus,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
@@ -24,6 +24,8 @@ import {
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuItem,
+	DropdownMenuItemIcon,
+	DropdownMenuItemIconLoading,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
@@ -51,31 +53,39 @@ export function NavbarUserMenu() {
 			<DropdownMenuContent collisionPadding={12}>
 				{user ? (
 					<>
-						<DropdownMenuItem
-							onClick={() => {
-								startTransition(() => logout());
-							}}
-							disabled={isPending}
-						>
-							{isPending ? (
-								<Spinner className="h-[1.25em] w-[1.25em] mr-3" />
-							) : (
-								<LogOut className="h-[1.25em] w-[1.25em] opacity-50 mr-3" strokeWidth={2.5} />
-							)}
-							{m.signout()}
-						</DropdownMenuItem>
+						<DropdownMenuGroup>
+							<DropdownMenuItem asChild>
+								<Link href="/i">
+									<DropdownMenuItemIcon icon={UserCircle} />
+									{m.my_account()}
+								</Link>
+							</DropdownMenuItem>
+						</DropdownMenuGroup>
+						<DropdownMenuSeparator />
+						<DropdownMenuGroup>
+							<DropdownMenuItem
+								onClick={() => {
+									startTransition(() => logout());
+								}}
+								disabled={isPending}
+								data-loading={isPending}
+							>
+								<DropdownMenuItemIconLoading icon={LogOut} />
+								{m.signout()}
+							</DropdownMenuItem>
+						</DropdownMenuGroup>
 					</>
 				) : (
 					<>
 						<DropdownMenuItem asChild>
 							<Link href="/signup">
-								<UserPlus className="h-[1.25em] w-[1.25em] opacity-50 mr-3" strokeWidth={2.5} />
+								<DropdownMenuItemIcon icon={UserPlus} />
 								{m.signup()}
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem asChild>
 							<Link href="/login">
-								<LogIn className="h-[1.25em] w-[1.25em] opacity-50 mr-3" strokeWidth={2.5} />
+								<DropdownMenuItemIcon icon={LogIn} />
 								{m.login()}
 							</Link>
 						</DropdownMenuItem>
@@ -104,13 +114,13 @@ function NavbarLangSwitch() {
 					className="group data-[selected]:font-semibold"
 				>
 					<Link href={currentUrl} hrefLang={lang}>
-						<CircleDashed
-							strokeWidth={2.5}
-							className="h-[1.25em] w-[1.25em] mr-3 opacity-25 group-data-[selected]:hidden"
+						<DropdownMenuItemIcon
+							icon={CircleDashed}
+							className="opacity-20 group-data-[selected]:hidden"
 						/>
-						<Languages
-							className="h-[1.25em] w-[1.25em] mr-3 hidden group-data-[selected]:block"
-							strokeWidth={2.5}
+						<DropdownMenuItemIcon
+							icon={Languages}
+							className="opacity-100 hidden group-data-[selected]:block"
 						/>
 						{LANG_NAMES[lang]}
 					</Link>
@@ -131,10 +141,7 @@ function NavbarThemeToggle() {
 				className="light:font-semibold"
 				onSelect={(e) => e.preventDefault()}
 			>
-				<Sun
-					className="h-[1.25em] w-[1.25em] mr-3 opacity-25 light:opacity-100"
-					strokeWidth={2.75}
-				/>
+				<DropdownMenuItemIcon icon={Sun} className="opacity-20 light:opacity-100" />
 				{m.theme_light()}
 			</DropdownMenuItem>
 			<DropdownMenuItem
@@ -142,10 +149,7 @@ function NavbarThemeToggle() {
 				className="dark:font-semibold"
 				onSelect={(e) => e.preventDefault()}
 			>
-				<Moon
-					className="h-[1.25em] w-[1.25em] mr-3 opacity-25 dark:opacity-100"
-					strokeWidth={2.5}
-				/>
+				<DropdownMenuItemIcon icon={Moon} className="opacity-20 dark:opacity-100" />
 				{m.theme_dark()}
 			</DropdownMenuItem>
 			<DropdownMenuItem
@@ -154,9 +158,9 @@ function NavbarThemeToggle() {
 				data-selected={theme === 'system' || undefined}
 				onSelect={(e) => e.preventDefault()}
 			>
-				<Monitor
-					className="h-[1.25em] w-[1.25em] mr-3 opacity-25 group-data-[selected]:opacity-100"
-					strokeWidth={2.5}
+				<DropdownMenuItemIcon
+					icon={Monitor}
+					className="opacity-20 group-data-[selected]:opacity-100"
 				/>
 				{m.theme_system()}
 			</DropdownMenuItem>

@@ -49,5 +49,6 @@
 	"update_my_password": "Mettre mon mot de passe à jour",
 	"password_reset_see_mailbox": "Consultez votre boîte de réception afin de poursuivre.",
 	"password_reset_success": "Votre mot de passe a été réinitialisé avec succès!",
-	"password_reset_see_mailbox_button": "Ouvrir ma boîte de courriel"
+	"password_reset_see_mailbox_button": "Ouvrir ma boîte de courriel",
+	"my_account": "Mon compte"
 }
