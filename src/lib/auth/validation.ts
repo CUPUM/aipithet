@@ -1,10 +1,15 @@
 import * as m from '@translations/messages';
+import type { User } from 'lucia';
 import { ZodIssueCode, z } from 'zod';
-import type { Role } from './constants';
-import { ROLES_ARR, USER_PASSWORD_MIN } from './constants';
+import type { PermissionKey, Role } from './constants';
+import { PERMISSIONS, ROLES_ARR, USER_PASSWORD_MIN } from './constants';
 
 export function isRole(maybeRole: unknown): maybeRole is Role {
 	return ROLES_ARR.includes(maybeRole as Role);
+}
+
+export function safeCheckUserPermissions(user: User, key?: PermissionKey) {
+	return !key || (PERMISSIONS[key] as Role[]).includes(user.role);
 }
 
 export const emailSchema = z.string().trim().email(m.email_invalid());

@@ -35,7 +35,7 @@ export default function ResetPasswordTemplate(props: { token: string; expiresAt:
 					{m.reset_password_email_outdated()}
 				</Text>
 				<Button
-					className="text-sm font-sans text-gray-600 border border-solid border-gray-200 rounded-[1em] px-5 py-4 mt-4"
+					className="text-sm font-sans text-gray-600 border border-solid border-gray-500/20 rounded-[1em] px-5 py-4 mt-4"
 					href={`${process.env.VERCEL_URL}/${withLang('/reset-password')}`}
 					hrefLang={lang}
 				>

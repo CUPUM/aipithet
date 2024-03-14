@@ -24,7 +24,7 @@
 	"email_verification_code_email_body": "Utilisez le code de vérification ci-présent pour confirmer l'authenticité de votre adresse courriel.\n\nNotez qu'il n'est valide que jusqu'à {time}.",
 	"email_verification_code_email_button": "Entrez votre code",
 	"validate": "Valider",
-	"email_verification_code_expiry": "Ce code est valide jusqu’à {date}.",
+	"email_verification_code_expiry": "Ce code est valide jusqu’à {time}.",
 	"forgot_password": "Mot de passe oublié",
 	"reset_password": "Réinitialiser mon mot de passe",
 	"reset": "Réinitialiser",
@@ -51,5 +51,13 @@
 	"password_reset_success": "Votre mot de passe a été réinitialisé avec succès!",
 	"password_reset_see_mailbox_button": "Ouvrir ma boîte de courriel",
 	"my_account": "Mon compte",
-	"insufficient_permissions": "Vous ne détenez pas les permissions requises pour compléter cette action ou accéder aux données."
+	"insufficient_permissions": "Vous ne détenez pas les permissions requises pour compléter cette action ou accéder aux données.",
+	"dashboard": "Tableau de bord",
+	"user_settings": "Paramètres & sécurité",
+	"user_dashboard": "Tableau de bord",
+	"user_surveys": "Mes sondages",
+	"invitation_code": "Code d'invitation",
+	"survey_invitation_email_body": "Utilisez le code d'invitation ci-dessous pour joindre le sondage. Le code à usage unique sera valide jusqu’au {date} et fonctionnera peu importe l'adresse courriel que vous avez utilisée pour créer votre compte!",
+	"survey_invitation_email_title": "Vous avez reçu une invitation pour rejoindre un sondage!",
+	"survey_invitation_email_button": "Utiliser le code d'invitation dès maintenant"
 }

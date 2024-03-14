@@ -1,4 +1,4 @@
-import { validate } from '@lib/auth/authorization';
+import { validate } from '@lib/auth/auth';
 import { Button, ButtonIcon } from '@lib/components/primitives/button';
 import Link from '@lib/i18n/Link';
 import { redirect } from '@lib/i18n/utilities';

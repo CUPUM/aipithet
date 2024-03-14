@@ -1,5 +1,4 @@
-import { auth } from '@lib/auth/auth';
-import { validate } from '@lib/auth/authorization';
+import { auth, validate } from '@lib/auth/auth';
 import { hashPassword } from '@lib/auth/utilities';
 import { finalizePasswordResetSchema } from '@lib/auth/validation';
 import { Button, ButtonIcon } from '@lib/components/primitives/button';

@@ -3,8 +3,8 @@
 import {
 	Button,
 	ButtonIcon,
+	ButtonIconLoading,
 	ButtonIconSpace,
-	LoadingButtonIcon,
 } from '@lib/components/primitives/button';
 import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import { Input } from '@lib/components/primitives/input';
@@ -16,7 +16,7 @@ import * as m from '@translations/messages';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
-import { signup } from './server';
+import signup from '../../../../../lib/actions/signup';
 
 export function SignupForm() {
 	const [formState, formAction] = useFormState(signup, EMPTY_FORMATTED_ERRORS);
@@ -59,7 +59,7 @@ export function SignupForm() {
 				<ErrorMessages errors={formState.errors.passwordConfirm?._errors} />
 			</LabeledField>
 			<SubmitButton>
-				<LoadingButtonIcon icon={UserPlus} />
+				<ButtonIconLoading icon={UserPlus} />
 				{m.sign_me_up()}
 				<ButtonIconSpace />
 			</SubmitButton>

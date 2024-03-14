@@ -1,11 +1,10 @@
 'use server';
 
-import { auth } from '@lib/auth/auth';
-import { validate } from '@lib/auth/authorization';
+import { auth, validate } from '@lib/auth/auth';
 import { redirect } from '@lib/i18n/utilities';
 import { cookies } from 'next/headers';
 
-export async function logout() {
+export default async function logout() {
 	const { session } = await validate();
 	if (!session) {
 		throw new Error('Unauthorized');

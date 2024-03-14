@@ -3,8 +3,8 @@
 import {
 	Button,
 	ButtonIcon,
+	ButtonIconLoading,
 	ButtonIconSpace,
-	LoadingButtonIcon,
 } from '@lib/components/primitives/button';
 import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import { Input } from '@lib/components/primitives/input';
@@ -15,7 +15,7 @@ import * as m from '@translations/messages';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
-import { login } from './server';
+import login from '../../../../../lib/actions/login';
 
 export function LoginForm() {
 	const [formState, formAction] = useFormState(login, undefined);
@@ -50,7 +50,7 @@ export function LoginForm() {
 			</LabeledField>
 			<ErrorMessages errors={formState?.errors._errors} />
 			<SubmitButton>
-				<LoadingButtonIcon icon={LogIn} />
+				<ButtonIconLoading icon={LogIn} />
 				{m.login()}
 				<ButtonIconSpace />
 			</SubmitButton>

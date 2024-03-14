@@ -1,10 +1,12 @@
 'use client';
 
+import { emailVerificationSend } from '@lib/actions/email-verification-send';
+import { emailVerify } from '@lib/actions/email-verify';
 import {
 	Button,
 	ButtonIcon,
+	ButtonIconLoading,
 	ButtonIconSpace,
-	LoadingButtonIcon,
 } from '@lib/components/primitives/button';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
@@ -14,7 +16,6 @@ import * as m from '@translations/messages';
 import { KeyRound, RefreshCw, Undo } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useFormState } from 'react-dom';
-import { sendEmailVerificationCode, verifyEmail } from './server';
 
 export function BackButton() {
 	const router = useRouter();
@@ -28,7 +29,7 @@ export function BackButton() {
 }
 
 export function VerifyEmailForm() {
-	const [_formState, formAction] = useFormState(verifyEmail, { errors: {} });
+	const [_formState, formAction] = useFormState(emailVerify, { errors: {} });
 	return (
 		<form action={formAction} className="flex flex-col gap-4">
 			<h1 className="text-3xl font-medium mb-4">{m.email_verification_code_email_title()}</h1>
@@ -42,12 +43,12 @@ export function VerifyEmailForm() {
 				/>
 			</LabeledField>
 			<SubmitButton>
-				<LoadingButtonIcon icon={KeyRound} />
+				<ButtonIconLoading icon={KeyRound} />
 				{m.validate()}
 				<ButtonIconSpace />
 			</SubmitButton>
-			<SubmitButton formAction={sendEmailVerificationCode} variant="ghost" formNoValidate>
-				<LoadingButtonIcon icon={RefreshCw} />
+			<SubmitButton formAction={emailVerificationSend} variant="ghost" formNoValidate>
+				<ButtonIconLoading icon={RefreshCw} />
 				{m.verification_code_send_new()}
 				<ButtonIconSpace />
 			</SubmitButton>

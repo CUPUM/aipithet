@@ -3,8 +3,8 @@
 import {
 	Button,
 	ButtonIcon,
+	ButtonIconLoading,
 	ButtonIconSpace,
-	LoadingButtonIcon,
 } from '@lib/components/primitives/button';
 import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import { Input } from '@lib/components/primitives/input';
@@ -16,10 +16,10 @@ import * as m from '@translations/messages';
 import { MailSearch, RefreshCw } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useFormState } from 'react-dom';
-import { resetPassword } from './server';
+import passwordReset from '../../../../../lib/actions/password-reset';
 
 export function ResetPasswordForm() {
-	const [formState, formAction] = useFormState(resetPassword, undefined);
+	const [formState, formAction] = useFormState(passwordReset, undefined);
 	const formRef = useRef<HTMLFormElement>(null);
 	useEffect(() => {
 		if (formState?.reset) {
@@ -37,7 +37,7 @@ export function ResetPasswordForm() {
 				</div>
 				<article className="flex flex-col gap-4 animate-fly-up">
 					<h1 className="text-3xl font-medium mb-4">{m.password_reset_success()}</h1>
-					<p>{m.password_reset_see_mailbox()}</p>
+					<p className="text-muted-foreground">{m.password_reset_see_mailbox()}</p>
 					<Button asChild variant="outline">
 						<a href="mailto:">
 							<ButtonIcon icon={MailSearch} />
@@ -59,7 +59,7 @@ export function ResetPasswordForm() {
 			</LabeledField>
 			<ErrorMessages errors={formState?.errors?._errors} />
 			<SubmitButton>
-				<LoadingButtonIcon icon={RefreshCw} />
+				<ButtonIconLoading icon={RefreshCw} />
 				{m.reset()}
 				<ButtonIconSpace />
 			</SubmitButton>

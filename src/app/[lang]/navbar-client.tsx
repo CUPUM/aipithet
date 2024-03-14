@@ -1,6 +1,7 @@
 'use client';
 
-import { useUser } from '@lib/auth/user-provider-client';
+import { useAuth } from '@lib/auth/auth-provider-client';
+import { Spinner } from '@lib/components/primitives/spinner';
 import Link from '@lib/i18n/Link';
 import * as m from '@translations/messages';
 import {
@@ -20,6 +21,7 @@ import {
 import { useTheme } from 'next-themes';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useMemo, useTransition } from 'react';
+import logout from '../../lib/actions/logout';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -33,19 +35,25 @@ import {
 } from '../../lib/components/primitives/dropdown-menu';
 import { LANG_NAMES } from '../../lib/i18n/constants';
 import { availableLanguageTags, languageTag } from '../../lib/i18n/generated/runtime';
-import { logout } from './(auth)/server';
+import { USER_ROUTES_ARR, USER_ROUTES_DETAILS } from './(user)/(user-layout)/constants';
 import NavbarButton from './navbar-button';
 
 export function NavbarUserMenu() {
-	const user = useUser();
-	const [isPending, startTransition] = useTransition();
+	const { user } = useAuth();
+	const [isPendingLogout, startTransitionLogout] = useTransition();
 
 	return (
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
 				<NavbarButton className="aspect-square px-0">
+					{isPendingLogout && <Spinner className="absolute" />}
 					{user ? (
-						<span className="uppercase">{user.email.charAt(0)}</span>
+						<span
+							className="uppercase data-[loading]:opacity-25 scale-95 transition-all"
+							data-loading={isPendingLogout}
+						>
+							{user.email.charAt(0)}
+						</span>
 					) : (
 						<User className="h-[1.25em] w-[1.25em]" strokeWidth={2.5} />
 					)}
@@ -70,12 +78,26 @@ export function NavbarUserMenu() {
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
+							{USER_ROUTES_ARR.map((userRoute, i) => {
+								const details = USER_ROUTES_DETAILS[userRoute];
+								return (
+									<DropdownMenuItem key={i} asChild>
+										<Link href={userRoute}>
+											{'icon' in details ? <DropdownMenuItemIcon icon={details.icon} /> : undefined}
+											{details.t()}
+										</Link>
+									</DropdownMenuItem>
+								);
+							})}
+						</DropdownMenuGroup>
+						<DropdownMenuSeparator />
+						<DropdownMenuGroup>
 							<DropdownMenuItem
 								onClick={() => {
-									startTransition(() => logout());
+									startTransitionLogout(() => logout());
 								}}
-								disabled={isPending}
-								data-loading={isPending}
+								disabled={isPendingLogout}
+								data-loading={isPendingLogout}
 							>
 								<DropdownMenuItemIconLoading icon={LogOut} />
 								{m.signout()}

@@ -2,6 +2,7 @@ import { ROLE_DEFAULT } from '@lib/auth/constants';
 import { add } from 'drizzle-orm-helpers';
 import { nanoid, now, interval as timeInterval } from 'drizzle-orm-helpers/pg';
 import {
+	boolean,
 	foreignKey,
 	integer,
 	interval,
@@ -9,6 +10,7 @@ import {
 	primaryKey,
 	text,
 	timestamp,
+	unique,
 } from 'drizzle-orm/pg-core';
 import { lang, role } from '../custom-types';
 import { roles, users } from './auth';
@@ -244,16 +246,26 @@ export const labelingSurveysUsers = pgTable(
 	}
 );
 
-export const labelingSurveysInvitations = pgTable('labeling_surveys_invitations', {
-	surveyId: text('survey_id').references(() => labelingSurveys.id, {
-		onDelete: 'cascade',
-		onUpdate: 'cascade',
-	}),
-	code: text('code').default(nanoid()).notNull(),
-	expiresAt: timestamp('expires_at')
-		.default(add(now(), timeInterval({ months: 1 })).inlineParams())
-		.notNull(),
-});
+export const labelingSurveysInvitations = pgTable(
+	'labeling_surveys_invitations',
+	{
+		surveyId: text('survey_id').references(() => labelingSurveys.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		code: text('code').default(nanoid()).notNull(),
+		expiresAt: timestamp('expires_at')
+			.default(add(now(), timeInterval({ months: 1 })).inlineParams())
+			.notNull(),
+		email: text('email').notNull(),
+		pending: boolean('pending').default(false).notNull(),
+	},
+	(table) => {
+		return {
+			unq: unique('unique_surveys_invitation_email').on(table.surveyId, table.email),
+		};
+	}
+);
 
 export const labelingSurveyCriterias = pgTable('labeling_survey_criteria', {});
 
@@ -291,7 +303,14 @@ export const labelingSurveysAnswers = pgTable(
 		id: text('id').default(nanoid()).primaryKey(),
 		surveyId: text('survey_id'),
 		userId: text('participant_id'),
-		timeToAnswer: interval('time_to_answer').notNull(),
+		/**
+		 * Check time to answer using cookies().set() on page load and cookies().get() on form submit.
+		 */
+		timeToAnswerServer: interval('time_to_answer_server').notNull(),
+		/**
+		 * Check time to answer client-side using a timer and a hidden readonly field in the form.
+		 */
+		timeToAnswerClient: interval('time_to_answer_client').notNull(),
 		// Add more fields
 	},
 	(table) => {

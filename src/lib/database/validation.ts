@@ -6,7 +6,7 @@ import type { ZodObject, ZodSchema, ZodTypeAny } from 'zod';
 import { z } from 'zod';
 import type { LangColumnName } from './constants';
 import { LANG_COLUMN_NAME } from './constants';
-import { labelingSurveys, labelingSurveysT } from './schema/public';
+import { labelingSurveys, labelingSurveysInvitations, labelingSurveysT } from './schema/public';
 
 /**
  * Extend the insert schema of a given ressource table with its corresponding translations. The
@@ -37,3 +37,5 @@ export const labelingSurveysWithTranslationsSchema = withTranslationsSchema(
 	labelingSurveysSchema,
 	labelingSurveysTranslationsSchema
 );
+
+export const labelingSurveysInvitationsSchema = createInsertSchema(labelingSurveysInvitations);

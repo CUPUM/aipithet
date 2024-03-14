@@ -3,8 +3,8 @@
 import {
 	Button,
 	ButtonIcon,
+	ButtonIconLoading,
 	ButtonIconSpace,
-	LoadingButtonIcon,
 } from '@lib/components/primitives/button';
 import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import { Input } from '@lib/components/primitives/input';
@@ -68,7 +68,7 @@ export function FinalizePasswordResetForm(props: {
 				<ErrorMessages errors={formState?.errors.newPasswordConfirm?._errors} />
 			</LabeledField>
 			<SubmitButton>
-				<LoadingButtonIcon icon={Check} />
+				<ButtonIconLoading icon={Check} />
 				{m.update_my_password()}
 				<ButtonIconSpace />
 			</SubmitButton>

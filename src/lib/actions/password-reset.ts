@@ -11,7 +11,7 @@ import { eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { excluded } from 'drizzle-orm-helpers/pg';
 
-export async function resetPassword(state: unknown, formData: FormData) {
+export default async function passwordReset(state: unknown, formData: FormData) {
 	try {
 		const data = Object.fromEntries(formData);
 		const parsed = passwordResetSchema.safeParse(data);

@@ -21,7 +21,7 @@ export function DashboardNavbarButton({
 			{...restProps}
 			href={href}
 			className={cn(
-				'group/button font-medium text-foreground/85 px-4 py-3 flex flex-row gap-2 rounded-sm aria-[current=page]:bg-accent/75 aria-[current=page]:text-accent-foreground hover:text-primary aria-[current=page]:pointer-events-none hover:bg-accent/35 animate-in duration-350 ease-out fade-in-0 slide-in-from-bottom-1 fill-mode-both',
+				'group/button font-medium text-foreground/85 px-4 py-3 flex flex-row gap-2 rounded-sm aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground hover:text-primary aria-[current=page]:pointer-events-none hover:bg-accent/35 animate-in duration-350 ease-out fade-in-0 slide-in-from-bottom-1 fill-mode-both',
 				className
 			)}
 			aria-current={current}

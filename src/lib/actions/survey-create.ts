@@ -1,13 +1,11 @@
 'use server';
 
-import { authorize } from '@lib/auth/authorization';
+import { authorize } from '@lib/auth/auth';
 import { db } from '@lib/database/db';
 import { labelingSurveys } from '@lib/database/schema/public';
 import { redirect } from '@lib/i18n/utilities';
 
-export async function joinSurveyWithInvite() {}
-
-export async function createSurvey() {
+export async function surveyCreate(state: unknown, formData: FormData) {
 	const { user } = await authorize('surveys.create');
 	const [inserted] = await db
 		.insert(labelingSurveys)

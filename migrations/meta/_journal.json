@@ -43,6 +43,13 @@
       "when": 1710258880419,
       "tag": "0005_spooky_starbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1710358017381,
+      "tag": "0006_breezy_doorman",
+      "breakpoints": true
     }
   ]
 }

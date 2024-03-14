@@ -24,7 +24,7 @@
 	"email_verification_code_email_body": "Use the following verification code to confirm the authenticity of your email address.\n\nNote that the code is only valid until {time}.",
 	"email_verification_code_email_button": "Enter your code",
 	"validate": "Validate",
-	"email_verification_code_expiry": "This code is valid until {date}.",
+	"email_verification_code_expiry": "This code is valid until {time}.",
 	"forgot_password": "Forgot password",
 	"reset_password": "Reset my password",
 	"reset": "Reset",
@@ -49,5 +49,14 @@
 	"password_reset_success": "Your password was successfully reinitialized!",
 	"password_reset_see_mailbox_button": "Go to my mailbox",
 	"my_account": "My account",
-	"insufficient_permissions": "You do not have sufficient permissions to complete this action or to access necessary data."
+	"insufficient_permissions": "You do not have sufficient permissions to complete this action or to access necessary data.",
+	"my_surveys": "My surveys",
+	"user_settings": "Settings & security",
+	"user_dashboard": "Dashboard",
+	"user_surveys": "My surveys",
+	"invitation_code": "Invitation code",
+	"email_survey_invitation_title": "You've received an invitation to join a survey!",
+	"survey_invitation_email_body": "Use the code below to claim your invitation and join the survey! The single-use code will remain valid until {date}, but it will work with your account regardless of the email address you used to register.",
+	"survey_invitation_email_title": "You've received an invitation to join a survey!",
+	"survey_invitation_email_button": "Reclaim the invitation code now"
 }

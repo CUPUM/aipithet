@@ -1,4 +1,4 @@
-import { authorize } from '@lib/auth/authorization';
+import { authorize } from '@lib/auth/auth';
 import { db } from '@lib/database/db';
 import { users } from '@lib/database/schema/auth';
 import * as m from '@translations/messages';

@@ -70,7 +70,7 @@ export function ButtonIcon({
 /**
  * A button icon replaced with loading spinner when parent button has loading state.
  */
-export function LoadingButtonIcon({
+export function ButtonIconLoading({
 	className,
 	icon,
 	...iconProps

@@ -1,5 +1,5 @@
-import { validate } from '@lib/auth/authorization';
-import UserProvider from '@lib/auth/user-provider-client';
+import { validate } from '@lib/auth/auth';
+import AuthProvider from '@lib/auth/auth-provider-client';
 import LanguageProvider from '@lib/i18n/language-provider';
 import ThemeProvider from '@lib/theme/theme-provider';
 import * as m from '@translations/messages';
@@ -21,10 +21,10 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const lang = languageTag();
-	const { user } = await validate();
+	const auth = await validate();
 	return (
 		<LanguageProvider>
-			<UserProvider user={user}>
+			<AuthProvider auth={auth}>
 				<html
 					lang={lang}
 					className={`${fontSans.variable} ${fontMono.variable} h-full`}
@@ -42,7 +42,7 @@ export default async function RootLayout({
 						</ThemeProvider>
 					</body>
 				</html>
-			</UserProvider>
+			</AuthProvider>
 		</LanguageProvider>
 	);
 }
