@@ -1,6 +1,6 @@
 import { auth, validate } from '@lib/auth/auth';
 import { hashPassword } from '@lib/auth/utilities';
-import { finalizePasswordResetSchema } from '@lib/auth/validation';
+import { passwordResetFinalizeSchema } from '@lib/auth/validation';
 import ButtonBack from '@lib/components/button-back';
 import { Button, ButtonIcon, ButtonIconSpace } from '@lib/components/primitives/button';
 import { db } from '@lib/database/db';
@@ -14,12 +14,12 @@ import { ArrowLeft, LogIn, UserPlus } from 'lucide-react';
 import { cookies } from 'next/headers';
 import { PasswordResetFinalizeForm } from './client';
 
-export function finalizePasswordReset(token: string) {
+export function passwordResetFinalize(token: string) {
 	return async function finalizePasswordReset(state: unknown, formData: FormData) {
 		'use server';
 		formData.set('token', decodeURIComponent(token));
 		const data = Object.fromEntries(formData);
-		const parsed = finalizePasswordResetSchema.safeParse(data);
+		const parsed = passwordResetFinalizeSchema.safeParse(data);
 		if (!parsed.success) {
 			console.log('fail');
 			return { errors: parsed.error.format() };
@@ -62,15 +62,15 @@ export default async function Page(props: { params: { token: string } }) {
 
 	return (
 		<>
-			<section className="mb-4 flex flex-row flex-wrap gap-2 justify-between animate-fly-up">
+			<section className="mb-4 flex animate-fly-up flex-row flex-wrap justify-between gap-2">
 				<ButtonBack size="sm" variant="link">
 					<ButtonIcon icon={ArrowLeft} />
 					{m.go_back()}
 					<ButtonIconSpace />
 				</ButtonBack>
 			</section>
-			<PasswordResetFinalizeForm formAction={finalizePasswordReset(props.params.token)} />
-			<section className="mt-4 flex flex-row flex-wrap gap-2 justify-between animate-fly-down">
+			<PasswordResetFinalizeForm formAction={passwordResetFinalize(props.params.token)} />
+			<section className="mt-4 flex animate-fly-down flex-row flex-wrap justify-between gap-2">
 				<Button asChild variant="link" size="sm">
 					<Link href="/signup">
 						<ButtonIcon icon={UserPlus} />

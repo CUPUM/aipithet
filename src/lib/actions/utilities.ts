@@ -1,5 +1,12 @@
 import { parseFormData } from 'parse-nested-form-data';
-import type { SafeParseError, UnknownKeysParam, ZodObject, ZodRawShape, ZodTypeAny } from 'zod';
+import type {
+	SafeParseError,
+	UnknownKeysParam,
+	ZodEffects,
+	ZodObject,
+	ZodRawShape,
+	ZodTypeAny,
+} from 'zod';
 
 function formatParsedError<T>(parsed: SafeParseError<T>) {
 	return {
@@ -48,7 +55,10 @@ export async function validateFormDataAsync<
 	T extends ZodRawShape = ZodRawShape,
 	UnknownKeys extends UnknownKeysParam = UnknownKeysParam,
 	Catchall extends ZodTypeAny = ZodTypeAny,
->(formData: FormData, schema: ZodObject<T, UnknownKeys, Catchall>) {
+>(
+	formData: FormData,
+	schema: ZodObject<T, UnknownKeys, Catchall> | ZodEffects<ZodObject<T, UnknownKeys, Catchall>>
+) {
 	const parsed = await schema.safeParseAsync(parseFormData(formData));
 	if (!parsed.success) {
 		return formatParsedError(parsed);

@@ -31,12 +31,30 @@ export function PasswordResetForm() {
 			<>
 				<div className="absolute inset-0 -z-10 opacity-20">
 					<ScatteredNodes
-						pool={['✉️', '📨', '🔑']}
-						className="animate-in zoom-in-75 duration-500 ease-out fill-mode-both fade-in-0 transition-all"
+						pool={[
+							<div
+								className="duration-500 ease-out animate-in fade-in-0 zoom-in-75 fill-mode-both"
+								key="a"
+							>
+								✉️
+							</div>,
+							<div
+								className="duration-500 ease-out animate-in fade-in-0 zoom-in-75 fill-mode-both"
+								key="a"
+							>
+								📨
+							</div>,
+							<div
+								className="duration-500 ease-out animate-in fade-in-0 zoom-in-75 fill-mode-both"
+								key="a"
+							>
+								🔑
+							</div>,
+						]}
 					/>
 				</div>
-				<article className="flex flex-col gap-4 animate-fly-up">
-					<h1 className="text-3xl font-medium mb-4">{m.password_reset_success()}</h1>
+				<article className="flex animate-fly-up flex-col gap-4">
+					<h1 className="mb-4 text-3xl font-medium">{m.password_reset_success()}</h1>
 					<p className="text-muted-foreground">{m.password_reset_see_mailbox()}</p>
 					<Button asChild variant="outline">
 						<a href="mailto:">
@@ -51,7 +69,7 @@ export function PasswordResetForm() {
 	}
 	return (
 		<form action={formAction} className="flex flex-col gap-4" ref={formRef}>
-			<h1 className="text-3xl font-medium mb-4">{m.reset_password()}</h1>
+			<h1 className="mb-4 text-3xl font-medium">{m.reset_password()}</h1>
 			<LabeledField>
 				<Label htmlFor="email">{m.email()}</Label>
 				<Input type="email" name="email" id="email" />

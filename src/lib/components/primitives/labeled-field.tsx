@@ -12,7 +12,7 @@ const LabeledField = forwardRef(function LabeledFieldBase<T extends ComponentPro
 			// @ts-ignore:next-line
 			ref={ref}
 			className={cn(
-				'flex flex-col items-start gap-2 has-[:disabled]:opacity-50 cursor-default',
+				'flex flex-col items-stretch gap-2 has-[:disabled]:opacity-50 cursor-default',
 				className
 			)}
 			{...restProps}

@@ -9,12 +9,12 @@ import { PasswordResetForm } from './client';
 export default async function Page() {
 	const { user } = await validate();
 	if (user) {
-		redirect('/settings#password');
+		redirect('/settings');
 	}
 	return (
 		<>
 			<PasswordResetForm />
-			<section className="mt-4 flex flex-row flex-wrap gap-2 justify-between animate-fly-down">
+			<section className="mt-4 flex animate-fly-down flex-row flex-wrap justify-between gap-2">
 				<Button asChild variant="link" size="sm">
 					<Link href="/signup">
 						<ButtonIcon icon={UserPlus} />

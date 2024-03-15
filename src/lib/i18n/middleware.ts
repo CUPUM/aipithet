@@ -13,11 +13,12 @@ import { getHeadersLang, getPathnameLang } from './utilities';
  * we must provide our own next/navigation wrappers to facilitate localization of redirects.
  */
 function middleware(request: NextRequest) {
+	console.log('Nexturl: ', request.nextUrl.pathname);
 	const pathnameLang = getPathnameLang(request.nextUrl.pathname);
 	const headersLang = getHeadersLang(request.headers);
 	const lang = pathnameLang ?? headersLang ?? sourceLanguageTag;
-	const headers = new Headers(request.headers);
-	headers.set(LANG_HEADER_NAME, lang);
+	const responseHeaders = new Headers(request.headers);
+	responseHeaders.set(LANG_HEADER_NAME, lang);
 	// if (!pathnameLang && headersLang) {
 	// 	// headers = new Headers();
 	// 	// headers.set(LANG_HEADER_NAME, lang);
@@ -32,7 +33,7 @@ function middleware(request: NextRequest) {
 	// 		return res;
 	// 	}
 	// }
-	return NextResponse.next({ request: { headers } });
+	return NextResponse.next({ request: { headers: responseHeaders } });
 }
 
 export default middleware;

@@ -14,13 +14,14 @@ import LabeledField from '@lib/components/primitives/labeled-field';
 import { EMPTY_FORMATTED_ERRORS } from '@lib/database/constants';
 import * as m from '@translations/messages';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useFormState } from 'react-dom';
 import signup from '../../../../../lib/actions/signup';
 
 export function SignupForm() {
 	const [formState, formAction] = useFormState(signup, EMPTY_FORMATTED_ERRORS);
 	const [showPassword, setShowPassword] = useState(false);
+	const passwordInputType = useMemo(() => (showPassword ? 'text' : 'password'), [showPassword]);
 	return (
 		<form action={formAction} className="flex flex-col gap-4">
 			<h1 className="text-3xl font-medium mb-4">{m.signup()}</h1>
@@ -32,17 +33,12 @@ export function SignupForm() {
 			<LabeledField>
 				<Label htmlFor="password">{m.password()}</Label>
 				<div className="flex flex-row gap-2 self-stretch">
-					<Input
-						className="flex-1"
-						type={showPassword ? 'text' : 'password'}
-						id="password"
-						name="password"
-					/>
+					<Input className="flex-1" type={passwordInputType} id="password" name="password" />
 					<Button
 						variant="outline"
 						className="aspect-square"
 						type="button"
-						onClick={() => setShowPassword(!showPassword)}
+						onClick={() => setShowPassword((v) => !v)}
 					>
 						<ButtonIcon icon={showPassword ? EyeOff : Eye} />
 					</Button>
@@ -50,12 +46,8 @@ export function SignupForm() {
 				<ErrorMessages errors={formState.errors.password?._errors} />
 			</LabeledField>
 			<LabeledField>
-				<Label htmlFor="passwordConfirm">{m.confirm_password()}</Label>
-				<Input
-					type={showPassword ? 'text' : 'password'}
-					id="passwordConfirm"
-					name="passwordConfirm"
-				/>
+				<Label htmlFor="password-confirm">{m.password_confirm()}</Label>
+				<Input type={passwordInputType} id="password-confirm" name="passwordConfirm" />
 				<ErrorMessages errors={formState.errors.passwordConfirm?._errors} />
 			</LabeledField>
 			<ButtonSubmit>

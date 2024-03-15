@@ -42,7 +42,7 @@ export const passwordResetSchema = z.object({
 	email: emailSchema,
 });
 
-export const finalizePasswordResetSchema = z
+export const passwordResetFinalizeSchema = z
 	.object({
 		token: z.string().trim().min(1, m.password_reset_token_invalid()),
 		newPassword: passwordSchema,
@@ -60,7 +60,7 @@ export const finalizePasswordResetSchema = z
 
 export const passwordUpdateSchema = z
 	.object({
-		password: hintlessPasswordSchema,
+		currentPassword: hintlessPasswordSchema,
 		newPassword: passwordSchema,
 		newPasswordConfirm: passwordConfirmSchema,
 	})

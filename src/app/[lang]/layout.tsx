@@ -30,7 +30,7 @@ export default async function RootLayout({
 					className={`${fontSans.variable} ${fontMono.variable} h-full`}
 					suppressHydrationWarning
 				>
-					<body className="flex flex-col w-full h-full">
+					<body className="flex h-full w-full flex-col">
 						<ThemeProvider
 							attribute="data-theme"
 							defaultTheme="system"

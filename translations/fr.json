@@ -53,11 +53,17 @@
 	"my_account": "Mon compte",
 	"insufficient_permissions": "Vous ne détenez pas les permissions requises pour compléter cette action ou accéder aux données.",
 	"dashboard": "Tableau de bord",
-	"user_settings": "Paramètres & sécurité",
+	"user_settings": "Paramètres de compte",
 	"user_dashboard": "Tableau de bord",
 	"user_surveys": "Mes sondages",
 	"invitation_code": "Code d'invitation",
 	"survey_invitation_email_body": "Utilisez le code d'invitation ci-dessous pour joindre le sondage. Le code à usage unique sera valide jusqu’au {date} et fonctionnera peu importe l'adresse courriel que vous avez utilisée pour créer votre compte!",
 	"survey_invitation_email_title": "Vous avez reçu une invitation pour rejoindre un sondage!",
-	"survey_invitation_email_button": "Utiliser le code d'invitation dès maintenant"
+	"survey_invitation_email_button": "Utiliser le code d'invitation dès maintenant",
+	"password_current": "Mot de passe actuel",
+	"password_new_confirm": "Confirmation du nouveau mot de passe",
+	"password_change": "Changer mon mot de passe",
+	"password_confirm": "Confirmez le mot de passe",
+	"save": "Sauvegarder",
+	"email_change": "Changer mon courriel"
 }

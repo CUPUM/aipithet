@@ -13,13 +13,14 @@ import { Label } from '@lib/components/primitives/label';
 import LabeledField from '@lib/components/primitives/labeled-field';
 import * as m from '@translations/messages';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useFormState } from 'react-dom';
 import login from '../../../../../lib/actions/login';
 
 export function LoginForm() {
 	const [formState, formAction] = useFormState(login, undefined);
 	const [showPassword, setShowPassword] = useState(false);
+	const toggledInputType = useMemo(() => (showPassword ? 'text' : 'password'), [showPassword]);
 	return (
 		<form action={formAction} className="flex flex-col gap-4">
 			<h1 className="text-3xl font-medium mb-4">{m.login()}</h1>
@@ -31,17 +32,12 @@ export function LoginForm() {
 			<LabeledField>
 				<Label htmlFor="password">{m.password()}</Label>
 				<div className="flex flex-row gap-2 self-stretch">
-					<Input
-						className="flex-1"
-						type={showPassword ? 'text' : 'password'}
-						id="password"
-						name="password"
-					/>
+					<Input className="flex-1" type={toggledInputType} id="password" name="password" />
 					<Button
 						variant="outline"
 						className="aspect-square"
 						type="button"
-						onClick={() => setShowPassword(!showPassword)}
+						onClick={() => setShowPassword((v) => !v)}
 					>
 						<ButtonIcon icon={showPassword ? EyeOff : Eye} />
 					</Button>

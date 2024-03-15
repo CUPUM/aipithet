@@ -50,13 +50,19 @@
 	"password_reset_see_mailbox_button": "Go to my mailbox",
 	"my_account": "My account",
 	"insufficient_permissions": "You do not have sufficient permissions to complete this action or to access necessary data.",
-	"my_surveys": "My surveys",
-	"user_settings": "Settings & security",
+	"user_settings": "Account settings",
 	"user_dashboard": "Dashboard",
 	"user_surveys": "My surveys",
 	"invitation_code": "Invitation code",
-	"email_survey_invitation_title": "You've received an invitation to join a survey!",
 	"survey_invitation_email_body": "Use the code below to claim your invitation and join the survey! The single-use code will remain valid until {date}, but it will work with your account regardless of the email address you used to register.",
 	"survey_invitation_email_title": "You've received an invitation to join a survey!",
-	"survey_invitation_email_button": "Reclaim the invitation code now"
+	"survey_invitation_email_button": "Reclaim the invitation code now",
+	"my_surveys": "My surveys",
+	"email_survey_invitation_title": "You've received an invitation to join a survey!",
+	"password_current": "Current password",
+	"password_new_confirm": "New password confirmation",
+	"password_change": "Change my password",
+	"password_confirm": "Confirm password",
+	"save": "Save",
+	"email_change": "Change my email"
 }

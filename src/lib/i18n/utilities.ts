@@ -21,11 +21,30 @@ export function getPathnameLang<U extends string>(url: `/${AvailableLanguageTag}
 	}
 }
 
+function getPreferredLang<H extends Headers>(headers: H) {
+	const preference = headers.get('Accept-Language');
+	const matched = preference
+		?.split(/;|,/)
+		.find((part) => {
+			if (part.startsWith('q')) {
+				return false;
+			}
+			const trimmed = part.trim();
+			if (!trimmed || trimmed === '*') {
+				return false;
+			}
+			return isAvailableLanguageTag(trimmed);
+		})
+		?.trim();
+	return matched as AvailableLanguageTag | undefined;
+}
+
 export function getHeadersLang<H extends Headers>(headers: H) {
 	const header = headers.get(LANG_HEADER_NAME);
 	if (isAvailableLanguageTag(header)) {
 		return header;
 	}
+	return getPreferredLang(headers);
 }
 
 /**
