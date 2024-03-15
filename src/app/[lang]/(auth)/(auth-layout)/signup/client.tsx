@@ -1,5 +1,6 @@
 'use client';
 
+import { ButtonSubmit } from '@lib/components/button-submit';
 import {
 	Button,
 	ButtonIcon,
@@ -10,7 +11,6 @@ import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
 import LabeledField from '@lib/components/primitives/labeled-field';
-import { SubmitButton } from '@lib/components/submit-button';
 import { EMPTY_FORMATTED_ERRORS } from '@lib/database/constants';
 import * as m from '@translations/messages';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
@@ -58,11 +58,11 @@ export function SignupForm() {
 				/>
 				<ErrorMessages errors={formState.errors.passwordConfirm?._errors} />
 			</LabeledField>
-			<SubmitButton>
+			<ButtonSubmit>
 				<ButtonIconLoading icon={UserPlus} />
 				{m.sign_me_up()}
 				<ButtonIconSpace />
-			</SubmitButton>
+			</ButtonSubmit>
 		</form>
 	);
 }

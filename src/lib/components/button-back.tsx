@@ -1,16 +1,16 @@
 'use client';
 
+import { useRouter } from 'next/router';
 import type { ComponentProps, ReactNode } from 'react';
-import { useFormStatus } from 'react-dom';
 import { Button } from './primitives/button';
 
-export function SubmitButton({
+export default function ButtonBack({
 	children,
 	...buttonProps
 }: { children?: ReactNode } & ComponentProps<typeof Button>) {
-	const { pending } = useFormStatus();
+	const router = useRouter();
 	return (
-		<Button disabled={pending} data-loading={pending} type="submit" {...buttonProps}>
+		<Button onClick={() => router.back()} {...buttonProps}>
 			{children}
 		</Button>
 	);

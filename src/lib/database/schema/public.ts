@@ -1,8 +1,10 @@
 import { ROLE_DEFAULT } from '@lib/auth/constants';
 import { add } from 'drizzle-orm-helpers';
-import { nanoid, now, interval as timeInterval } from 'drizzle-orm-helpers/pg';
+import { nanoid, now, numrange, range, interval as timeInterval } from 'drizzle-orm-helpers/pg';
+import type { AnyPgColumn } from 'drizzle-orm/pg-core';
 import {
 	boolean,
+	decimal,
 	foreignKey,
 	integer,
 	interval,
@@ -22,10 +24,6 @@ import { LANG_COLUMN } from './i18n';
 export const imageTypes = pgTable('image_types', {
 	id: text('id').default(nanoid()).primaryKey(),
 });
-
-/**
- * Translation fields for image types.
- */
 export const imageTypesT = pgTable(
 	'image_types_t',
 	{
@@ -61,10 +59,6 @@ export const imagesPools = pgTable('image_pools', {
 		}),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
-
-/**
- * Translation fields for collections of images.
- */
 export const imagesPoolsT = pgTable(
 	'image_pools_t',
 	{
@@ -100,7 +94,10 @@ export const imagesPoolsEditors = pgTable(
 			onUpdate: 'cascade',
 		}),
 		role: role('role')
-			.references(() => roles.role, { onDelete: 'set default', onUpdate: 'cascade' })
+			.references(() => roles.role, {
+				onDelete: 'set default',
+				onUpdate: 'cascade',
+			})
 			.notNull()
 			.default(ROLE_DEFAULT),
 	},
@@ -111,6 +108,9 @@ export const imagesPoolsEditors = pgTable(
 	}
 );
 
+/**
+ * Reusable image-prompts associated with generated images uploaded by users.
+ */
 export const imagesPrompts = pgTable('images_prompts', {
 	id: text('id').default(nanoid()).primaryKey(),
 	originalLang: lang('original_lang').notNull(),
@@ -137,7 +137,7 @@ export const imagesPromptsT = pgTable(
 );
 
 /**
- * Images uploaded by users. Each image can be used in multiple pools.
+ * Images uploaded by users (can be used across multiple pools).
  */
 export const images = pgTable('images', {
 	id: text('id').default(nanoid()).primaryKey(),
@@ -197,7 +197,11 @@ export const labelingSurveys = pgTable('labeling_surveys', {
 		onDelete: 'set null',
 		onUpdate: 'cascade',
 	}),
-	dueAt: timestamp('due_at', { withTimezone: true }),
+	sliderStepCount: integer('slider_step_count').notNull().default(0),
+	sliderStepSize: decimal('slider_step_size').notNull().default('0'),
+	scoreRange: numrange('score_range')
+		.notNull()
+		.default(range([-1, 1]).inlineParams()),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
@@ -234,7 +238,10 @@ export const labelingSurveysUsers = pgTable(
 			onUpdate: 'cascade',
 		}),
 		role: role('role')
-			.references(() => roles.role, { onDelete: 'set default', onUpdate: 'cascade' })
+			.references(() => roles.role, {
+				onDelete: 'set default',
+				onUpdate: 'cascade',
+			})
 			.notNull()
 			.default(ROLE_DEFAULT),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -267,16 +274,20 @@ export const labelingSurveysInvitations = pgTable(
 	}
 );
 
-export const labelingSurveyCriterias = pgTable('labeling_survey_criteria', {});
-
 export const labelingSurveysChapters = pgTable('labeling_surveys_chapters', {
 	id: text('id').default(nanoid()).primaryKey(),
 	surveyId: text('survey_id').references(() => labelingSurveys.id, {
 		onDelete: 'cascade',
 		onUpdate: 'cascade',
 	}),
+	imagePoolId: text('image_pool_id').references(() => imagesPools.id, {
+		onDelete: 'set null',
+		onUpdate: 'cascade',
+	}),
+	duration: interval('duration'),
+	start: timestamp('start', { withTimezone: true }),
+	allowLateness: boolean('allow_lateness'),
 });
-
 export const labelingSurveysChaptersT = pgTable(
 	'labeling_surveys_chapters_t',
 	{
@@ -297,12 +308,39 @@ export const labelingSurveysChaptersT = pgTable(
 	}
 );
 
+export const labelingSurveysChaptersPlannedLeafs = pgTable(
+	'labeling_surveys_chapters_planned_leafs',
+	{
+		chapterId: text('id').references(() => labelingSurveysChapters.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		index: integer('index').notNull(),
+	},
+	(table) => {
+		return {
+			unq: unique().on(table.chapterId, table.index),
+		};
+	}
+);
+
 export const labelingSurveysAnswers = pgTable(
 	'labeling_surveys_answers',
 	{
 		id: text('id').default(nanoid()).primaryKey(),
-		surveyId: text('survey_id'),
 		userId: text('participant_id'),
+		surveyId: text('survey_id'),
+		chapterId: text('chapter_id').references(() => labelingSurveysChapters.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		image1Id: text('image_1_id')
+			.references(() => images.id, { onDelete: 'restrict', onUpdate: 'cascade' })
+			.notNull(),
+		image2Id: text('image_2_id')
+			.references(() => images.id, { onDelete: 'restrict', onUpdate: 'cascade' })
+			.notNull(),
+		score: decimal('score'),
 		/**
 		 * Check time to answer using cookies().set() on page load and cookies().get() on form submit.
 		 */
@@ -311,14 +349,22 @@ export const labelingSurveysAnswers = pgTable(
 		 * Check time to answer client-side using a timer and a hidden readonly field in the form.
 		 */
 		timeToAnswerClient: interval('time_to_answer_client').notNull(),
-		// Add more fields
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+		nextId: text('next_id').references((): AnyPgColumn => labelingSurveysAnswers.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
+		newVersionId: text('new_version_id').references((): AnyPgColumn => labelingSurveysAnswers.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
 	},
 	(table) => {
 		return {
 			fk: foreignKey({
 				columns: [table.userId, table.surveyId],
 				foreignColumns: [labelingSurveysUsers.userId, labelingSurveysUsers.surveyId],
-				name: 'labeling_surveys_users_fk',
+				name: 'labeling_surveys_users_answer_fk',
 			})
 				.onDelete('cascade')
 				.onUpdate('cascade'),

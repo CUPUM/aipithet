@@ -1,4 +1,4 @@
-import { ClaimSurveyInvitationForm, CreateSurveyForm } from './client';
+import { SurveyCreateForm, SurveyInvitationClaimForm } from './client';
 
 export default function Page() {
 	return (
@@ -7,9 +7,9 @@ export default function Page() {
 			<section>
 				<h2>Ongoing surveys</h2>
 			</section>
-			<ClaimSurveyInvitationForm />
+			<SurveyInvitationClaimForm />
 			{}
-			<CreateSurveyForm />
+			<SurveyCreateForm />
 		</>
 	);
 }

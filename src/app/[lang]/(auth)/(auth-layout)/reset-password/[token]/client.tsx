@@ -1,5 +1,6 @@
 'use client';
 
+import { ButtonSubmit } from '@lib/components/button-submit';
 import {
 	Button,
 	ButtonIcon,
@@ -10,26 +11,13 @@ import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
 import LabeledField from '@lib/components/primitives/labeled-field';
-import { SubmitButton } from '@lib/components/submit-button';
 import * as m from '@translations/messages';
-import { ArrowLeft, Check, Eye, EyeOff } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Check, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
 import type { finalizePasswordReset } from './page';
 
-export function BackButton() {
-	const router = useRouter();
-	return (
-		<Button onClick={() => router.back()} variant="link" size="sm">
-			<ButtonIcon icon={ArrowLeft} />
-			{m.go_back()}
-			<ButtonIconSpace />
-		</Button>
-	);
-}
-
-export function FinalizePasswordResetForm(props: {
+export function PasswordResetFinalizeForm(props: {
 	formAction: ReturnType<typeof finalizePasswordReset>;
 }) {
 	const [formState, formAction] = useFormState(props.formAction, undefined);
@@ -67,11 +55,11 @@ export function FinalizePasswordResetForm(props: {
 				/>
 				<ErrorMessages errors={formState?.errors.newPasswordConfirm?._errors} />
 			</LabeledField>
-			<SubmitButton>
+			<ButtonSubmit>
 				<ButtonIconLoading icon={Check} />
 				{m.update_my_password()}
 				<ButtonIconSpace />
-			</SubmitButton>
+			</ButtonSubmit>
 		</form>
 	);
 }

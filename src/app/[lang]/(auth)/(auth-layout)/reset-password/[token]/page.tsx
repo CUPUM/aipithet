@@ -1,7 +1,8 @@
 import { auth, validate } from '@lib/auth/auth';
 import { hashPassword } from '@lib/auth/utilities';
 import { finalizePasswordResetSchema } from '@lib/auth/validation';
-import { Button, ButtonIcon } from '@lib/components/primitives/button';
+import ButtonBack from '@lib/components/button-back';
+import { Button, ButtonIcon, ButtonIconSpace } from '@lib/components/primitives/button';
 import { db } from '@lib/database/db';
 import { passwordResetTokens, users } from '@lib/database/schema/auth';
 import Link from '@lib/i18n/Link';
@@ -9,9 +10,9 @@ import { redirect } from '@lib/i18n/utilities';
 import * as m from '@translations/messages';
 import { and, eq, gte } from 'drizzle-orm';
 import { now } from 'drizzle-orm-helpers/pg';
-import { LogIn, UserPlus } from 'lucide-react';
+import { ArrowLeft, LogIn, UserPlus } from 'lucide-react';
 import { cookies } from 'next/headers';
-import { BackButton, FinalizePasswordResetForm } from './client';
+import { PasswordResetFinalizeForm } from './client';
 
 export function finalizePasswordReset(token: string) {
 	return async function finalizePasswordReset(state: unknown, formData: FormData) {
@@ -56,15 +57,19 @@ export function finalizePasswordReset(token: string) {
 export default async function Page(props: { params: { token: string } }) {
 	const { user } = await validate();
 	if (user) {
-		redirect('/i/settings#password');
+		redirect('/settings#password');
 	}
 
 	return (
 		<>
 			<section className="mb-4 flex flex-row flex-wrap gap-2 justify-between animate-fly-up">
-				<BackButton />
+				<ButtonBack size="sm" variant="link">
+					<ButtonIcon icon={ArrowLeft} />
+					{m.go_back()}
+					<ButtonIconSpace />
+				</ButtonBack>
 			</section>
-			<FinalizePasswordResetForm formAction={finalizePasswordReset(props.params.token)} />
+			<PasswordResetFinalizeForm formAction={finalizePasswordReset(props.params.token)} />
 			<section className="mt-4 flex flex-row flex-wrap gap-2 justify-between animate-fly-down">
 				<Button asChild variant="link" size="sm">
 					<Link href="/signup">

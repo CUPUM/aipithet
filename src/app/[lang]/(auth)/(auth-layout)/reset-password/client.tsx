@@ -1,5 +1,6 @@
 'use client';
 
+import { ButtonSubmit } from '@lib/components/button-submit';
 import {
 	Button,
 	ButtonIcon,
@@ -11,14 +12,13 @@ import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
 import LabeledField from '@lib/components/primitives/labeled-field';
 import { ScatteredNodes } from '@lib/components/scattered-nodes';
-import { SubmitButton } from '@lib/components/submit-button';
 import * as m from '@translations/messages';
 import { MailSearch, RefreshCw } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useFormState } from 'react-dom';
 import passwordReset from '../../../../../lib/actions/password-reset';
 
-export function ResetPasswordForm() {
+export function PasswordResetForm() {
 	const [formState, formAction] = useFormState(passwordReset, undefined);
 	const formRef = useRef<HTMLFormElement>(null);
 	useEffect(() => {
@@ -58,11 +58,11 @@ export function ResetPasswordForm() {
 				<ErrorMessages errors={formState?.errors?.email?._errors} />
 			</LabeledField>
 			<ErrorMessages errors={formState?.errors?._errors} />
-			<SubmitButton>
+			<ButtonSubmit>
 				<ButtonIconLoading icon={RefreshCw} />
 				{m.reset()}
 				<ButtonIconSpace />
-			</SubmitButton>
+			</ButtonSubmit>
 		</form>
 	);
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { ButtonSubmit } from '@lib/components/button-submit';
 import {
 	Button,
 	ButtonIcon,
@@ -10,7 +11,6 @@ import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
 import LabeledField from '@lib/components/primitives/labeled-field';
-import { SubmitButton } from '@lib/components/submit-button';
 import * as m from '@translations/messages';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useState } from 'react';
@@ -49,11 +49,11 @@ export function LoginForm() {
 				<ErrorMessages errors={formState?.errors?.password?._errors} />
 			</LabeledField>
 			<ErrorMessages errors={formState?.errors._errors} />
-			<SubmitButton>
+			<ButtonSubmit>
 				<ButtonIconLoading icon={LogIn} />
 				{m.login()}
 				<ButtonIconSpace />
-			</SubmitButton>
+			</ButtonSubmit>
 		</form>
 	);
 }

@@ -2,14 +2,14 @@
 
 import { surveyCreate } from '@lib/actions/survey-create';
 import surveyInvitationClaim from '@lib/actions/survey-invitation-claim';
+import { ButtonSubmit } from '@lib/components/button-submit';
 import { ButtonIconLoading } from '@lib/components/primitives/button';
 import { Input } from '@lib/components/primitives/input';
-import { SubmitButton } from '@lib/components/submit-button';
 import * as m from '@translations/messages';
 import { ArrowRight, PenBox } from 'lucide-react';
 import { useFormState } from 'react-dom';
 
-export function ClaimSurveyInvitationForm() {
+export function SurveyInvitationClaimForm() {
 	const [formState, formAction] = useFormState(surveyInvitationClaim, undefined);
 	return (
 		<form action={formAction}>
@@ -23,22 +23,22 @@ export function ClaimSurveyInvitationForm() {
 					placeholder={m.invitation_code()}
 				/>
 				{/* <ErrorMessages errors={formState.} /> */}
-				<SubmitButton className="aspect-square">
+				<ButtonSubmit className="aspect-square">
 					<ButtonIconLoading icon={ArrowRight} />
-				</SubmitButton>
+				</ButtonSubmit>
 			</div>
 		</form>
 	);
 }
 
-export function CreateSurveyForm() {
+export function SurveyCreateForm() {
 	const [formState, formAction] = useFormState(surveyCreate, undefined);
 	return (
 		<form action={formAction}>
-			<SubmitButton>
+			<ButtonSubmit>
 				<ButtonIconLoading icon={PenBox} />
 				Start creating your own survey!
-			</SubmitButton>
+			</ButtonSubmit>
 		</form>
 	);
 }

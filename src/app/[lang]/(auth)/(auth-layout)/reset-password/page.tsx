@@ -4,16 +4,16 @@ import Link from '@lib/i18n/Link';
 import { redirect } from '@lib/i18n/utilities';
 import * as m from '@translations/messages';
 import { LogIn, UserPlus } from 'lucide-react';
-import { ResetPasswordForm } from './client';
+import { PasswordResetForm } from './client';
 
 export default async function Page() {
 	const { user } = await validate();
 	if (user) {
-		redirect('/i/settings#password');
+		redirect('/settings#password');
 	}
 	return (
 		<>
-			<ResetPasswordForm />
+			<PasswordResetForm />
 			<section className="mt-4 flex flex-row flex-wrap gap-2 justify-between animate-fly-down">
 				<Button asChild variant="link" size="sm">
 					<Link href="/signup">

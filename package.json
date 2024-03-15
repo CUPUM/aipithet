@@ -49,7 +49,7 @@
 		"clsx": "^2.1.0",
 		"date-fns": "^3.4.0",
 		"drizzle-orm": "^0.30.2",
-		"drizzle-orm-helpers": "^0.5.13",
+		"drizzle-orm-helpers": "^0.5.14",
 		"drizzle-zod": "^0.5.1",
 		"embla-carousel-react": "8.0.0",
 		"input-otp": "^1.1.0",

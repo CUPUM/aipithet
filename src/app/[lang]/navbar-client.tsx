@@ -50,7 +50,7 @@ export function NavbarUserMenu() {
 					{user ? (
 						<span
 							className="uppercase data-[loading]:opacity-25 scale-95 transition-all"
-							data-loading={isPendingLogout}
+							data-loading={isPendingLogout || undefined}
 						>
 							{user.email.charAt(0)}
 						</span>
