@@ -50,6 +50,34 @@
       "when": 1710358017381,
       "tag": "0006_breezy_doorman",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1710614979201,
+      "tag": "0007_jazzy_snowbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1710618930024,
+      "tag": "0008_white_tigra",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1710618948803,
+      "tag": "0009_curious_ezekiel",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1710618979517,
+      "tag": "0010_windy_ma_gnuci",
+      "breakpoints": true
     }
   ]
 }

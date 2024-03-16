@@ -1,63 +1,79 @@
 'use client';
 
 import passwordUpdate from '@lib/actions/password-update';
-import { ButtonSubmit } from '@lib/components/button-submit';
-import { Button, ButtonIcon, ButtonIconLoading } from '@lib/components/primitives/button';
+import ButtonPasswordToggle from '@lib/components/button-password-toggle';
+import ButtonSubmit from '@lib/components/button-submit';
+import { ButtonIconLoading } from '@lib/components/primitives/button';
+import { ErrorMessages } from '@lib/components/primitives/error-messages';
+import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
-import LabeledField from '@lib/components/primitives/labeled-field';
+import useActionSuccess from '@lib/hooks/action-success';
+import { usePasswordReveal } from '@lib/hooks/password-reveal';
 import * as m from '@translations/messages';
-import { ArrowRight, Eye, EyeOff } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { useState } from 'react';
 import { useFormState } from 'react-dom';
 
 export function PasswordUpdateForm() {
 	const [formState, formAction] = useFormState(passwordUpdate, undefined);
-	const [showPassword, setShowPassword] = useState(false);
-	const passwordInputType = useMemo(() => (showPassword ? 'text' : 'password'), [showPassword]);
+	const currentPasswordVisibility = usePasswordReveal(false);
+	const newPasswordVisibility = usePasswordReveal(false);
 	const [hasCurrentPassword, setHasCurrentPassword] = useState(false);
+	const formRef = useActionSuccess(formState?.success);
 
 	return (
 		<form
+			ref={formRef}
 			action={formAction}
 			className="flex animate-fly-up flex-col gap-3 rounded-lg border border-border bg-background p-8"
 		>
 			<h1 className="mb-4 text-xl font-semibold">{m.password_change()}</h1>
-			<LabeledField>
+			<Field>
 				<Label htmlFor="current-password">{m.password_current()}</Label>
-				<Input
-					type="password"
-					name="currentPassword"
-					id="current-password"
-					onInput={(e) => setHasCurrentPassword(!!e.currentTarget.value.length)}
-				/>
-				{/* <ErrorMessages errors={formState?.errors}/> */}
-			</LabeledField>
-			<LabeledField>
+				<div className="flex flex-row gap-2">
+					<Input
+						type={currentPasswordVisibility.type}
+						name="currentPassword"
+						id="current-password"
+						className="flex-1"
+						onInput={(e) => setHasCurrentPassword(!!e.currentTarget.value.length)}
+					/>
+					<ButtonPasswordToggle
+						variant="outline"
+						reveal={currentPasswordVisibility.reveal}
+						toggle={currentPasswordVisibility.toggle}
+					/>
+				</div>
+				<ErrorMessages errors={formState?.errors?.currentPassword?._errors} />
+			</Field>
+			<Field>
 				<Label htmlFor="new-password">{m.password_new()}</Label>
 				<fieldset className="flex flex-row gap-2" disabled={!hasCurrentPassword}>
-					<Input type={passwordInputType} name="newPassword" id="new-password" className="flex-1" />
-					<Button
+					<Input
+						type={newPasswordVisibility.type}
+						name="newPassword"
+						id="new-password"
+						className="flex-1"
+					/>
+					<ButtonPasswordToggle
 						variant="outline"
-						className="aspect-square"
-						type="button"
-						onClick={() => setShowPassword((v) => !v)}
-					>
-						<ButtonIcon icon={showPassword ? EyeOff : Eye} />
-					</Button>
+						reveal={newPasswordVisibility.reveal}
+						toggle={newPasswordVisibility.toggle}
+					/>
 				</fieldset>
-				{/* <ErrorMessages errors={formState?.errors.}/> */}
-			</LabeledField>
-			<LabeledField>
+				<ErrorMessages errors={formState?.errors?.newPassword?._errors} />
+			</Field>
+			<Field>
 				<Label htmlFor="new-password-confirm">{m.password_new_confirm()}</Label>
 				<Input
-					type={passwordInputType}
+					type={newPasswordVisibility.type}
 					name="newPasswordConfirm"
 					id="new-password-confirm"
 					disabled={!hasCurrentPassword}
 				/>
-				{/* <ErrorMessages errors={formState?.errors.}/> */}
-			</LabeledField>
+				<ErrorMessages errors={formState?.errors?.newPasswordConfirm?._errors} />
+			</Field>
 			<ButtonSubmit className="self-end" type="submit" disabled={!hasCurrentPassword}>
 				{m.save()}
 				<ButtonIconLoading icon={ArrowRight} />
@@ -67,16 +83,16 @@ export function PasswordUpdateForm() {
 }
 
 export function EmailUpdateForm() {
-	const [formState, formAction] = useFormState(passwordUpdate, undefined);
+	const [_formState, formAction] = useFormState(passwordUpdate, undefined);
 
 	return (
 		<form
 			action={formAction}
 			className="flex animate-fly-up flex-col gap-3 rounded-lg border border-border bg-background p-8 fill-mode-both"
-			style={{ animationDelay: '250ms' }}
+			style={{ animationDelay: '100ms' }}
 		>
 			<h1 className="mb-4 text-xl font-semibold">{m.email_change()}</h1>
-			<em className="text-muted-foreground">À venir</em>
+			<em className="text-muted-foreground">{m.coming_soon()}</em>
 		</form>
 	);
 }

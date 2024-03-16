@@ -1,6 +1,6 @@
 import { ROLE_DEFAULT } from '@lib/auth/constants';
 import { add } from 'drizzle-orm-helpers';
-import { nanoid, now, numrange, range, interval as timeInterval } from 'drizzle-orm-helpers/pg';
+import { nanoid, now, interval as timeInterval } from 'drizzle-orm-helpers/pg';
 import type { AnyPgColumn } from 'drizzle-orm/pg-core';
 import {
 	boolean,
@@ -198,10 +198,6 @@ export const labelingSurveys = pgTable('labeling_surveys', {
 		onUpdate: 'cascade',
 	}),
 	sliderStepCount: integer('slider_step_count').notNull().default(0),
-	sliderStepSize: decimal('slider_step_size').notNull().default('0'),
-	scoreRange: numrange('score_range')
-		.notNull()
-		.default(range([-1, 1]).inlineParams()),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
@@ -226,8 +222,8 @@ export const labelingSurveysT = pgTable(
 	}
 );
 
-export const labelingSurveysUsers = pgTable(
-	'labeling_surveys_users',
+export const labelingSurveysEditors = pgTable(
+	'labeling_surveys_editors',
 	{
 		surveyId: text('survey_id').references(() => labelingSurveys.id, {
 			onDelete: 'cascade',
@@ -253,6 +249,26 @@ export const labelingSurveysUsers = pgTable(
 	}
 );
 
+export const labelingSurveysParticipants = pgTable(
+	'labeling_surveys_participants',
+	{
+		surveyId: text('survey_id').references(() => labelingSurveys.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		userId: text('user_id').references(() => users.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	},
+	(table) => {
+		return {
+			pk: primaryKey({ columns: [table.surveyId, table.userId] }),
+		};
+	}
+);
+
 export const labelingSurveysInvitations = pgTable(
 	'labeling_surveys_invitations',
 	{
@@ -265,7 +281,8 @@ export const labelingSurveysInvitations = pgTable(
 			.default(add(now(), timeInterval({ months: 1 })).inlineParams())
 			.notNull(),
 		email: text('email').notNull(),
-		pending: boolean('pending').default(false).notNull(),
+		editor: boolean('editor').default(false).notNull(),
+		pending: boolean('pending').default(true).notNull(),
 	},
 	(table) => {
 		return {
@@ -341,13 +358,7 @@ export const labelingSurveysAnswers = pgTable(
 			.references(() => images.id, { onDelete: 'restrict', onUpdate: 'cascade' })
 			.notNull(),
 		score: decimal('score'),
-		/**
-		 * Check time to answer using cookies().set() on page load and cookies().get() on form submit.
-		 */
 		timeToAnswerServer: interval('time_to_answer_server').notNull(),
-		/**
-		 * Check time to answer client-side using a timer and a hidden readonly field in the form.
-		 */
 		timeToAnswerClient: interval('time_to_answer_client').notNull(),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 		nextId: text('next_id').references((): AnyPgColumn => labelingSurveysAnswers.id, {
@@ -363,7 +374,7 @@ export const labelingSurveysAnswers = pgTable(
 		return {
 			fk: foreignKey({
 				columns: [table.userId, table.surveyId],
-				foreignColumns: [labelingSurveysUsers.userId, labelingSurveysUsers.surveyId],
+				foreignColumns: [labelingSurveysParticipants.userId, labelingSurveysParticipants.surveyId],
 				name: 'labeling_surveys_users_answer_fk',
 			})
 				.onDelete('cascade')

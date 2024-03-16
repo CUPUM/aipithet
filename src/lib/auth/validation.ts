@@ -8,7 +8,7 @@ export function isRole(maybeRole: unknown): maybeRole is Role {
 	return ROLES_ARR.includes(maybeRole as Role);
 }
 
-export function safeCheckUserPermissions(user: User, key?: PermissionKey) {
+export function isAllowed(user: User, key?: PermissionKey) {
 	return !key || (PERMISSIONS[key] as Role[]).includes(user.role);
 }
 

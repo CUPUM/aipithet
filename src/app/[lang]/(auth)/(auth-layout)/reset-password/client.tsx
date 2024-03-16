@@ -1,6 +1,6 @@
 'use client';
 
-import { ButtonSubmit } from '@lib/components/button-submit';
+import ButtonSubmit from '@lib/components/button-submit';
 import {
 	Button,
 	ButtonIcon,
@@ -8,10 +8,10 @@ import {
 	ButtonIconSpace,
 } from '@lib/components/primitives/button';
 import { ErrorMessages } from '@lib/components/primitives/error-messages';
+import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
-import LabeledField from '@lib/components/primitives/labeled-field';
-import { ScatteredNodes } from '@lib/components/scattered-nodes';
+import ScatteredNodes from '@lib/components/scattered-nodes';
 import * as m from '@translations/messages';
 import { MailSearch, RefreshCw } from 'lucide-react';
 import { useEffect, useRef } from 'react';
@@ -31,6 +31,8 @@ export function PasswordResetForm() {
 			<>
 				<div className="absolute inset-0 -z-10 opacity-20">
 					<ScatteredNodes
+						count={25}
+						stagger={(i) => i * 25}
 						pool={[
 							<div
 								className="duration-500 ease-out animate-in fade-in-0 zoom-in-75 fill-mode-both"
@@ -70,11 +72,11 @@ export function PasswordResetForm() {
 	return (
 		<form action={formAction} className="flex flex-col gap-4" ref={formRef}>
 			<h1 className="mb-4 text-3xl font-medium">{m.reset_password()}</h1>
-			<LabeledField>
+			<Field>
 				<Label htmlFor="email">{m.email()}</Label>
 				<Input type="email" name="email" id="email" />
 				<ErrorMessages errors={formState?.errors?.email?._errors} />
-			</LabeledField>
+			</Field>
 			<ErrorMessages errors={formState?.errors?._errors} />
 			<ButtonSubmit>
 				<ButtonIconLoading icon={RefreshCw} />

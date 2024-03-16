@@ -13,7 +13,7 @@ const NavbarButton = forwardRef(function NavbarButtonBase<
 			// @ts-ignore:next-line
 			ref={ref}
 			className={cn(
-				'inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-full text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-12 px-5 data-[state=open]:text-accent-foreground data-[state=open]:bg-accent',
+				'inline-flex h-12 items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 text-sm font-semibold ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
 				className
 			)}
 			{...restProps}

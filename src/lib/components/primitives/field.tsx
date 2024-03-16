@@ -2,7 +2,7 @@ import type { ComponentProps, ForwardedRef } from 'react';
 import { forwardRef } from 'react';
 import { cn } from '../utilities';
 
-const LabeledField = forwardRef(function LabeledFieldBase<T extends ComponentProps<'div'>>(
+const Field = forwardRef(function LabeledFieldBase<T extends ComponentProps<'div'>>(
 	{ children, className, ...restProps }: T,
 	ref: ForwardedRef<T>
 ) {
@@ -12,7 +12,7 @@ const LabeledField = forwardRef(function LabeledFieldBase<T extends ComponentPro
 			// @ts-ignore:next-line
 			ref={ref}
 			className={cn(
-				'flex flex-col items-stretch gap-2 has-[:disabled]:opacity-50 cursor-default',
+				'flex cursor-default flex-col items-stretch gap-2 has-[:disabled]:opacity-50',
 				className
 			)}
 			{...restProps}
@@ -22,4 +22,4 @@ const LabeledField = forwardRef(function LabeledFieldBase<T extends ComponentPro
 	);
 });
 
-export default LabeledField;
+export default Field;

@@ -7,7 +7,7 @@ import { emailVerificationCodes, users } from '@lib/database/schema/auth';
 import { SENDERS } from '@lib/email/constants';
 import VerifyEmailTemplate from '@lib/email/templates/verify-email';
 import { resend } from '@lib/email/transporter';
-import { redirect } from '@lib/i18n/utilities';
+import { redirect } from '@lib/i18n/utilities-server';
 import { and, eq, exists, gte } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { excluded, now } from 'drizzle-orm-helpers/pg';

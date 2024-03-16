@@ -8,7 +8,7 @@ import { emailVerificationCodes, users } from '@lib/database/schema/auth';
 import { SENDERS } from '@lib/email/constants';
 import VerifyEmailTemplate from '@lib/email/templates/verify-email';
 import { resend } from '@lib/email/transporter';
-import { redirect } from '@lib/i18n/utilities';
+import { redirect } from '@lib/i18n/utilities-server';
 import * as m from '@translations/messages';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';

@@ -1,7 +1,7 @@
 'use server';
 
 import { auth, validate } from '@lib/auth/auth';
-import { redirect } from '@lib/i18n/utilities';
+import { redirect } from '@lib/i18n/utilities-server';
 import { cookies } from 'next/headers';
 
 export default async function logout() {

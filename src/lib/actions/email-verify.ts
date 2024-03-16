@@ -4,7 +4,7 @@ import { authorize } from '@lib/auth/auth';
 import { emailVerificationSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { emailVerificationCodes, users } from '@lib/database/schema/auth';
-import { redirect } from '@lib/i18n/utilities';
+import { redirect } from '@lib/i18n/utilities-server';
 import { and, eq, exists, gte } from 'drizzle-orm';
 import { now } from 'drizzle-orm-helpers/pg';
 

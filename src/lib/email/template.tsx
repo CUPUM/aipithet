@@ -1,7 +1,8 @@
 /* eslint-disable @next/next/no-page-custom-font */
 import { withLang } from '@lib/i18n/utilities';
+import { languageTagServer } from '@lib/i18n/utilities-server';
 import { Container, Head, Hr, Html, Link, Section, Tailwind } from '@react-email/components';
-import { languageTag } from '@translations/runtime';
+import { setLanguageTag } from '@translations/runtime';
 import type { ReactNode } from 'react';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 import tailwindConfig from '../../../tailwind.config';
@@ -12,7 +13,8 @@ import tailwindConfig from '../../../tailwind.config';
  * @see https://github.com/resend/react-email/issues/729
  */
 export function Template(props: { children: ReactNode }) {
-	const lang = languageTag();
+	setLanguageTag(languageTagServer);
+	const lang = languageTagServer();
 
 	return (
 		<Tailwind
@@ -58,7 +60,7 @@ export function Template(props: { children: ReactNode }) {
 						<Link
 							hrefLang={lang}
 							href={`${process.env.VERCEL_URL}/${withLang('/verify-email')}`}
-							className="text-slate-500 text-xs font-sans"
+							className="font-sans text-xs text-slate-500"
 						>
 							Aipithet
 						</Link>

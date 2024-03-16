@@ -18,7 +18,7 @@ export default async function Page() {
 	if (verified) {
 		return (
 			<article className="flex flex-col items-center gap-8">
-				<div className="absolute text-9xl -z-10 -translate-y-1/2 opacity-10">🎉</div>
+				<div className="absolute -z-10 -translate-y-1/2 text-9xl opacity-10">🎉</div>
 				<p className="text-center">{m.email_already_verified()}</p>
 				<ButtonBack>
 					<ButtonIcon icon={Undo} />

@@ -11,7 +11,7 @@ export function ErrorMessages<
 	return (
 		<label
 			className={cn(
-				'self-stretch text-left flex right flex-col gap-1 text-xs text-destructive italic opacity-75',
+				'right flex flex-col gap-1 self-stretch text-left text-xs italic text-destructive opacity-75',
 				className
 			)}
 			{...restProps}

@@ -1,9 +1,9 @@
 import { validate } from '@lib/auth/auth';
 import { ButtonIcon } from '@lib/components/primitives/button';
-import { redirect } from '@lib/i18n/utilities';
+import { redirect } from '@lib/i18n/utilities-server';
 import type { ReactNode } from 'react';
+import { DashboardNavbarButton } from './client';
 import { USER_ROUTES_ARR, USER_ROUTES_DETAILS } from './constants';
-import { DashboardNavbarButton } from './i/client';
 
 export default async function Layout(props: { children: ReactNode }) {
 	const { user } = await validate();
@@ -11,8 +11,8 @@ export default async function Layout(props: { children: ReactNode }) {
 		redirect('/login');
 	}
 	return (
-		<div className="flex flex-1 flex-col overflow-hidden">
-			<nav className="flex flex-row items-start gap-1 overflow-x-auto px-2 pb-2 text-sm md:px-3">
+		<>
+			<nav className="-mt-2 flex flex-row items-start gap-1 overflow-x-auto px-2 py-2 text-sm md:px-3">
 				{USER_ROUTES_ARR.map((userRoute, i) => {
 					const details = USER_ROUTES_DETAILS[userRoute];
 					return (
@@ -27,9 +27,9 @@ export default async function Layout(props: { children: ReactNode }) {
 					);
 				})}
 			</nav>
-			<article className="relative flex flex-1 flex-col justify-items-center overflow-y-auto overflow-x-hidden rounded-t-sm border-t border-accent p-2 md:p-8">
+			<article className="relative flex flex-1 flex-col justify-items-center overflow-y-auto overflow-x-hidden rounded-t-2xl border-t border-t-accent md:p-8">
 				{props.children}
 			</article>
-		</div>
+		</>
 	);
 }

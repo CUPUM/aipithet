@@ -5,7 +5,7 @@ import { verifyPassword } from '@lib/auth/utilities';
 import { emailPasswordLoginSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { users } from '@lib/database/schema/auth';
-import { redirect } from '@lib/i18n/utilities';
+import { redirect } from '@lib/i18n/utilities-server';
 import * as m from '@translations/messages';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';

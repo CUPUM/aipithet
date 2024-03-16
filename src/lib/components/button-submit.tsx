@@ -4,7 +4,7 @@ import type { ComponentProps, ReactNode } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from './primitives/button';
 
-export function ButtonSubmit({
+export default function ButtonSubmit({
 	children,
 	...buttonProps
 }: { children?: ReactNode } & ComponentProps<typeof Button>) {

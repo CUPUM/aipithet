@@ -4,7 +4,7 @@ import type { Session, User } from 'lucia';
 import type { ReactNode } from 'react';
 import { createContext, useCallback, useContext } from 'react';
 import type { PermissionKey } from './constants';
-import { safeCheckUserPermissions } from './validation';
+import { isAllowed } from './validation';
 
 const AuthContext = createContext<{ user: User; session: Session } | { user: null; session: null }>(
 	{ user: null, session: null }
@@ -40,7 +40,7 @@ export default function AuthProvider({
 			if (!auth.user?.role) {
 				return false;
 			}
-			return safeCheckUserPermissions(auth.user, key);
+			return isAllowed(auth.user, key);
 		},
 		[auth.user]
 	);

@@ -1,21 +1,21 @@
 import { withLang } from '@lib/i18n/utilities';
+import { languageTagServer } from '@lib/i18n/utilities-server';
 import { Button, Heading, Section, Text } from '@react-email/components';
 import * as m from '@translations/messages';
-import { languageTag } from '@translations/runtime';
 import { Template } from '../template';
 
 export default function ResetPasswordTemplate(props: { token: string; expiresAt: Date }) {
-	const lang = languageTag();
+	const lang = languageTagServer();
 
 	return (
 		<Template>
-			<Section className="text-center w-full max-w-[60ch]">
+			<Section className="w-full max-w-[60ch] text-center">
 				<Heading as="h1" className="font-sans text-2xl">
 					{m.reset_password_email_title()}
 				</Heading>
 			</Section>
-			<Section className="text-center w-full max-w-[60ch]">
-				<Text className="font-sans text-sm text-left whitespace-pre-line">
+			<Section className="w-full max-w-[60ch] text-center">
+				<Text className="whitespace-pre-line text-left font-sans text-sm">
 					{m.reset_password_email_body({
 						time: (props.expiresAt ?? new Date()).toLocaleTimeString(`${lang}-CA`, {
 							timeStyle: 'long',
@@ -23,19 +23,19 @@ export default function ResetPasswordTemplate(props: { token: string; expiresAt:
 					})}
 				</Text>
 				<Button
-					className="text-sm font-sans font-medium text-gray-50 bg-violet-700 rounded-[1em] px-5 py-4 mt-4"
+					className="mt-4 rounded-[1em] bg-violet-700 px-5 py-4 font-sans text-sm font-medium text-gray-50"
 					href={`${process.env.VERCEL_URL}/${withLang(`/reset-password/${encodeURIComponent(props.token)}`)}`}
 					hrefLang={lang}
 				>
 					🔑&emsp;{m.reset_password_email_button()}
 				</Button>
 			</Section>
-			<Section className="text-center mt-4 w-full max-w-[60ch]">
-				<Text className="font-sans text-sm text-left opacity-40 whitespace-pre-line">
+			<Section className="mt-4 w-full max-w-[60ch] text-center">
+				<Text className="whitespace-pre-line text-left font-sans text-sm opacity-40">
 					{m.reset_password_email_outdated()}
 				</Text>
 				<Button
-					className="text-sm font-sans text-gray-600 border border-solid border-gray-500/20 rounded-[1em] px-5 py-4 mt-4"
+					className="mt-4 rounded-[1em] border border-solid border-gray-500/20 px-5 py-4 font-sans text-sm text-gray-600"
 					href={`${process.env.VERCEL_URL}/${withLang('/reset-password')}`}
 					hrefLang={lang}
 				>

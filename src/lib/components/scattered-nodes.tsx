@@ -2,10 +2,10 @@ import type { ReactNode } from 'react';
 
 type AngleUnit = 'deg' | 'turn' | 'rad';
 
-export function ScatteredNodes<const TRender extends ReactNode | ReactNode[]>({
+export default function ScatteredNodes<const TRender extends ReactNode | ReactNode[]>({
 	pool,
-	count = 20,
-	stagger = (i) => i * 10,
+	count = 50,
+	stagger = (i) => i * 25,
 	fontSize = () => `${Number((Math.random() * 10 + 0.5).toFixed(2))}rem`,
 	scale = () => 0.5 + Math.random(),
 	rotate = () => `${Math.random() - 0.5} ${Math.random() - 0.5} ${Math.random() - 0.5} ${0.1}turn`,

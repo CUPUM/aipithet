@@ -65,5 +65,18 @@
 	"password_change": "Changer mon mot de passe",
 	"password_confirm": "Confirmez le mot de passe",
 	"save": "Sauvegarder",
-	"email_change": "Changer mon courriel"
+	"email_change": "Changer mon courriel",
+	"password_invalid": "Mot de passe non valide",
+	"invitation_code_invalid": "Code d'invitation non valide",
+	"invitation_code_error": "Le code n'a pas pu être utilisé en raison d'une erreur",
+	"my_surveys": "Mes sondages",
+	"help_needed": "Besoin d’aide",
+	"help_needed_body": "Écrivez-nous directement, il nous fera plaisir de vous accompagner pour résoudre vos problèmes en lien avec la plateforme.",
+	"write_us": "Écrivez-nous",
+	"coming_soon": "À venir",
+	"images": "Images",
+	"summary": "Sommaire",
+	"title": "Titre",
+	"description": "Description",
+	"presentation": "Présentation"
 }

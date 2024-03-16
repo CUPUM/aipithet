@@ -6,7 +6,7 @@ import { Button, ButtonIcon, ButtonIconSpace } from '@lib/components/primitives/
 import { db } from '@lib/database/db';
 import { passwordResetTokens, users } from '@lib/database/schema/auth';
 import Link from '@lib/i18n/Link';
-import { redirect } from '@lib/i18n/utilities';
+import { redirect } from '@lib/i18n/utilities-server';
 import * as m from '@translations/messages';
 import { and, eq, gte } from 'drizzle-orm';
 import { now } from 'drizzle-orm-helpers/pg';

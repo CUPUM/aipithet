@@ -1,6 +1,6 @@
 import { db } from '@lib/database/db';
 import { sessions, users } from '@lib/database/schema/auth';
-import { redirect } from '@lib/i18n/utilities';
+import { redirect } from '@lib/i18n/utilities-server';
 import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle';
 import * as m from '@translations/messages';
 import type { InferSelectModel } from 'drizzle-orm';
@@ -9,7 +9,7 @@ import { cookies } from 'next/headers';
 import { RedirectType } from 'next/navigation';
 import { cache } from 'react';
 import type { PermissionKey } from './constants';
-import { safeCheckUserPermissions } from './validation';
+import { isAllowed } from './validation';
 
 const adapter = new DrizzlePostgreSQLAdapter(db, sessions, users);
 
@@ -72,27 +72,13 @@ export const validate = cache(async () => {
  *   route.
  */
 export const authorize = cache(async (key?: PermissionKey) => {
+	'use server';
 	const validated = await validate();
 	if (!validated.user) {
 		return redirect('/login', RedirectType.push);
 	}
-	if (!safeCheckUserPermissions(validated.user, key)) {
+	if (!isAllowed(validated.user, key)) {
 		throw new Error(m.insufficient_permissions());
 	}
 	return validated;
-});
-
-export const safeAuthorize = cache(async (key?: PermissionKey) => {
-	const validated = await validate();
-	if (!validated.user) {
-		return {
-			user: null,
-			session: null,
-			authorized: false as const,
-		};
-	}
-	return {
-		...validated,
-		authorized: validated.user ? safeCheckUserPermissions(validated.user, key) : false,
-	};
 });

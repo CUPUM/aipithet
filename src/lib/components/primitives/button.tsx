@@ -59,7 +59,7 @@ export function ButtonIcon({
 		<Icon
 			{...restProps}
 			className={cn(
-				'w-[1.25em] h-[1.25em] opacity-40 group-hover/button:opacity-80 group-[.aspect-square]/button:opacity-75 transition-all duration-350 ease-out group-aria-[current]/button:opacity-100 group-aria-[current]/button:animate-pulse group-aria-[current]/button:text-primary',
+				'duration-350 h-[1.25em] w-[1.25em] opacity-40 transition-all ease-out group-hover/button:opacity-80 group-[.aspect-square]/button:opacity-75 group-aria-[current]/button:animate-pulse group-aria-[current]/button:text-primary group-aria-[current]/button:opacity-100',
 				className
 			)}
 			strokeWidth={strokeWidth}
@@ -80,19 +80,19 @@ export function ButtonIconLoading({
 			<Spinner
 				{...iconProps}
 				className={cn(
-					'w-[1.25em] h-[1.25em] hidden group-data-[loading=true]/button:block',
+					'hidden h-[1.25em] w-[1.25em] group-data-[loading=true]/button:block',
 					className
 				)}
 			/>
 			<ButtonIcon
 				{...iconProps}
 				icon={icon}
-				className={cn('group-data-[loading=true]/button:hidden animate-puff-grow', className)}
+				className={cn('animate-puff-grow group-data-[loading=true]/button:hidden', className)}
 			/>
 		</>
 	);
 }
 
 export function ButtonIconSpace() {
-	return <div className="max-w-[1.25em] flex-1 select-none invisible" />;
+	return <div className="invisible max-w-[1.25em] flex-1 select-none" />;
 }

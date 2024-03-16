@@ -2,11 +2,11 @@
 
 import { emailVerificationSend } from '@lib/actions/email-verification-send';
 import { emailVerify } from '@lib/actions/email-verify';
-import { ButtonSubmit } from '@lib/components/button-submit';
+import ButtonSubmit from '@lib/components/button-submit';
 import { ButtonIconLoading, ButtonIconSpace } from '@lib/components/primitives/button';
+import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
-import LabeledField from '@lib/components/primitives/labeled-field';
 import * as m from '@translations/messages';
 import { KeyRound, RefreshCw } from 'lucide-react';
 import { useFormState } from 'react-dom';
@@ -15,16 +15,16 @@ export function EmailVerifyForm() {
 	const [_formState, formAction] = useFormState(emailVerify, { errors: {} });
 	return (
 		<form action={formAction} className="flex flex-col gap-4">
-			<h1 className="text-3xl font-medium mb-4">{m.email_verification_code_email_title()}</h1>
-			<LabeledField>
+			<h1 className="mb-4 text-3xl font-medium">{m.email_verification_code_email_title()}</h1>
+			<Field>
 				<Label htmlFor="code">{m.email_verification_code()}</Label>
 				<Input
 					id="code"
 					name="code"
 					required
-					className="text-xl uppercase font-mono tracking-[.5em]"
+					className="font-mono text-xl uppercase tracking-[.5em]"
 				/>
-			</LabeledField>
+			</Field>
 			<ButtonSubmit>
 				<ButtonIconLoading icon={KeyRound} />
 				{m.validate()}

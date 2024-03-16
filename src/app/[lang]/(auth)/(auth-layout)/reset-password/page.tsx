@@ -1,7 +1,7 @@
 import { validate } from '@lib/auth/auth';
 import { Button, ButtonIcon } from '@lib/components/primitives/button';
 import Link from '@lib/i18n/Link';
-import { redirect } from '@lib/i18n/utilities';
+import { redirect } from '@lib/i18n/utilities-server';
 import * as m from '@translations/messages';
 import { LogIn, UserPlus } from 'lucide-react';
 import { PasswordResetForm } from './client';
