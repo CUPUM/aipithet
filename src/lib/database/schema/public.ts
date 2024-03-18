@@ -1,4 +1,3 @@
-import { ROLE_DEFAULT } from '@lib/auth/constants';
 import { add } from 'drizzle-orm-helpers';
 import { nanoid, now, interval as timeInterval } from 'drizzle-orm-helpers/pg';
 import type { AnyPgColumn } from 'drizzle-orm/pg-core';
@@ -14,8 +13,8 @@ import {
 	timestamp,
 	unique,
 } from 'drizzle-orm/pg-core';
-import { lang, role } from '../custom-types';
-import { roles, users } from './auth';
+import { lang } from '../custom-types';
+import { users } from './auth';
 import { LANG_COLUMN } from './i18n';
 
 /**
@@ -93,13 +92,6 @@ export const imagesPoolsEditors = pgTable(
 			onDelete: 'cascade',
 			onUpdate: 'cascade',
 		}),
-		role: role('role')
-			.references(() => roles.role, {
-				onDelete: 'set default',
-				onUpdate: 'cascade',
-			})
-			.notNull()
-			.default(ROLE_DEFAULT),
 	},
 	(table) => {
 		return {
@@ -233,13 +225,6 @@ export const labelingSurveysEditors = pgTable(
 			onDelete: 'cascade',
 			onUpdate: 'cascade',
 		}),
-		role: role('role')
-			.references(() => roles.role, {
-				onDelete: 'set default',
-				onUpdate: 'cascade',
-			})
-			.notNull()
-			.default(ROLE_DEFAULT),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	},
 	(table) => {

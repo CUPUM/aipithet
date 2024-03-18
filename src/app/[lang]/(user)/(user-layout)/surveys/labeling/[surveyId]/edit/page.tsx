@@ -1,6 +1,8 @@
 import { authorize } from '@lib/auth/auth';
 import { db } from '@lib/database/db';
-import { labelingSurveys } from '@lib/database/schema/public';
+import type { InferColumns } from '@lib/database/queries';
+import { editableLabelingSurveys, withTranslations } from '@lib/database/queries';
+import { labelingSurveysT } from '@lib/database/schema/public';
 import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import {
@@ -12,17 +14,25 @@ import {
 
 export default async function Page(props: { params: { surveyId: string } }) {
 	const { user } = await authorize();
+	const editables = editableLabelingSurveys(user.id);
+	type Cols = InferColumns<typeof editables>;
+	const editablesWithTranslations = withTranslations(editables, labelingSurveysT, (t, tt) => ({
+		field: t.id,
+		reference: tt.id,
+	}));
 	const [survey] = await db
+		.with(editable)
 		.select()
-		.from(labelingSurveys)
-		.where(eq(labelingSurveys.id, props.params.surveyId))
+		.from(editable)
+		.where(eq(editable.id, props.params.surveyId))
+		.leftJoin()
 		.limit(1);
 	if (!survey) {
 		notFound();
 	}
 	return (
 		<div className="flex w-full max-w-screen-lg flex-1 flex-col items-stretch justify-center gap-5 self-center p-2">
-			<SurveyPresentationForm />
+			<SurveyPresentationForm surveyId={props.params.surveyId} />
 			<SurveyConfigurationForm />
 			<SurveySharingForm />
 			<SurveySecurityForm />

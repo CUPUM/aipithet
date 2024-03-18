@@ -18,32 +18,34 @@ export function SurveyPresentationForm(props: { surveyId: string }) {
 	return (
 		<form action={formAction} className="flex flex-col gap-8 rounded-lg border border-border p-8 ">
 			<h1 className="text-xl font-semibold">{m.presentation()}</h1>
-			<div className="flex flex-row flex-wrap gap-4">
-				{availableLanguageTags.map((lang) => (
-					<fieldset
-						key={lang}
-						className="flex min-w-60 flex-1 flex-col gap-4 rounded-md border border-border bg-muted/20 p-8 pt-6"
-					>
-						<legend className="float-left mb-2 self-start rounded-full bg-foreground px-3 py-1 font-semibold text-muted">
-							{LANG_NAMES[lang]}
-						</legend>
-						<Field>
-							<Label htmlFor={`title-${lang}`}>{m.title(undefined, { languageTag: lang })}</Label>
-							<Input name="title" id={`title-${lang}`} type="text" />
-						</Field>
-						<Field>
-							<Label htmlFor={`summary-${lang}`}>
-								{m.summary(undefined, { languageTag: lang })}
-							</Label>
-							<Textarea name="summary" id={`summary-${lang}`} />
-						</Field>
-						<Field>
-							<Label htmlFor={`description-${lang}`}>
-								{m.description(undefined, { languageTag: lang })}
-							</Label>
-							<Textarea name="description" id={`description-${lang}`} />
-						</Field>
-					</fieldset>
+			<div className="flex flex-col gap-8 lg:flex-row">
+				{availableLanguageTags.map((lang, i) => (
+					<>
+						<fieldset key={lang} className="flex flex-1 flex-col gap-4">
+							<legend className="float-left mb-2 self-start rounded-full bg-foreground px-2 py-1 font-semibold text-muted">
+								{LANG_NAMES[lang]}
+							</legend>
+							<Field>
+								<Label htmlFor={`title-${lang}`}>{m.title(undefined, { languageTag: lang })}</Label>
+								<Input name="title" id={`title-${lang}`} type="text" />
+							</Field>
+							<Field>
+								<Label htmlFor={`summary-${lang}`}>
+									{m.summary(undefined, { languageTag: lang })}
+								</Label>
+								<Textarea name="summary" id={`summary-${lang}`} />
+							</Field>
+							<Field>
+								<Label htmlFor={`description-${lang}`}>
+									{m.description(undefined, { languageTag: lang })}
+								</Label>
+								<Textarea name="description" id={`description-${lang}`} />
+							</Field>
+						</fieldset>
+						{i < availableLanguageTags.length - 1 && (
+							<hr className="block h-auto w-auto self-stretch border-l border-t border-border" />
+						)}
+					</>
 				))}
 			</div>
 			<ButtonSubmit className="self-end">

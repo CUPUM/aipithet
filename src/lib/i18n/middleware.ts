@@ -1,9 +1,9 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { LANG_HEADER_NAME } from './constants';
-import { setLanguageTag, sourceLanguageTag } from './generated/runtime';
-import { getPathnameLang } from './utilities';
-import { getHeadersLang, languageTagServer } from './utilities-server';
+import { setLanguageTag } from './generated/runtime';
+import { getPathnameLang, withLang } from './utilities';
+import { languageTagServer } from './utilities-server';
 
 /**
  * @see https://github.com/vercel/next.js/issues/58281
@@ -15,10 +15,9 @@ import { getHeadersLang, languageTagServer } from './utilities-server';
  */
 function middleware(request: NextRequest) {
 	const pathnameLang = getPathnameLang(request.nextUrl.pathname);
-	const headersLang = getHeadersLang(request.headers);
-	const lang = pathnameLang ?? headersLang ?? sourceLanguageTag;
-	const responseHeaders = new Headers(request.headers);
-	responseHeaders.set(LANG_HEADER_NAME, lang);
+	const lang = pathnameLang ?? languageTagServer();
+	const headers = new Headers(request.headers);
+	headers.set(LANG_HEADER_NAME, lang);
 	setLanguageTag(languageTagServer);
 	// if (!pathnameLang && headersLang) {
 	// 	// headers = new Headers();
@@ -34,7 +33,13 @@ function middleware(request: NextRequest) {
 	// 		return res;
 	// 	}
 	// }
-	return NextResponse.next({ request: { headers: responseHeaders } });
+	if (!pathnameLang) {
+		return NextResponse.rewrite(
+			new URL(withLang(request.url.replace(request.nextUrl.origin, '')), request.nextUrl.origin),
+			{ request: { headers } }
+		);
+	}
+	return NextResponse.next({ request: { headers } });
 }
 
 export default middleware;

@@ -4,8 +4,8 @@ import LanguageProvider from '@lib/i18n/language-provider';
 import ThemeProvider from '@lib/theme/theme-provider';
 import * as m from '@translations/messages';
 import { languageTag } from '@translations/runtime';
-import { fontMono, fontSans } from './fonts';
-import './globals.css';
+import { fontMono, fontSans } from '../fonts';
+import '../globals.css';
 import Navbar from './navbar';
 
 export async function generateMetadata() {

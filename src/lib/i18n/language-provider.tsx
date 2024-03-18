@@ -5,7 +5,7 @@ import { languageTagServer } from './utilities-server';
 
 setLanguageTag(languageTagServer);
 
-export default async function LanguageProvider(props: { children: React.ReactNode }) {
+export default function LanguageProvider(props: { children: React.ReactNode }) {
 	setLanguageTag(languageTagServer);
 	return (
 		<>

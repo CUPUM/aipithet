@@ -50,7 +50,7 @@ export function SurveyCreateForm() {
 			className="flex flex-1 animate-fly-down items-center justify-center rounded-lg border border-border bg-background p-8 fill-mode-both"
 			style={{ animationDelay: '100ms' }}
 		>
-			<ButtonSubmit>
+			<ButtonSubmit size="lg">
 				<ButtonIconLoading icon={Plus} />
 				Start creating your own survey!
 			</ButtonSubmit>

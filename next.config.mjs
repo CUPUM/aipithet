@@ -7,14 +7,6 @@ const nextConfig = {
 		config.externals.push('@node-rs/argon2', '@node-rs/bcrypt');
 		return config;
 	},
-	rewrites() {
-		return [
-			{
-				source: '/:path((?!fr|en).*)',
-				destination: '/fr/:path*',
-			},
-		];
-	},
 };
 
 export default nextConfig;

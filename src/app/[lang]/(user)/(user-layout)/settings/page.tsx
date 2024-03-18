@@ -15,7 +15,7 @@ export default function Page() {
 							<Node
 								className="aspect-square h-20 w-20 animate-puff-grow rounded-lg bg-background p-5 duration-1000 ease-out animate-in zoom-in-50 fill-mode-both"
 								vectorEffect="non-scaling-stroke"
-								strokeWidth={1.25}
+								strokeWidth={1.5}
 								key="a"
 							/>
 						))}
