@@ -1,5 +1,6 @@
 import { validate } from '@lib/auth/auth';
 import { ButtonIcon } from '@lib/components/primitives/button';
+import ScrollOnNavigation from '@lib/components/scroll-on-navigation';
 import { redirect } from '@lib/i18n/utilities-server';
 import type { ReactNode } from 'react';
 import { DashboardNavbarButton } from './client';
@@ -27,7 +28,11 @@ export default async function Layout(props: { children: ReactNode }) {
 					);
 				})}
 			</nav>
-			<article className="relative flex flex-1 flex-col justify-items-center overflow-y-auto overflow-x-hidden rounded-t-2xl border-t border-t-accent md:p-8">
+			<article
+				id="user-layout-scroll"
+				className="relative flex flex-1 flex-col justify-items-center overflow-y-auto overflow-x-hidden rounded-t-2xl border-t border-t-accent md:p-8"
+			>
+				<ScrollOnNavigation />
 				{props.children}
 			</article>
 		</>

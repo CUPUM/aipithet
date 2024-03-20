@@ -1,5 +1,6 @@
 'use client';
 
+import login from '@lib/actions/login';
 import ButtonSubmit from '@lib/components/button-submit';
 import {
 	Button,
@@ -15,7 +16,6 @@ import * as m from '@translations/messages';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useFormState } from 'react-dom';
-import login from '../../../../../lib/actions/login';
 
 export function LoginForm() {
 	const [formState, formAction] = useFormState(login, undefined);

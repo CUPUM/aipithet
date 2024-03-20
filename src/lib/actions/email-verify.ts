@@ -4,11 +4,13 @@ import { authorize } from '@lib/auth/auth';
 import { emailVerificationSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { emailVerificationCodes, users } from '@lib/database/schema/auth';
-import { redirect } from '@lib/i18n/utilities-server';
+import { languageTagServer, redirect } from '@lib/i18n/utilities-server';
+import { setLanguageTag } from '@translations/runtime';
 import { and, eq, exists, gte } from 'drizzle-orm';
 import { now } from 'drizzle-orm-helpers/pg';
 
-export async function emailVerify(state: unknown, formData: FormData) {
+export default async function emailVerify(state: unknown, formData: FormData) {
+	setLanguageTag(languageTagServer);
 	const { user } = await authorize();
 	const data = Object.fromEntries(formData);
 	const parsed = emailVerificationSchema.safeParse(data);

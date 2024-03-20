@@ -1,5 +1,6 @@
 'use client';
 
+import passwordReset from '@lib/actions/password-reset';
 import ButtonSubmit from '@lib/components/button-submit';
 import {
 	Button,
@@ -16,7 +17,6 @@ import * as m from '@translations/messages';
 import { MailSearch, RefreshCw } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useFormState } from 'react-dom';
-import passwordReset from '../../../../../lib/actions/password-reset';
 
 export function PasswordResetForm() {
 	const [formState, formAction] = useFormState(passwordReset, undefined);

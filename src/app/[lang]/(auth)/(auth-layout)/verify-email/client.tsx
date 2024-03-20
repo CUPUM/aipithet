@@ -1,7 +1,7 @@
 'use client';
 
-import { emailVerificationSend } from '@lib/actions/email-verification-send';
-import { emailVerify } from '@lib/actions/email-verify';
+import emailVerificationSend from '@lib/actions/email-verification-send';
+import emailVerify from '@lib/actions/email-verify';
 import ButtonSubmit from '@lib/components/button-submit';
 import { ButtonIconLoading, ButtonIconSpace } from '@lib/components/primitives/button';
 import Field from '@lib/components/primitives/field';

@@ -1,8 +1,7 @@
 /* eslint-disable @next/next/no-page-custom-font */
 import { withLang } from '@lib/i18n/utilities';
-import { languageTagServer } from '@lib/i18n/utilities-server';
 import { Container, Head, Hr, Html, Link, Section, Tailwind } from '@react-email/components';
-import { setLanguageTag } from '@translations/runtime';
+import { languageTag } from '@translations/runtime';
 import type { ReactNode } from 'react';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 import tailwindConfig from '../../../tailwind.config';
@@ -13,9 +12,7 @@ import tailwindConfig from '../../../tailwind.config';
  * @see https://github.com/resend/react-email/issues/729
  */
 export function Template(props: { children: ReactNode }) {
-	setLanguageTag(languageTagServer);
-	const lang = languageTagServer();
-
+	const lang = languageTag();
 	return (
 		<Tailwind
 			config={{

@@ -4,12 +4,15 @@ import { authorize } from '@lib/auth/auth';
 import { db } from '@lib/database/db';
 import { emailVerificationCodes } from '@lib/database/schema/auth';
 import { SENDERS } from '@lib/email/constants';
+import { resend } from '@lib/email/resend';
 import VerifyEmailTemplate from '@lib/email/templates/verify-email';
-import { resend } from '@lib/email/transporter';
+import { languageTagServer } from '@lib/i18n/utilities-server';
+import { setLanguageTag } from '@translations/runtime';
 import { getColumns } from 'drizzle-orm-helpers';
 import { excluded } from 'drizzle-orm-helpers/pg';
 
-export async function emailVerificationSend() {
+export default async function emailVerificationSend() {
+	setLanguageTag(languageTagServer);
 	const { user } = await authorize();
 	try {
 		const [inserted] = await db

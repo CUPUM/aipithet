@@ -72,9 +72,21 @@
 	"write_us": "Write to us",
 	"coming_soon": "Coming soon",
 	"images": "Images",
-	"email_survey_invitation_title": "You've received an invitation to join a survey!",
 	"summary": "Summary",
 	"title": "Title",
 	"description": "Description",
-	"presentation": "Presentation"
+	"presentation": "Presentation",
+	"survey_create_long": "Start creating my own survey",
+	"survey_join": "Join a survey",
+	"email_survey_invitation_title": "You've received an invitation to join a survey!",
+	"survey_delete": "Delete survey",
+	"sharing": "Sharing",
+	"editables": "Editables",
+	"participating": "Participating",
+	"untitled": "Untitled",
+	"editor": "Editor",
+	"survey_likert_step_count": "Number of steps",
+	"survey_likert_step_count_description": "Specify the number of discrete steps to use on the slider when collecting data",
+	"survey": "Survey",
+	"survey_likert_step_count_max_error": "The survey slider scale cannot contain more than {n} discrete steps"
 }

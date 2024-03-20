@@ -1,6 +1,6 @@
 import type { Role } from '@lib/auth/constants';
 import { ROLE_DEFAULT } from '@lib/auth/constants';
-import { isRole } from '@lib/auth/validation';
+import { isRole } from '@lib/auth/utilities';
 import type { AvailableLanguageTag } from '@translations/runtime';
 import { isAvailableLanguageTag } from '@translations/runtime';
 import { customType } from 'drizzle-orm/pg-core';

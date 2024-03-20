@@ -1,5 +1,4 @@
 import { auth, validate } from '@lib/auth/auth';
-import { hashPassword } from '@lib/auth/utilities';
 import { passwordResetFinalizeSchema } from '@lib/auth/validation';
 import ButtonBack from '@lib/components/button-back';
 import { Button, ButtonIcon, ButtonIconSpace } from '@lib/components/primitives/button';
@@ -12,6 +11,7 @@ import { and, eq, gte } from 'drizzle-orm';
 import { now } from 'drizzle-orm-helpers/pg';
 import { ArrowLeft, LogIn, UserPlus } from 'lucide-react';
 import { cookies } from 'next/headers';
+import { Argon2id } from 'oslo/password';
 import { PasswordResetFinalizeForm } from './client';
 
 export function passwordResetFinalize(token: string) {
@@ -21,7 +21,6 @@ export function passwordResetFinalize(token: string) {
 		const data = Object.fromEntries(formData);
 		const parsed = passwordResetFinalizeSchema.safeParse(data);
 		if (!parsed.success) {
-			console.log('fail');
 			return { errors: parsed.error.format() };
 		}
 		const [updated] = await db.transaction(async (tx) => {
@@ -37,7 +36,7 @@ export function passwordResetFinalize(token: string) {
 			if (!tokenUser) {
 				throw new Error(m.password_reset_token_invalid());
 			}
-			const hashedPassword = await hashPassword(parsed.data.newPassword);
+			const hashedPassword = await new Argon2id().hash(parsed.data.newPassword);
 			return await tx
 				.update(users)
 				.set({ hashedPassword, updatedAt: now() })

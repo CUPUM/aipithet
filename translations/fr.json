@@ -78,5 +78,17 @@
 	"summary": "Sommaire",
 	"title": "Titre",
 	"description": "Description",
-	"presentation": "Présentation"
+	"presentation": "Présentation",
+	"survey_create_long": "Créer mon propre sondage",
+	"survey_join": "Rejoindre un sondage",
+	"survey_delete": "Supprimer le sondage",
+	"sharing": "Partage",
+	"editables": "Modifiables",
+	"participating": "Participant",
+	"untitled": "Sans titre",
+	"editor": "Éditeur",
+	"survey_likert_step_count": "Nombre d'échelons",
+	"survey_likert_step_count_description": "Indiquez le nombre d'échelon de Likert à utiliser sur la glissière lors de la collecte des données",
+	"survey": "Sondage",
+	"survey_likert_step_count_max_error": "La glissière ne peut pas être configurée pour plus de {n} échelons"
 }

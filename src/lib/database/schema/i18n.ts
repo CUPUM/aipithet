@@ -12,6 +12,9 @@ export const languages = i18nSchema.table('languages', {
 	regconfig: regconfig('regconfig').notNull(),
 });
 
+/**
+ * Reusable lang column for base of translations tables (use by destructuring).
+ */
 export const LANG_COLUMN = {
 	[LANG_COLUMN_NAME]: lang(LANG_COLUMN_NAME)
 		.references(() => languages[LANG_COLUMN_NAME], {

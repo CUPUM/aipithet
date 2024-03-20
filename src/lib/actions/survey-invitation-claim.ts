@@ -8,13 +8,16 @@ import {
 	labelingSurveysParticipants,
 } from '@lib/database/schema/public';
 import { labelingSurveysInvitationsSchema } from '@lib/database/validation';
+import { languageTagServer } from '@lib/i18n/utilities-server';
 import * as m from '@translations/messages';
+import { setLanguageTag } from '@translations/runtime';
 import { and, eq, gte, not } from 'drizzle-orm';
 import { now } from 'drizzle-orm-helpers/pg';
 import { NEVER } from 'zod';
-import { validateFormDataAsync } from './utilities';
+import { validateFormDataAsync } from './validation';
 
 export default async function surveyInvitationClaim(state: unknown, formData: FormData) {
+	setLanguageTag(languageTagServer);
 	const { user } = await authorize();
 	const parsed = await validateFormDataAsync(
 		formData,

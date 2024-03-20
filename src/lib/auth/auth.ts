@@ -9,7 +9,7 @@ import { cookies } from 'next/headers';
 import { RedirectType } from 'next/navigation';
 import { cache } from 'react';
 import type { PermissionKey } from './constants';
-import { isAllowed } from './validation';
+import { isAllowed } from './utilities';
 
 const adapter = new DrizzlePostgreSQLAdapter(db, sessions, users);
 

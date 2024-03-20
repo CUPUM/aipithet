@@ -1,17 +1,19 @@
 'use server';
 
 import { auth } from '@lib/auth/auth';
-import { verifyPassword } from '@lib/auth/utilities';
 import { emailPasswordLoginSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { users } from '@lib/database/schema/auth';
-import { redirect } from '@lib/i18n/utilities-server';
+import { languageTagServer, redirect } from '@lib/i18n/utilities-server';
 import * as m from '@translations/messages';
+import { setLanguageTag } from '@translations/runtime';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
+import { Argon2id } from 'oslo/password';
 import { NEVER, ZodIssueCode } from 'zod';
 
 export default async function login(state: unknown, formData: FormData) {
+	setLanguageTag(languageTagServer);
 	const data = Object.fromEntries(formData);
 	const parsed = await emailPasswordLoginSchema
 		.transform(async (data, ctx) => {
@@ -31,7 +33,7 @@ export default async function login(state: unknown, formData: FormData) {
 				});
 				return NEVER;
 			}
-			const validPassword = await verifyPassword(user.hashedPassword, data.password);
+			const validPassword = await new Argon2id().verify(user.hashedPassword, data.password);
 			if (!validPassword) {
 				ctx.addIssue({
 					code: ZodIssueCode.custom,

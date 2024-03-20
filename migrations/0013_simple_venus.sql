@@ -1,0 +1,1 @@
+ALTER TABLE "labeling_surveys" RENAME COLUMN "slider_step_count" TO "likert_step_count";

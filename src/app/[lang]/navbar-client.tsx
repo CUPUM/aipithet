@@ -49,7 +49,7 @@ export function NavbarUserMenu() {
 					{isPendingLogout && <Spinner className="absolute" />}
 					{user ? (
 						<span
-							className="uppercase data-[loading]:opacity-25 scale-95 transition-all"
+							className="scale-95 uppercase transition-all data-[loading]:opacity-25"
 							data-loading={isPendingLogout || undefined}
 						>
 							{user.email.charAt(0)}
@@ -149,7 +149,7 @@ function NavbarLangSwitch() {
 						/>
 						<DropdownMenuItemIcon
 							icon={Languages}
-							className="opacity-100 hidden group-data-[selected]:block"
+							className="hidden opacity-100 group-data-[selected]:block"
 						/>
 						{LANG_NAMES[lang]}
 					</Link>

@@ -19,6 +19,9 @@ const config = {
 				sans: ['var(--font-sans)', ...fontFamily.sans],
 				mono: ['var(--font-mono)', ...fontFamily.mono],
 			},
+			borderWidth: {
+				DEFAULT: '1.5px',
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

@@ -4,19 +4,21 @@ import { passwordResetSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { passwordResetTokens, users } from '@lib/database/schema/auth';
 import { SENDERS } from '@lib/email/constants';
+import { resend } from '@lib/email/resend';
 import ResetPasswordTemplate from '@lib/email/templates/reset-password';
-import { resend } from '@lib/email/transporter';
+import { languageTagServer } from '@lib/i18n/utilities-server';
 import * as m from '@translations/messages';
+import { setLanguageTag } from '@translations/runtime';
 import { eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { excluded } from 'drizzle-orm-helpers/pg';
 
 export default async function passwordReset(state: unknown, formData: FormData) {
+	setLanguageTag(languageTagServer);
 	try {
 		const data = Object.fromEntries(formData);
 		const parsed = passwordResetSchema.safeParse(data);
 		if (!parsed.success) {
-			console.log(parsed.error.format());
 			return {
 				errors: parsed.error.format(),
 			};

@@ -21,14 +21,14 @@ export function SurveyInvitationClaimForm() {
 			className="flex flex-1 animate-fly-down flex-col gap-3 rounded-lg border border-border bg-background p-8 fill-mode-both"
 			style={{ animationDelay: '200ms' }}
 		>
-			<h1 className="mb-4 text-xl font-semibold">Join a survey</h1>
+			<h1 className="mb-4 text-xl font-semibold">{m.survey_join()}</h1>
 			<Field>
 				<div className="flex flex-row gap-2">
 					<Input
 						type="text"
 						name="code"
 						id="invitation-code"
-						className="min-w-40 flex-1"
+						className="min-w-40 flex-1 font-mono text-lg tracking-wider placeholder:relative placeholder:-top-0.5 placeholder:font-sans placeholder:text-sm placeholder:tracking-normal"
 						placeholder={m.invitation_code()}
 						onInput={(e) => setHasCode(!!e.currentTarget.value.length)}
 					/>
@@ -52,7 +52,7 @@ export function SurveyCreateForm() {
 		>
 			<ButtonSubmit size="lg">
 				<ButtonIconLoading icon={Plus} />
-				Start creating your own survey!
+				{m.survey_create_long()}
 			</ButtonSubmit>
 		</form>
 	);

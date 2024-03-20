@@ -1,15 +1,11 @@
-import { Argon2id } from 'oslo/password';
+import type { User } from 'lucia';
+import type { PermissionKey, Role } from './constants';
+import { PERMISSIONS, ROLES_ARR } from './constants';
 
-/**
- * Normalize how passwords are hashed across the app.
- */
-export async function hashPassword(raw: string) {
-	return new Argon2id().hash(raw);
+export function isRole(maybeRole: unknown): maybeRole is Role {
+	return ROLES_ARR.includes(maybeRole as Role);
 }
 
-/**
- * Normalize how paswsword hashes are verified across the app.
- */
-export async function verifyPassword(hash: string, password: string) {
-	return new Argon2id().verify(hash, password);
+export function isAllowed(user: User, key?: PermissionKey) {
+	return !key || (PERMISSIONS[key] as Role[]).includes(user.role);
 }

@@ -1,20 +1,22 @@
 'use server';
 
 import { auth } from '@lib/auth/auth';
-import { hashPassword } from '@lib/auth/utilities';
 import { emailPasswordSignupSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { emailVerificationCodes, users } from '@lib/database/schema/auth';
 import { SENDERS } from '@lib/email/constants';
+import { resend } from '@lib/email/resend';
 import VerifyEmailTemplate from '@lib/email/templates/verify-email';
-import { resend } from '@lib/email/transporter';
-import { redirect } from '@lib/i18n/utilities-server';
+import { languageTagServer, redirect } from '@lib/i18n/utilities-server';
 import * as m from '@translations/messages';
+import { setLanguageTag } from '@translations/runtime';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
+import { Argon2id } from 'oslo/password';
 import { ZodIssueCode } from 'zod';
 
 export default async function signup(state: unknown, formData: FormData) {
+	setLanguageTag(languageTagServer);
 	const data = Object.fromEntries(formData);
 	const parsed = await emailPasswordSignupSchema
 		.superRefine(async (data, ctx) => {
@@ -36,7 +38,7 @@ export default async function signup(state: unknown, formData: FormData) {
 	if (!parsed.success) {
 		return { errors: parsed.error.format() };
 	}
-	const hashedPassword = await hashPassword(parsed.data.password);
+	const hashedPassword = await new Argon2id().hash(parsed.data.password);
 	const { id, code, expiresAt } = await db.transaction(async (tx) => {
 		const [inserted] = await tx
 			.insert(users)

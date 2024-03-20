@@ -4,7 +4,7 @@ import type { Session, User } from 'lucia';
 import type { ReactNode } from 'react';
 import { createContext, useCallback, useContext } from 'react';
 import type { PermissionKey } from './constants';
-import { isAllowed } from './validation';
+import { isAllowed } from './utilities';
 
 const AuthContext = createContext<{ user: User; session: Session } | { user: null; session: null }>(
 	{ user: null, session: null }
