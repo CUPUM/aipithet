@@ -76,36 +76,24 @@ const config = {
 						opacity: '0',
 						translate: '0px -0.3em',
 					},
-					// to: {
-					// 	translate: '0px 0em',
-					// },
 				},
 				'fly-up': {
 					from: {
 						opacity: '0',
 						translate: '0px 0.3em',
 					},
-					// to: {
-					// 	translate: '0px 0em',
-					// },
 				},
 				'puff-grow': {
 					from: {
 						opacity: '0',
 						scale: '0.96',
 					},
-					// to: {
-					// 	scale: '1',
-					// },
 				},
 				'puff-shrink': {
 					from: {
 						opacity: '0',
 						scale: '1.06',
 					},
-					// to: {
-					// 	scale: '1',
-					// },
 				},
 			},
 			animation: {
@@ -120,7 +108,7 @@ const config = {
 	},
 	plugins: [
 		require('tailwindcss-animate'),
-		plugin(({ addVariant, matchUtilities, theme }) => {
+		plugin(({ addVariant, matchUtilities, theme, addUtilities }) => {
 			addVariant('light', '[data-theme="light"] &');
 			matchUtilities(
 				{
@@ -134,6 +122,18 @@ const config = {
 					values: theme('transitionDelay'),
 				}
 			);
+			addUtilities({
+				'.hide-arrows': {
+					'&::-webkit-inner-spin-button': {
+						'-webkit-appearance': 'none',
+						'margin': '0',
+					},
+					'&::-webkit-outer-spin-button': {
+						'-webkit-appearance': 'none',
+						'margin': '0',
+					},
+				},
+			});
 			// availableLanguageTags.forEach((tag) => {
 			// 	addVariant(tag, `[lang="${tag}"] &`);
 			// });

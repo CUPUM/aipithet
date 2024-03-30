@@ -7,10 +7,11 @@ setLanguageTag(languageTagServer);
 
 export default function LanguageProvider(props: { children: React.ReactNode }) {
 	setLanguageTag(languageTagServer);
+	const lang = languageTag();
 	return (
 		<>
-			<ClientLanguageProvider language={languageTag()} />
-			<Fragment key={languageTag()}>{props.children}</Fragment>
+			<ClientLanguageProvider language={lang} />
+			<Fragment key={lang}>{props.children}</Fragment>
 		</>
 	);
 }

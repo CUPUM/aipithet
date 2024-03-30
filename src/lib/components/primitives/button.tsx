@@ -12,7 +12,8 @@ const buttonVariants = cva(
 		variants: {
 			variant: {
 				default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-				destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+				destructive:
+					'text-destructive bg-destructive/5 border border-destructive/20 hover:bg-destructive/90 hover:text-destructive-foreground',
 				outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
 				secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
 				ghost: 'hover:bg-accent hover:text-accent-foreground',
@@ -20,7 +21,7 @@ const buttonVariants = cva(
 			},
 			size: {
 				default: 'h-14 px-6 py-2',
-				sm: 'h-10 rounded-full px-3',
+				sm: 'h-10 rounded-full px-4',
 				lg: 'h-16 rounded-md px-8 rounded-lg',
 			},
 		},
@@ -59,7 +60,7 @@ export function ButtonIcon({
 		<Icon
 			{...restProps}
 			className={cn(
-				'duration-350 h-[1.25em] w-[1.25em] opacity-40 transition-all ease-out group-hover/button:opacity-80 group-[.aspect-square]/button:opacity-75 group-aria-[current]/button:animate-pulse group-aria-[current]/button:text-primary group-aria-[current]/button:opacity-100',
+				'duration-350 h-[1.25em] w-[1.25em] opacity-40 transition-all ease-out group-hover/button:opacity-80 group-[.aspect-square]/button:opacity-75 group-aria-[current]/button:animate-pulse group-aria-[current]/button:text-current group-aria-[current]/button:opacity-100',
 				className
 			)}
 			strokeWidth={strokeWidth}

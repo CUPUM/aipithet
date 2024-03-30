@@ -6,7 +6,7 @@ import { labelingSurveys } from '@lib/database/schema/public';
 import { languageTagServer, redirect } from '@lib/i18n/utilities-server';
 import { setLanguageTag } from '@translations/runtime';
 
-export async function surveyCreate() {
+export default async function surveyCreate() {
 	setLanguageTag(languageTagServer);
 	const { user } = await authorize('surveys.create');
 	const [inserted] = await db

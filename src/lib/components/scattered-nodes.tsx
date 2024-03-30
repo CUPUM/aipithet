@@ -26,33 +26,48 @@ export default function ScatteredNodes<const TRender extends ReactNode | ReactNo
 		| `${number} ${number} ${number} ${number}${AngleUnit}`;
 	zIndex?: (index: number) => number;
 }) {
-	const arr: ReactNode[] = Array.isArray(pool) ? pool : [pool];
-	const scattered = new Array(count).fill(null).map(() => {
-		const node = arr[Math.floor(Math.random() * arr.length)];
+	// const scattered = useMemo(() => {
+	// 	const arr: ReactNode[] = Array.isArray(pool) ? pool : [pool];
+	// 	return new Array(count).fill(null).map((_, i) => {
+	// 		const node = arr[Math.floor(Math.random() * arr.length)];
+	// 		return {
+	// 			node,
+	// 			style: {
+	// 				top: `${(Math.random() * 100).toFixed(2)}%`,
+	// 				left: `${(Math.random() * 100).toFixed(2)}%`,
+	// 				transitionDuration: '500ms',
+	// 				animationDelay: `${stagger(i)}ms`,
+	// 				fontSize: fontSize(i),
+	// 				scale: scale && scale(i),
+	// 				rotate: rotate && rotate(i),
+	// 				zIndex: zIndex(i),
+	// 				opacity: opacity && opacity(i),
+	// 			},
+	// 		};
+	// 	});
+	// }, [pool, count, stagger, fontSize, scale, rotate, zIndex, opacity]);
+	const poolArr: ReactNode[] = Array.isArray(pool) ? pool : [pool];
+	const scattered = new Array(count).fill(null).map((_, i) => {
+		const node = poolArr[Math.floor(Math.random() * poolArr.length)];
 		return {
 			node,
-			top: `${(Math.random() * 100).toFixed(2)}%`,
-			left: `${(Math.random() * 100).toFixed(2)}%`,
+			style: {
+				top: `${(Math.random() * 100).toFixed(2)}%`,
+				left: `${(Math.random() * 100).toFixed(2)}%`,
+				transitionDuration: '500ms',
+				animationDelay: `${stagger(i)}ms`,
+				fontSize: fontSize(i),
+				scale: scale && scale(i),
+				rotate: rotate && rotate(i),
+				zIndex: zIndex(i),
+				opacity: opacity && opacity(i),
+			},
 		};
 	});
 	return (
 		<>
 			{scattered.map((item, i) => (
-				<div
-					suppressHydrationWarning
-					key={i}
-					className="absolute"
-					style={{
-						top: item.top,
-						left: item.left,
-						animationDelay: `${stagger(i)}ms`,
-						fontSize: fontSize(i),
-						scale: scale && scale(i),
-						rotate: rotate && rotate(i),
-						zIndex: zIndex(i),
-						opacity: opacity && opacity(i),
-					}}
-				>
+				<div key={i} className="absolute transition-all" style={item.style}>
 					{item.node}
 				</div>
 			))}

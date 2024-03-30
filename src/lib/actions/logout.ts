@@ -1,10 +1,12 @@
 'use server';
 
 import { auth, validate } from '@lib/auth/auth';
-import { redirect } from '@lib/i18n/utilities-server';
+import { languageTagServer, redirect } from '@lib/i18n/utilities-server';
+import { setLanguageTag } from '@translations/runtime';
 import { cookies } from 'next/headers';
 
 export default async function logout() {
+	setLanguageTag(languageTagServer);
 	const { session } = await validate();
 	if (!session) {
 		throw new Error('Unauthorized');

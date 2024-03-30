@@ -5,7 +5,7 @@ import { Spinner } from '@lib/components/primitives/spinner';
 import Link from '@lib/i18n/Link';
 import * as m from '@translations/messages';
 import {
-	CircleDashed,
+	ChevronRight,
 	Home,
 	Languages,
 	LogIn,
@@ -144,8 +144,8 @@ function NavbarLangSwitch() {
 				>
 					<Link href={currentUrl} hrefLang={lang}>
 						<DropdownMenuItemIcon
-							icon={CircleDashed}
-							className="opacity-20 group-data-[selected]:hidden"
+							icon={ChevronRight}
+							className="opacity-0 group-data-[selected]:hidden"
 						/>
 						<DropdownMenuItemIcon
 							icon={Languages}

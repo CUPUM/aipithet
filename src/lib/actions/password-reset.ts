@@ -11,7 +11,7 @@ import * as m from '@translations/messages';
 import { setLanguageTag } from '@translations/runtime';
 import { eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
-import { excluded } from 'drizzle-orm-helpers/pg';
+import { toExcluded } from 'drizzle-orm-helpers/pg';
 
 export default async function passwordReset(state: unknown, formData: FormData) {
 	setLanguageTag(languageTagServer);
@@ -38,7 +38,7 @@ export default async function passwordReset(state: unknown, formData: FormData) 
 			.values({ userId: user.id })
 			.onConflictDoUpdate({
 				target: [passwordResetTokens.userId],
-				set: excluded(getColumns(passwordResetTokens)),
+				set: toExcluded(getColumns(passwordResetTokens)),
 			})
 			.returning({
 				token: passwordResetTokens.token,

@@ -6,9 +6,11 @@ import { db } from '@lib/database/db';
 import { labelingSurveys, labelingSurveysTranslations } from '@lib/database/schema/public';
 import { labelingSurveysWithTranslationsSchema } from '@lib/database/validation';
 import { languageTagServer } from '@lib/i18n/utilities-server';
-import { setLanguageTag } from '@translations/runtime';
+import { canEditLabelingSurvey } from '@lib/queries/queries';
+import { setLanguageTag, sourceLanguageTag } from '@translations/runtime';
+import { and, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
-import { excluded, now } from 'drizzle-orm-helpers/pg';
+import { now, toExcluded } from 'drizzle-orm-helpers/pg';
 import { revalidateTag } from 'next/cache';
 import { validateFormData } from './validation';
 
@@ -27,13 +29,25 @@ export default async function surveyPresentationUpdate(state: unknown, formData:
 			.insert(labelingSurveysTranslations)
 			.values(Object.values(parsed.data))
 			.onConflictDoUpdate({
+				where: canEditLabelingSurvey({
+					userId: user.id,
+					surveyId: labelingSurveysTranslations.id,
+				}),
 				target: [labelingSurveysTranslations.id, labelingSurveysTranslations.lang],
-				set: excluded(getColumns(labelingSurveysTranslations)),
+				set: toExcluded(getColumns(labelingSurveysTranslations)),
 			});
-		await tx.update(labelingSurveys).set({
-			updatedAt: now(),
-			updatedById: user.id,
-		});
+		await tx
+			.update(labelingSurveys)
+			.set({
+				updatedAt: now(),
+				updatedById: user.id,
+			})
+			.where(
+				and(
+					eq(labelingSurveys.id, parsed.data[sourceLanguageTag].id),
+					canEditLabelingSurvey({ userId: user.id })
+				)
+			);
 	});
 	revalidateTag(CACHE_TAGS.EDITOR_SURVEY_PRESENTATION);
 	return parsed.succeed;

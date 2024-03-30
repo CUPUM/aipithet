@@ -9,7 +9,7 @@ import VerifyEmailTemplate from '@lib/email/templates/verify-email';
 import { languageTagServer } from '@lib/i18n/utilities-server';
 import { setLanguageTag } from '@translations/runtime';
 import { getColumns } from 'drizzle-orm-helpers';
-import { excluded } from 'drizzle-orm-helpers/pg';
+import { toExcluded } from 'drizzle-orm-helpers/pg';
 
 export default async function emailVerificationSend() {
 	setLanguageTag(languageTagServer);
@@ -20,7 +20,7 @@ export default async function emailVerificationSend() {
 			.values({ userId: user.id, email: user.email })
 			.onConflictDoUpdate({
 				target: [emailVerificationCodes.userId],
-				set: excluded(getColumns(emailVerificationCodes)),
+				set: toExcluded(getColumns(emailVerificationCodes)),
 			})
 			.returning({
 				code: emailVerificationCodes.code,

@@ -1,0 +1,1 @@
+ALTER TABLE "labeling_surveys_chapters_t" ADD COLUMN "summary" text;

@@ -5,7 +5,7 @@ import { EmailUpdateForm, PasswordUpdateForm } from './client';
 
 export default function Page() {
 	return (
-		<div className="flex w-full max-w-screen-md flex-1 flex-col items-stretch gap-4 self-center p-2">
+		<div className="flex w-full max-w-screen-md flex-1 flex-col items-stretch gap-4 self-center">
 			<h2 className="mb-4 text-4xl font-semibold">{m.user_settings()}</h2>
 			<PasswordUpdateForm />
 			<EmailUpdateForm />

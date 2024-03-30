@@ -23,8 +23,8 @@ export default async function surveyInvitationClaim(state: unknown, formData: Fo
 		formData,
 		labelingSurveysInvitationsSchema
 			.pick({ code: true })
+			.strip()
 			.required({ code: true })
-			.strict()
 			.superRefine(async (data, ctx) => {
 				return await db.transaction(async (tx) => {
 					const [invitation] = await db

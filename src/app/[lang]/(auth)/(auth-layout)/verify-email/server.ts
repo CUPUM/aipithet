@@ -10,7 +10,7 @@ import VerifyEmailTemplate from '@lib/email/templates/verify-email';
 import { redirect } from '@lib/i18n/utilities-server';
 import { and, eq, exists, gte } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
-import { excluded, now } from 'drizzle-orm-helpers/pg';
+import { now, toExcluded } from 'drizzle-orm-helpers/pg';
 
 export async function emailVerificationSend() {
 	const { user } = await authorize();
@@ -20,7 +20,7 @@ export async function emailVerificationSend() {
 			.values({ userId: user.id, email: user.email })
 			.onConflictDoUpdate({
 				target: [emailVerificationCodes.userId],
-				set: excluded(getColumns(emailVerificationCodes)),
+				set: toExcluded(getColumns(emailVerificationCodes)),
 			})
 			.returning({
 				code: emailVerificationCodes.code,

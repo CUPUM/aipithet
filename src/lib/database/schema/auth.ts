@@ -1,6 +1,6 @@
 import { ROLE_DEFAULT } from '@lib/auth/constants';
 import { add } from 'drizzle-orm-helpers';
-import { interval, nanoid, now } from 'drizzle-orm-helpers/pg';
+import { nanoid, now, toInterval } from 'drizzle-orm-helpers/pg';
 import { boolean, pgSchema, primaryKey, text, timestamp, unique } from 'drizzle-orm/pg-core';
 import { EMAIL_CONFIRMATION_CODE_LENGTH, LANG_COLUMN_NAME, USER_ID_LENGTH } from '../constants';
 import { role } from '../custom-types';
@@ -68,7 +68,7 @@ export const emailVerificationCodes = authSchema.table('email_verification_codes
 	email: text('email').notNull(),
 	expiresAt: timestamp('expires_at', { withTimezone: true })
 		.notNull()
-		.default(add(now(), interval({ minutes: 5 })).inlineParams()),
+		.default(add(now(), toInterval({ minutes: 5 })).inlineParams()),
 });
 
 export const passwordResetTokens = authSchema.table('password_reset_tokens', {
@@ -86,5 +86,5 @@ export const passwordResetTokens = authSchema.table('password_reset_tokens', {
 		),
 	expiresAt: timestamp('expires_at', { withTimezone: true })
 		.notNull()
-		.default(add(now(), interval({ hours: 1 })).inlineParams()),
+		.default(add(now(), toInterval({ hours: 1 })).inlineParams()),
 });

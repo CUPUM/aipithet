@@ -1,6 +1,6 @@
 'use client';
 
-import { surveyCreate } from '@lib/actions/survey-create';
+import surveyCreate from '@lib/actions/survey-create';
 import surveyInvitationClaim from '@lib/actions/survey-invitation-claim';
 import ButtonSubmit from '@lib/components/button-submit';
 import { ButtonIconLoading } from '@lib/components/primitives/button';
@@ -28,7 +28,7 @@ export function SurveyInvitationClaimForm() {
 						type="text"
 						name="code"
 						id="invitation-code"
-						className="min-w-40 flex-1 font-mono text-lg tracking-wider placeholder:relative placeholder:-top-0.5 placeholder:font-sans placeholder:text-sm placeholder:tracking-normal"
+						className="min-w-32 flex-1 font-mono text-lg tracking-wider placeholder:relative placeholder:-top-0.5 placeholder:font-sans placeholder:text-sm placeholder:tracking-normal"
 						placeholder={m.invitation_code()}
 						onInput={(e) => setHasCode(!!e.currentTarget.value.length)}
 					/>
@@ -45,12 +45,13 @@ export function SurveyInvitationClaimForm() {
 export function SurveyCreateForm() {
 	const [_formState, formAction] = useFormState(surveyCreate, undefined);
 	return (
-		<form
-			action={formAction}
-			className="flex flex-1 animate-fly-down items-center justify-center rounded-lg border border-border bg-background p-8 fill-mode-both"
-			style={{ animationDelay: '100ms' }}
-		>
-			<ButtonSubmit size="lg">
+		<form action={formAction} className="flex flex-1 items-stretch justify-stretch">
+			<ButtonSubmit
+				size="lg"
+				style={{ animationDelay: '100ms' }}
+				variant="outline"
+				className="text-md flex h-[unset] flex-1 animate-fly-down items-center justify-center rounded-lg border-dashed bg-background p-8 fill-mode-both"
+			>
 				<ButtonIconLoading icon={Plus} />
 				{m.survey_create_long()}
 			</ButtonSubmit>

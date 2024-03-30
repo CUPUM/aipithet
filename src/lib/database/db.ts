@@ -17,6 +17,6 @@ const pool = new Pool({
  *
  * @see https://github.com/neondatabase/serverless#example-nodejs-with-poolconnect
  */
-export const db = drizzle(pool);
+export const db = drizzle(pool, { logger: false });
 
 export type Db = typeof db;

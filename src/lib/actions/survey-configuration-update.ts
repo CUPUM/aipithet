@@ -6,10 +6,12 @@ import { db } from '@lib/database/db';
 import { labelingSurveys } from '@lib/database/schema/public';
 import { labelingSurveysSchema } from '@lib/database/validation';
 import { languageTagServer } from '@lib/i18n/utilities-server';
+import { canEditLabelingSurvey } from '@lib/queries/queries';
 import { setLanguageTag } from '@translations/runtime';
-import { getColumns } from 'drizzle-orm-helpers';
-import { excluded, now } from 'drizzle-orm-helpers/pg';
+import { and, eq } from 'drizzle-orm';
+import { now } from 'drizzle-orm-helpers/pg';
 import { revalidateTag } from 'next/cache';
+import { notFound } from 'next/navigation';
 import { validateFormData } from './validation';
 
 export default async function surveyConfigurationUpdate(state: unknown, formData: FormData) {
@@ -17,22 +19,23 @@ export default async function surveyConfigurationUpdate(state: unknown, formData
 	const { user } = await authorize();
 	const parsed = validateFormData(
 		formData,
-		labelingSurveysSchema.pick({ id: true, likertStepCount: true }).strict()
+		labelingSurveysSchema.pick({ id: true, sliderStepCount: true, imagePoolId: true }).strip()
 	);
 	if (!parsed.success) {
 		return parsed.fail;
 	}
+	const { id: surveyId, ...data } = parsed.data;
+	if (!surveyId) {
+		notFound();
+	}
 	await db
-		.insert(labelingSurveys)
-		.values({
-			...parsed.data,
+		.update(labelingSurveys)
+		.set({
+			...data,
 			updatedAt: now(),
 			updatedById: user.id,
 		})
-		.onConflictDoUpdate({
-			target: [labelingSurveys.id],
-			set: excluded(getColumns(labelingSurveys)),
-		});
+		.where(and(eq(labelingSurveys.id, surveyId), canEditLabelingSurvey({ userId: user.id })));
 	revalidateTag(CACHE_TAGS.EDITOR_SURVEY_CONFIG);
 	return parsed.succeed;
 }

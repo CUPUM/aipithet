@@ -15,9 +15,9 @@ import { languageTagServer } from './utilities-server';
  */
 function middleware(request: NextRequest) {
 	const pathnameLang = getPathnameLang(request.nextUrl.pathname);
-	const lang = pathnameLang ?? languageTagServer();
+	const headersLang = languageTagServer();
 	const headers = new Headers(request.headers);
-	headers.set(LANG_HEADER_NAME, lang);
+	headers.set(LANG_HEADER_NAME, pathnameLang ?? headersLang);
 	setLanguageTag(languageTagServer);
 	// if (!pathnameLang && headersLang) {
 	// 	// headers = new Headers();

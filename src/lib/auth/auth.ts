@@ -71,14 +71,14 @@ export const validate = cache(async () => {
  * @returns User and Session if found, else the default behavior throws a redirect to the `/login`
  *   route.
  */
-export const authorize = cache(async (key?: PermissionKey) => {
+export const authorize = cache(async (key?: PermissionKey, message?: string) => {
 	'use server';
 	const validated = await validate();
 	if (!validated.user) {
 		return redirect('/login', RedirectType.push);
 	}
 	if (!isAllowed(validated.user, key)) {
-		throw new Error(m.insufficient_permissions());
+		throw new Error(message ?? m.insufficient_permissions());
 	}
 	return validated;
 });

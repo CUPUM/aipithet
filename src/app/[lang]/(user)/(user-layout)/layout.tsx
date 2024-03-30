@@ -13,7 +13,7 @@ export default async function Layout(props: { children: ReactNode }) {
 	}
 	return (
 		<>
-			<nav className="-mt-2 flex flex-row items-start gap-1 overflow-x-auto px-2 py-2 text-sm md:px-3">
+			<nav className="-mt-3 flex flex-row items-start gap-1 overflow-x-auto border-b border-border p-2 text-sm md:p-3">
 				{USER_ROUTES_ARR.map((userRoute, i) => {
 					const details = USER_ROUTES_DETAILS[userRoute];
 					return (
@@ -30,7 +30,7 @@ export default async function Layout(props: { children: ReactNode }) {
 			</nav>
 			<article
 				id="user-layout-scroll"
-				className="relative flex flex-1 flex-col justify-items-center overflow-y-auto overflow-x-hidden rounded-t-2xl border-t border-t-accent md:p-8"
+				className="relative flex flex-1 flex-col justify-items-center overflow-y-auto overflow-x-hidden py-8 md:px-6"
 			>
 				<ScrollOnNavigation />
 				{props.children}

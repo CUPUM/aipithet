@@ -1,5 +1,5 @@
 import { add } from 'drizzle-orm-helpers';
-import { nanoid, now, interval as timeInterval } from 'drizzle-orm-helpers/pg';
+import { nanoid, now, toInterval } from 'drizzle-orm-helpers/pg';
 import {
 	boolean,
 	decimal,
@@ -133,6 +133,10 @@ export const imagesPromptsT = pgTable(
 export const images = pgTable('images', {
 	id: text('id').default(nanoid()).primaryKey(),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	createdById: text('created_by_id').references(() => users.id, {
+		onDelete: 'set null',
+		onUpdate: 'cascade',
+	}),
 	storageName: text('storage_name').notNull().unique(),
 	width: integer('width').notNull(),
 	height: integer('height').notNull(),
@@ -174,10 +178,47 @@ export const imagesToPools = pgTable(
 			onDelete: 'cascade',
 			onUpdate: 'cascade',
 		}),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	},
 	(table) => {
 		return {
 			pk: primaryKey({ columns: [table.imageId, table.poolId] }),
+		};
+	}
+);
+
+export const labels = pgTable('labels', {
+	id: text('id').default(nanoid()).primaryKey(),
+	surveyId: text('survey_id')
+		.references(() => labelingSurveys.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		})
+		.notNull(),
+	createdById: text('created_by_id')
+		.references(() => users.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		})
+		.notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});
+export const labelsTranslations = pgTable(
+	'labels_t',
+	{
+		...LANG_COLUMN,
+		id: text('id')
+			.references(() => labels.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
+		text: text('text'),
+		description: text('description'),
+	},
+	(table) => {
+		return {
+			pk: primaryKey({ columns: [table.lang, table.id] }),
 		};
 	}
 );
@@ -188,7 +229,11 @@ export const labelingSurveys = pgTable('labeling_surveys', {
 		onDelete: 'set null',
 		onUpdate: 'cascade',
 	}),
-	likertStepCount: integer('likert_step_count').notNull().default(0),
+	sliderStepCount: integer('slider_step_count').notNull().default(0),
+	imagePoolId: text('image_pool_id').references(() => imagesPools.id, {
+		onDelete: 'set null',
+		onUpdate: 'cascade',
+	}),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 	updatedById: text('updated_by_id').references(() => users.id, {
@@ -266,7 +311,7 @@ export const labelingSurveysInvitations = pgTable(
 		}),
 		code: text('code').default(nanoid()).notNull(),
 		expiresAt: timestamp('expires_at')
-			.default(add(now(), timeInterval({ months: 1 })).inlineParams())
+			.default(add(now(), toInterval({ months: 1 })).inlineParams())
 			.notNull(),
 		email: text('email').notNull(),
 		editor: boolean('editor').default(false).notNull(),
@@ -281,17 +326,21 @@ export const labelingSurveysInvitations = pgTable(
 
 export const labelingSurveysChapters = pgTable('labeling_surveys_chapters', {
 	id: text('id').default(nanoid()).primaryKey(),
-	surveyId: text('survey_id').references(() => labelingSurveys.id, {
-		onDelete: 'cascade',
-		onUpdate: 'cascade',
-	}),
-	imagePoolId: text('image_pool_id').references(() => imagesPools.id, {
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	createdById: text('created_by_id').references(() => users.id, {
 		onDelete: 'set null',
 		onUpdate: 'cascade',
 	}),
-	duration: interval('duration'),
+	surveyId: text('survey_id')
+		.references(() => labelingSurveys.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		})
+		.notNull(),
 	start: timestamp('start', { withTimezone: true }),
-	allowLateness: boolean('allow_lateness'),
+	end: timestamp('end', { withTimezone: true }),
+	maxAnswersCount: integer('max_answers_count'),
+	allowLateness: boolean('allow_lateness').notNull().default(false),
 });
 export const labelingSurveysChaptersTranslations = pgTable(
 	'labeling_surveys_chapters_t',
@@ -304,6 +353,7 @@ export const labelingSurveysChaptersTranslations = pgTable(
 			})
 			.notNull(),
 		title: text('title'),
+		summary: text('summary'),
 		description: text('description'),
 	},
 	(table) => {
@@ -313,8 +363,8 @@ export const labelingSurveysChaptersTranslations = pgTable(
 	}
 );
 
-export const labelingSurveysChaptersLeafs = pgTable(
-	'labeling_surveys_chapters_leafs',
+export const labelingSurveysLeafs = pgTable(
+	'labeling_surveys_leafs',
 	{
 		id: text('id').default(nanoid()).primaryKey(),
 		chapterId: text('chapter_id').references(() => labelingSurveysChapters.id, {
@@ -322,7 +372,7 @@ export const labelingSurveysChaptersLeafs = pgTable(
 			onUpdate: 'cascade',
 		}),
 		index: integer('index'),
-		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 		image1Id: text('image_1_id')
 			.references(() => images.id, {
 				onDelete: 'restrict',
@@ -343,26 +393,36 @@ export const labelingSurveysChaptersLeafs = pgTable(
 	}
 );
 
-export const labelingSurveysChaptersAnswers = pgTable(
-	'labeling_surveys_chapters_answers',
+export const labelingSurveysAnswers = pgTable(
+	'labeling_surveys_answers',
 	{
 		id: text('id').default(nanoid()).primaryKey(),
-		leafId: text('leaf_id')
-			.references(() => labelingSurveysChaptersLeafs.id, {
+		userId: text('user_id')
+			.references(() => users.id, {
 				onDelete: 'cascade',
 				onUpdate: 'cascade',
 			})
 			.notNull(),
-		userId: text('user_id').notNull(),
-		surveyId: text('survey_id').notNull(),
+		chapterId: text('chapter_id')
+			.references(() => labelingSurveysChapters.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
+		leafId: text('leaf_id')
+			.references(() => labelingSurveysLeafs.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
 		score: decimal('score'),
 		timeToAnswerServer: interval('time_to_answer_server').notNull(),
 		timeToAnswerClient: interval('time_to_answer_client').notNull(),
-		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	},
 	(table) => ({
 		cfk: foreignKey({
-			columns: [table.userId, table.surveyId],
+			columns: [table.userId, table.chapterId],
 			foreignColumns: [labelingSurveysParticipants.userId, labelingSurveysParticipants.surveyId],
 		})
 			.onDelete('cascade')

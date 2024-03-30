@@ -1,5 +1,6 @@
 import type { AvailableLanguageTag } from '@translations/runtime';
 import { isAvailableLanguageTag, setLanguageTag, sourceLanguageTag } from '@translations/runtime';
+import { revalidatePath as nextRevalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 import type { RedirectType } from 'next/navigation';
 import {
@@ -63,4 +64,9 @@ export function redirect(url: string, type?: RedirectType) {
 export function permanentRedirect(url: string, type?: RedirectType) {
 	setLanguageTag(languageTagServer);
 	return nextPermanentRedirect(withLang(url), type);
+}
+
+export function revalidatePath(originalPath: string, type?: 'layout' | 'page') {
+	setLanguageTag(languageTagServer);
+	return nextRevalidatePath(withLang(originalPath), type);
 }

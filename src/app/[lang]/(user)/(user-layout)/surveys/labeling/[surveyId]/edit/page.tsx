@@ -1,59 +1,104 @@
 import { authorize } from '@lib/auth/auth';
 import { CACHE_TAGS } from '@lib/constants';
-import { labelingSurveys, labelingSurveysTranslations } from '@lib/database/schema/public';
-import { withTranslations } from '@lib/i18n/aggregation';
-import { isEditableLabelingSurvey } from '@lib/queries/queries';
-import * as m from '@translations/messages';
+import { db } from '@lib/database/db';
+import {
+	imagesPools,
+	imagesPoolsTranslations,
+	labelingSurveys,
+	labelingSurveysTranslations,
+	labels,
+	labelsTranslations,
+} from '@lib/database/schema/public';
+import { languagesJoin, translationsAgg, translationsJoin } from '@lib/i18n/aggregation';
+import { canEditLabelingSurvey } from '@lib/queries/queries';
 import { languageTag } from '@translations/runtime';
-import { and, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
+import { getColumns } from 'drizzle-orm-helpers';
 import { unstable_cache as cache } from 'next/cache';
 import { notFound } from 'next/navigation';
-import {
-	SurveyConfigurationForm,
-	SurveyPresentationForm,
-	SurveySecurityForm,
-	SurveySharingForm,
-} from './client';
+import { SurveyConfigurationForm, SurveyLabelsForm, SurveyPresentationForm } from './client';
 
 const getEditorLabelingSurvey = cache(
 	async function getEditorLabelingSurvey(surveyId: string) {
 		const { user } = await authorize();
-		const agg = withTranslations(labelingSurveys, labelingSurveysTranslations, (t, tt) => ({
-			field: t.id,
-			reference: tt.id,
-		}));
 		return (
-			await agg
-				.where(and(eq(labelingSurveys.id, surveyId), isEditableLabelingSurvey(user.id)))
-				.limit(1)
-		)[0];
+			(
+				await db
+					.select({
+						...getColumns(labelingSurveys),
+						translations: translationsAgg(getColumns(labelingSurveysTranslations)),
+					})
+					.from(labelingSurveys)
+					.leftJoin(...languagesJoin)
+					.leftJoin(
+						...translationsJoin(
+							labelingSurveysTranslations,
+							labelingSurveys.id,
+							labelingSurveysTranslations.id
+						)
+					)
+					.groupBy(labelingSurveys.id)
+					.where(and(eq(labelingSurveys.id, surveyId), canEditLabelingSurvey({ userId: user.id })))
+					.limit(1)
+			)[0] ?? null
+		);
 	},
-	[],
-	{ tags: [CACHE_TAGS.EDITOR_SURVEY_PRESENTATION, CACHE_TAGS.EDITOR_SURVEY_CONFIG] }
+	['editor-survey-id'],
+	{ tags: [CACHE_TAGS.EDITOR_SURVEY_PRESENTATION, CACHE_TAGS.EDITOR_SURVEY_CONFIG], revalidate: 10 }
 );
 
 export type EditorLabelingSurvey = NonNullable<Awaited<ReturnType<typeof getEditorLabelingSurvey>>>;
 
+const getEditorLabelingSurveyLabels = cache(
+	async function (surveyId: string) {
+		const { user } = await authorize();
+		return await db
+			.select({
+				...getColumns(labels),
+				translations: translationsAgg(getColumns(labelsTranslations)).as('labels_t_agg'),
+			})
+			.from(labels)
+			.leftJoin(...languagesJoin)
+			.leftJoin(...translationsJoin(labelsTranslations, labels.id, labelsTranslations.id))
+			.groupBy(labels.id)
+			.where(
+				and(eq(labels.surveyId, surveyId), canEditLabelingSurvey({ userId: user.id, surveyId }))
+			)
+			.orderBy(asc(labels.createdAt));
+	},
+	['editor-survey-id'],
+	{ tags: [CACHE_TAGS.EDITOR_SURVEY_LABELS], revalidate: 10 }
+);
+
+export type EditorLabelingSurveyLabels = Awaited<ReturnType<typeof getEditorLabelingSurveyLabels>>;
+
+async function getSelectableImagesPools() {
+	const lang = languageTag();
+	const { id } = getColumns(imagesPools);
+	const { title, description } = getColumns(imagesPoolsTranslations);
+	return await db
+		.select({ id, title, description })
+		.from(imagesPools)
+		.leftJoin(
+			imagesPoolsTranslations,
+			and(eq(imagesPools.id, imagesPoolsTranslations.id), eq(imagesPoolsTranslations.lang, lang))
+		);
+}
+
+export type SelectableImagesPools = Awaited<ReturnType<typeof getSelectableImagesPools>>;
+
 export default async function Page(props: { params: { surveyId: string } }) {
 	const survey = await getEditorLabelingSurvey(props.params.surveyId);
-	const lang = languageTag();
-
+	const labels = await getEditorLabelingSurveyLabels(props.params.surveyId);
+	const pools = await getSelectableImagesPools();
 	if (!survey) {
 		notFound();
 	}
-
 	return (
-		<div className="flex w-full max-w-screen-xl flex-1 flex-col items-stretch justify-center gap-5 self-center p-2">
-			<h1 className="text-4xl font-semibold">
-				<span className="text-muted-foreground">{m.survey()}&thinsp;:</span>&ensp;
-				{survey.translations[lang].title || (
-					<span className="italic opacity-50">{m.untitled()}</span>
-				)}
-			</h1>
+		<>
 			<SurveyPresentationForm {...survey} />
-			<SurveyConfigurationForm {...survey} />
-			<SurveySharingForm {...survey} />
-			<SurveySecurityForm {...survey} />
-		</div>
+			<SurveyConfigurationForm {...survey} selectableImagesPools={pools} />
+			<SurveyLabelsForm {...survey} labels={labels} />
+		</>
 	);
 }
