@@ -1,5 +1,6 @@
 'use client';
 
+import passwordResetFinalize from '@lib/actions/password-reset-finalize';
 import ButtonSubmit from '@lib/components/button-submit';
 import {
 	Button,
@@ -15,17 +16,15 @@ import * as m from '@translations/messages';
 import { Check, Eye, EyeOff } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useFormState } from 'react-dom';
-import type { passwordResetFinalize } from './page';
 
-export function PasswordResetFinalizeForm(props: {
-	formAction: ReturnType<typeof passwordResetFinalize>;
-}) {
-	const [formState, formAction] = useFormState(props.formAction, undefined);
+export function PasswordResetFinalizeForm(props: { token: string }) {
+	const [formState, formAction] = useFormState(passwordResetFinalize, undefined);
 	const [showPassword, setShowPassword] = useState(false);
 	const passwordInputType = useMemo(() => (showPassword ? 'text' : 'password'), [showPassword]);
 	return (
 		<form action={formAction} className="flex flex-col gap-4">
 			<h1 className="mb-4 text-3xl font-medium">{m.reset_password()}</h1>
+			<input type="hidden" name="token" readOnly defaultValue={props.token} />
 			<Field>
 				<Label htmlFor="new-password">{m.password_new()}</Label>
 				<div className="flex flex-row gap-2 self-stretch">

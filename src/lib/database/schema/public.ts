@@ -101,66 +101,79 @@ export const imagesPoolsEditors = pgTable(
 	}
 );
 
-export const workshopScenarios = pgTable('workshop_scenarios', {
-	id: text('id')
-		.default(nanoid({ size: 12 }))
-		.primaryKey(),
-	externalId: text('external_id'),
-	name: text('name'),
-	body: text('body'),
-});
+export const workshopScenarios = pgTable(
+	'workshop_scenarios',
+	{
+		id: text('id')
+			.default(nanoid({ size: 12 }))
+			.primaryKey(),
+		poolId: text('pool_id')
+			.references(() => imagesPools.id, { onDelete: 'cascade', onUpdate: 'cascade' })
+			.notNull(),
+		externalId: text('external_id'),
+		name: text('name').notNull(),
+		body: text('body').notNull(),
+	},
+	(table) => {
+		return {
+			unq: unique().on(table.poolId, table.name),
+		};
+	}
+);
 
 /**
  * Reusable image-prompts associated with generated images uploaded by users.
  */
-export const imagesPrompts = pgTable('images_prompts', {
-	id: text('id').default(nanoid()).primaryKey(),
-	scenarioId: text('scenario_id').references(() => workshopScenarios.id, {
-		onDelete: 'set null',
-		onUpdate: 'cascade',
-	}),
-	prompt: text('prompt').notNull(),
-	createdAt: timestamp('created_at').notNull().defaultNow(),
-});
+export const imagesPrompts = pgTable(
+	'images_prompts',
+	{
+		id: text('id').default(nanoid()).primaryKey(),
+		scenarioId: text('scenario_id').references(() => workshopScenarios.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
+		poolId: text('pool_id')
+			.references(() => imagesPools.id, { onDelete: 'cascade', onUpdate: 'cascade' })
+			.notNull(),
+		prompt: text('prompt').notNull(),
+		createdAt: timestamp('created_at').notNull().defaultNow(),
+	},
+	(table) => {
+		return {
+			unq: unique().on(table.prompt, table.poolId),
+		};
+	}
+);
 
 /**
  * Images uploaded by users (can be used across multiple pools).
  */
-export const images = pgTable('images', {
-	id: text('id').default(nanoid()).primaryKey(),
-	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-	createdById: text('created_by_id').references(() => users.id, {
-		onDelete: 'set null',
-		onUpdate: 'cascade',
-	}),
-	storageName: text('storage_name').notNull().unique(),
-	width: integer('width').notNull(),
-	height: integer('height').notNull(),
-	promptId: text('prompt_id').references(() => imagesPrompts.id, {
-		onDelete: 'set null',
-		onUpdate: 'cascade',
-	}),
-});
-
-/**
- * Through this table, images can be used across multiple pools (many:many).
- */
-export const imagesToPools = pgTable(
-	'images_to_pools',
+export const images = pgTable(
+	'images',
 	{
-		poolId: text('image_pool_id').references(() => imagesPools.id, {
-			onDelete: 'cascade',
-			onUpdate: 'cascade',
-		}),
-		imageId: text('image_id').references(() => images.id, {
-			onDelete: 'cascade',
-			onUpdate: 'cascade',
-		}),
+		id: text('id').default(nanoid()).primaryKey(),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+		createdById: text('created_by_id').references(() => users.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
+		storageName: text('storage_name').notNull(),
+		poolId: text('pool_id')
+			.references(() => imagesPools.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
+		width: integer('width').notNull(),
+		height: integer('height').notNull(),
+		promptId: text('prompt_id').references(() => imagesPrompts.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
 	},
 	(table) => {
 		return {
-			pk: primaryKey({ columns: [table.imageId, table.poolId] }),
+			unq: unique().on(table.storageName, table.poolId),
 		};
 	}
 );

@@ -1,6 +1,7 @@
 import { LANG_COLUMN_SCHEMA, withTranslationsSchema } from '@lib/i18n/validation';
 import * as m from '@translations/messages';
 import { createInsertSchema } from 'drizzle-zod';
+import { z } from 'zod';
 import {
 	IMAGE_POOL_DESCRIPTION_MAX,
 	IMAGE_POOL_TITLE_MAX,
@@ -11,7 +12,9 @@ import {
 } from './constants';
 import {
 	imagesPools,
+	imagesPoolsInvitations,
 	imagesPoolsTranslations,
+	imagesPrompts,
 	labelingSurveys,
 	labelingSurveysChapters,
 	labelingSurveysChaptersTranslations,
@@ -31,6 +34,10 @@ export const imagesPoolsWithTranslationsSchema = withTranslationsSchema(
 	imagesPoolsSchema,
 	imagesPoolsTranslationsSchema
 );
+
+export const imagesPoolsInvitationsSchema = createInsertSchema(imagesPoolsInvitations);
+
+export const imagesPromptsSchema = createInsertSchema(imagesPrompts);
 
 export const labelsSchema = createInsertSchema(labels);
 export const labelsTranslationsSchema = createInsertSchema(labelsTranslations, {
@@ -63,7 +70,10 @@ export const labelingSurveysWithTranslationsSchema = withTranslationsSchema(
 
 export const labelingSurveysInvitationsSchema = createInsertSchema(labelingSurveysInvitations);
 
-export const labelingSurveysChaptersSchema = createInsertSchema(labelingSurveysChapters);
+export const labelingSurveysChaptersSchema = createInsertSchema(labelingSurveysChapters, {
+	start: z.string().pipe(z.coerce.date()),
+	end: z.string().pipe(z.coerce.date()),
+});
 export const labelingSurveysChaptersTranslationsSchema = createInsertSchema(
 	labelingSurveysChaptersTranslations,
 	{

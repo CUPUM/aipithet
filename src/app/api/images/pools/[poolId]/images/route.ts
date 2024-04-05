@@ -19,6 +19,7 @@ export async function POST(request: NextRequest, route: { params: { poolId: stri
 	try {
 		const { user } = await authorizeRequest('images.create');
 		console.log(request.formData());
+		console.log(user, route);
 		const parsed = validateFormData(await request.formData(), schema);
 		if (!parsed.success) {
 			return Response.json(parsed.error.flatten(), { status: 400 });

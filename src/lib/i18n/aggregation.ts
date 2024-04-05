@@ -2,7 +2,7 @@ import type { AnyTable, ColumnsSelection, SQL, Subquery, TableConfig } from 'dri
 import { and, eq } from 'drizzle-orm';
 import { tru } from 'drizzle-orm-helpers';
 import { jsonBuildObject, jsonObjectAgg } from 'drizzle-orm-helpers/pg';
-import type { AnyPgSelectQueryBuilder } from 'drizzle-orm/pg-core';
+import type { PgSelect } from 'drizzle-orm/pg-core';
 import { LANG_COLUMN_NAME } from '../database/constants';
 import type { LangColumn } from '../database/schema/i18n';
 import { languages } from '../database/schema/i18n';
@@ -19,14 +19,15 @@ import { languages } from '../database/schema/i18n';
  * 			...getColumns(baseTable),
  * 			translations: aggTranslations(getColumns(translationsTable)),
  * 		})
- * 		.from(baseTable),
+ * 		.from(baseTable)
+ * 		.$dynamic(),
  * 	translationsTable,
  * 	eq(baseTable.id, translationsTable.id)
  * ).groupBy(baseTable.id);
  * ```
  */
 export function joinTranslations<
-	TSelect extends AnyPgSelectQueryBuilder,
+	TSelect extends PgSelect,
 	TTranslations extends
 		| (AnyTable<TableConfig> & LangColumn)
 		| (Subquery<string, Record<string, unknown>> & LangColumn),

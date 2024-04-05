@@ -16,7 +16,8 @@ async function getEditorImagePool(poolId: string) {
 				...getColumns(imagesPools),
 				translations: aggTranslations(getColumns(imagesPoolsTranslations)),
 			})
-			.from(imagesPools),
+			.from(imagesPools)
+			.$dynamic(),
 		imagesPoolsTranslations,
 		eq(imagesPools.id, imagesPoolsTranslations.id)
 	)

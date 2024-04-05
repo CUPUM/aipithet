@@ -9,7 +9,7 @@ import {
 	labels,
 	labelsTranslations,
 } from '@lib/database/schema/public';
-import { aggTranslations, languagesJoin, translationsJoin } from '@lib/i18n/aggregation';
+import { aggTranslations, joinTranslations } from '@lib/i18n/aggregation';
 import { canEditLabelingSurvey } from '@lib/queries/queries';
 import { languageTag } from '@translations/runtime';
 import { and, asc, eq } from 'drizzle-orm';
@@ -21,27 +21,21 @@ import { SurveyConfigurationForm, SurveyLabelsForm, SurveyPresentationForm } fro
 const getEditorLabelingSurvey = cache(
 	async function getEditorLabelingSurvey(surveyId: string) {
 		const { user } = await authorize();
-		return (
-			(
-				await db
-					.select({
-						...getColumns(labelingSurveys),
-						translations: aggTranslations(getColumns(labelingSurveysTranslations)),
-					})
-					.from(labelingSurveys)
-					.leftJoin(...languagesJoin)
-					.leftJoin(
-						...translationsJoin(
-							labelingSurveysTranslations,
-							labelingSurveys.id,
-							labelingSurveysTranslations.id
-						)
-					)
-					.groupBy(labelingSurveys.id)
-					.where(and(eq(labelingSurveys.id, surveyId), canEditLabelingSurvey({ userId: user.id })))
-					.limit(1)
-			)[0] ?? null
-		);
+		const [found] = await joinTranslations(
+			db
+				.select({
+					...getColumns(labelingSurveys),
+					translations: aggTranslations(getColumns(labelingSurveysTranslations)),
+				})
+				.from(labelingSurveys)
+				.$dynamic(),
+			labelingSurveysTranslations,
+			eq(labelingSurveys.id, labelingSurveysTranslations.id)
+		)
+			.groupBy(labelingSurveys.id)
+			.where(and(eq(labelingSurveys.id, surveyId), canEditLabelingSurvey({ userId: user.id })))
+			.limit(1);
+		return found ?? null;
 	},
 	['editor-survey-id'],
 	{ tags: [CACHE_TAGS.EDITOR_SURVEY_PRESENTATION, CACHE_TAGS.EDITOR_SURVEY_CONFIG], revalidate: 10 }
@@ -52,14 +46,17 @@ export type EditorLabelingSurvey = NonNullable<Awaited<ReturnType<typeof getEdit
 const getEditorLabelingSurveyLabels = cache(
 	async function (surveyId: string) {
 		const { user } = await authorize();
-		return await db
-			.select({
-				...getColumns(labels),
-				translations: aggTranslations(getColumns(labelsTranslations)).as('labels_t_agg'),
-			})
-			.from(labels)
-			.leftJoin(...languagesJoin)
-			.leftJoin(...translationsJoin(labelsTranslations, labels.id, labelsTranslations.id))
+		return await joinTranslations(
+			db
+				.select({
+					...getColumns(labels),
+					translations: aggTranslations(getColumns(labelsTranslations)).as('labels_t_agg'),
+				})
+				.from(labels)
+				.$dynamic(),
+			labelsTranslations,
+			eq(labels.id, labelsTranslations.id)
+		)
 			.groupBy(labels.id)
 			.where(
 				and(eq(labels.surveyId, surveyId), canEditLabelingSurvey({ userId: user.id, surveyId }))

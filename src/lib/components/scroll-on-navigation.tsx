@@ -11,7 +11,7 @@ import { useEffect, useRef } from 'react';
 export default function ScrollOnNavigation({ top = 0, left }: ScrollToOptions = {}) {
 	const ref = useRef<HTMLDivElement>(null);
 	const pathname = usePathname();
-
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => ref.current?.parentElement?.scrollTo({ top, left }), [pathname, ref]);
 
 	return <div ref={ref} className="hidden" />;

@@ -11,7 +11,7 @@ import { ImagePoolCreateForm } from './client';
 
 async function ImagePools() {
 	const lang = languageTag();
-	const { user } = await authorize();
+	await authorize();
 	const { id, createdAt } = getColumns(imagesPools);
 	const { description, title } = getColumns(imagesPoolsTranslations);
 	const pools = await db
@@ -36,7 +36,7 @@ async function ImagePools() {
 
 async function Prompts(props: { page?: number }) {
 	const pageSize = 20;
-	const { user } = await authorize();
+	await authorize();
 	const { id, createdAt, storageName } = getColumns(images);
 	const imgs = await db
 		.select({ id, createdAt, storageName })

@@ -1,12 +1,14 @@
 import { authorize } from '@lib/auth/auth';
 import { CACHE_TAGS } from '@lib/constants';
+import { db } from '@lib/database/db';
 import {
 	labelingSurveysChapters,
 	labelingSurveysChaptersTranslations,
 } from '@lib/database/schema/public';
-import { withTranslations } from '@lib/i18n/aggregation';
+import { aggTranslations, joinTranslations } from '@lib/i18n/aggregation';
 import { canEditLabelingSurvey } from '@lib/queries/queries';
 import { and, eq } from 'drizzle-orm';
+import { getColumns } from 'drizzle-orm-helpers';
 import { unstable_cache as cache } from 'next/cache';
 import { notFound } from 'next/navigation';
 import {
@@ -18,13 +20,16 @@ import {
 const getEditorLabelingSurveyChapter = cache(
 	async function getEditorLabelingSurvey(chapterId: string) {
 		const { user } = await authorize();
-		const agg = await withTranslations(
-			labelingSurveysChapters,
+		const agg = await joinTranslations(
+			db
+				.select({
+					...getColumns(labelingSurveysChapters),
+					translations: aggTranslations(getColumns(labelingSurveysChaptersTranslations)),
+				})
+				.from(labelingSurveysChapters)
+				.$dynamic(),
 			labelingSurveysChaptersTranslations,
-			(t, tt) => ({
-				field: t.id,
-				reference: tt.id,
-			})
+			eq(labelingSurveysChapters.id, labelingSurveysChaptersTranslations.id)
 		)
 			.where(
 				and(

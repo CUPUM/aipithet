@@ -11,7 +11,7 @@ import { Send, Trash2 } from 'lucide-react';
 import { useFormState } from 'react-dom';
 
 export function ImagePoolEditorInviteForm(props: { poolId: string }) {
-	const [formState, formAction] = useFormState(imagePoolEditorDelete, undefined);
+	const [_formState, formAction] = useFormState(imagePoolEditorDelete, undefined);
 	return (
 		<form action={formAction} className="flex flex-col gap-4 rounded-sm bg-border/50 p-6">
 			<div className="flex flex-row gap-2">

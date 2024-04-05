@@ -4,5 +4,5 @@ import surveyInvitationParticipantCreate from './survey-invitation-participant-c
 
 export default async function surveyInvitationEditorCreate(state: unknown, formData: FormData) {
 	formData.set('&editor', 'true');
-	surveyInvitationParticipantCreate(state, formData);
+	return surveyInvitationParticipantCreate(state, formData);
 }

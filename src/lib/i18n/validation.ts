@@ -16,8 +16,7 @@ export const LANG_COLUMN_SCHEMA = {
 export type LangColumnSchema = typeof LANG_COLUMN_SCHEMA;
 
 /**
- * Extend the insert schema of a given ressource table with its corresponding translations. The
- * resulting schema should be isomorphic with `withTranslations`.
+ * Extend the insert schema of a given ressource table with its corresponding translations.
  */
 export function withTranslationsSchema<
 	T extends Record<string, ZodTypeAny>,

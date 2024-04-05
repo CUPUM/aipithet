@@ -1,4 +1,3 @@
-import type { ParseFormDataOptions } from 'parse-nested-form-data';
 import { parseFormData } from 'parse-nested-form-data';
 import type {
 	AnyZodObject,
@@ -35,18 +34,18 @@ function formatParseSuccess<T>(parsed: SafeParseSuccess<T>) {
 	};
 }
 
-export const transformEntry: ParseFormDataOptions['transformEntry'] = (
-	[path, value],
-	defaultTransform
-) => {
-	if (path.startsWith('@') && typeof value === 'string') {
-		return {
-			path: path.slice(1),
-			value: value.length ? new Date(value) : null,
-		};
-	}
-	return defaultTransform([path, value]);
-};
+// export const transformEntry: ParseFormDataOptions['transformEntry'] = (
+// 	[path, value],
+// 	defaultTransform
+// ) => {
+// 	if (path.startsWith('@') && typeof value === 'string') {
+// 		return {
+// 			path: path.slice(1),
+// 			value: value.length ? new Date(value) : null,
+// 		};
+// 	}
+// 	return defaultTransform([path, value]);
+// };
 
 type ZodObjectUnion<T extends AnyZodObject> = ZodUnion<
 	[ZodValidation<T>, ZodValidation<T>, ...ZodValidation<T>[]]
@@ -108,7 +107,7 @@ export function validateFormData<
 	UnknownKeys extends UnknownKeysParam = UnknownKeysParam,
 	Catchall extends ZodTypeAny = ZodTypeAny,
 >(formData: FormData, schema: ZodValidation<ZodObject<T, UnknownKeys, Catchall>>) {
-	const parsed = schema.safeParse(parseFormData(formData, { transformEntry }));
+	const parsed = schema.safeParse(parseFormData(formData));
 	if (!parsed.success) {
 		return formatParseError(parsed);
 	}
@@ -133,7 +132,7 @@ export async function validateFormDataAsync<
 	UnknownKeys extends UnknownKeysParam = UnknownKeysParam,
 	Catchall extends ZodTypeAny = ZodTypeAny,
 >(formData: FormData, schema: ZodValidation<ZodObject<T, UnknownKeys, Catchall>>) {
-	const parsed = await schema.safeParseAsync(parseFormData(formData, { transformEntry }));
+	const parsed = await schema.safeParseAsync(parseFormData(formData));
 	if (!parsed.success) {
 		return formatParseError(parsed);
 	}

@@ -96,7 +96,7 @@ export function SurveyChapterConfigurationForm(props: EditorLabelingSurveyChapte
 					<Field>
 						<Label>{m.start()}</Label>
 						<Input
-							name="@start"
+							name="start"
 							type="datetime-local"
 							defaultValue={props.start ? toDateTimeLocalString(props.start) : undefined}
 						/>
@@ -105,7 +105,7 @@ export function SurveyChapterConfigurationForm(props: EditorLabelingSurveyChapte
 					<Field>
 						<Label>{m.end()}</Label>
 						<Input
-							name="@end"
+							name="end"
 							type="datetime-local"
 							defaultValue={props.end ? toDateTimeLocalString(props.end) : undefined}
 						/>
