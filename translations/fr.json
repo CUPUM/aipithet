@@ -102,7 +102,7 @@
 	"image_pools": "Collections d’images",
 	"surveys_none_found": "Aucun sondage trouvé",
 	"images_pools_none_found": "Aucune collection d’images trouvée",
-	"images_pools_create": "Créer une collection d’images",
+	"image_pool_create": "Créer une collection d’images",
 	"images_none_found": "Aucune image trouvée",
 	"administration": "Administration",
 	"image_pool": "Collection d’images",
@@ -121,5 +121,16 @@
 	"date_range_active_long": "Sélectionnez une période pour laquelle le chapitre du sondage devrait être ouvert au participants.",
 	"start": "Début",
 	"end": "Fin",
-	"answer_quota": "Quota de réponse"
+	"answer_quota": "Quota de réponse",
+	"invitations": "Invitations",
+	"invitation_send": "Envoyer l'invitation",
+	"participant": "Participant",
+	"invitations_pending": "Invitations en attente",
+	"del": "Supprimer",
+	"time_left": "Restant",
+	"images_and_prompts": "Images et prompts",
+	"prompts": "Prompts",
+	"prompts_none_found": "Aucun prompt trouvé",
+	"editor_invite_new": "Inviter un nouvel éditeur",
+	"signup_error": "Impossible de créer le nouvel utilisateur."
 }

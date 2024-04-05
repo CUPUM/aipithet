@@ -148,6 +148,34 @@
       "when": 1711774087855,
       "tag": "0020_elite_stardust",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1711787743996,
+      "tag": "0021_nifty_cannonball",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "5",
+      "when": 1712073469111,
+      "tag": "0022_fancy_plazm",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1712089491187,
+      "tag": "0023_sour_fabian_cortez",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "5",
+      "when": 1712253460740,
+      "tag": "0024_silky_master_mold",
+      "breakpoints": true
     }
   ]
 }

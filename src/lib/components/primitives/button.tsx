@@ -14,7 +14,7 @@ const buttonVariants = cva(
 				default: 'bg-primary text-primary-foreground hover:bg-primary/90',
 				destructive:
 					'text-destructive bg-destructive/5 border border-destructive/20 hover:bg-destructive/90 hover:text-destructive-foreground',
-				outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+				outline: 'border border-input bg-transparent hover:bg-accent hover:text-accent-foreground',
 				secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
 				ghost: 'hover:bg-accent hover:text-accent-foreground',
 				link: 'text-primary underline-offset-4 hover:underline',
@@ -60,7 +60,7 @@ export function ButtonIcon({
 		<Icon
 			{...restProps}
 			className={cn(
-				'duration-350 h-[1.25em] w-[1.25em] opacity-40 transition-all ease-out group-hover/button:opacity-80 group-[.aspect-square]/button:opacity-75 group-aria-[current]/button:animate-pulse group-aria-[current]/button:text-current group-aria-[current]/button:opacity-100',
+				'duration-350 h-[1.25em] w-[1.25em] opacity-30 transition-all ease-out group-hover/button:opacity-80 group-[.aspect-square]/button:opacity-75 group-aria-[current]/button:animate-pulse group-aria-[current]/button:text-current group-aria-[current]/button:opacity-100',
 				className
 			)}
 			strokeWidth={strokeWidth}

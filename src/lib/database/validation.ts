@@ -21,15 +21,15 @@ import {
 	labelsTranslations,
 } from './schema/public';
 
-export const imagePoolsSchema = createInsertSchema(imagesPools);
-export const imagePoolsTranslationsSchema = createInsertSchema(imagesPoolsTranslations, {
+export const imagesPoolsSchema = createInsertSchema(imagesPools);
+export const imagesPoolsTranslationsSchema = createInsertSchema(imagesPoolsTranslations, {
 	...LANG_COLUMN_SCHEMA,
 	title: (s) => s.title.trim().max(IMAGE_POOL_TITLE_MAX),
 	description: (s) => s.description.trim().max(IMAGE_POOL_DESCRIPTION_MAX),
 });
-export const imagePoolsWithTranslationsSchema = withTranslationsSchema(
-	imagePoolsSchema,
-	imagePoolsTranslationsSchema
+export const imagesPoolsWithTranslationsSchema = withTranslationsSchema(
+	imagesPoolsSchema,
+	imagesPoolsTranslationsSchema
 );
 
 export const labelsSchema = createInsertSchema(labels);

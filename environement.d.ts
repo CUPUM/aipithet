@@ -8,11 +8,12 @@ namespace NodeJS {
 		DB_HOST_POOLED: string;
 		DB_NAME: string;
 		DB_PORT: string;
-		RESEND_DOMAIN: string;
-		RESEND_API_KEY: string;
-		S3_ACCESS_KEY: string;
-		S3_SECRET_KEY: string;
-		S3_BUCKET_NAME: string;
-		S3_BUCKET_REGION: string;
+		EMAIL_HOST: string;
+		EMAIL_PORT: string;
+		EMAIL_USER: string;
+		EMAIL_PASSWORD: string;
+		STORAGE_PROJECT_ID: string;
+		STORAGE_PRIVATE_KEY: string;
+		STORAGE_CLIENT_EMAIL: string;
 	}
 }

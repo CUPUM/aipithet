@@ -10,12 +10,12 @@ export function SurveyChapterCreateForm(props: { surveyId: string }) {
 	return (
 		<form
 			action={surveyChapterCreate}
-			className="flex aspect-[5/3] animate-puff-grow items-stretch justify-stretch"
+			className="flex aspect-[5/3] animate-fly-up items-stretch justify-stretch"
 		>
 			<ButtonSubmit
 				name="surveyId"
 				value={props.surveyId}
-				className="flex h-[unset] flex-1 animate-fly-down items-center justify-center rounded-lg border-dashed bg-background p-8 fill-mode-both"
+				className="text-md flex h-[unset] flex-1 animate-fly-down items-center justify-center rounded-lg border-dashed p-8 fill-mode-both"
 				variant="outline"
 			>
 				<ButtonIconLoading icon={Plus} />

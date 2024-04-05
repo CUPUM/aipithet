@@ -10,13 +10,13 @@ import { useFormState } from 'react-dom';
 export function ImagePoolCreateForm() {
 	const [_formState, formAction] = useFormState(imagePoolCreate, undefined);
 	return (
-		<form action={formAction} className="list-item">
+		<form action={formAction} className="list-item aspect-[5/3]">
 			<ButtonSubmit
 				variant="outline"
-				className="flex aspect-[5/3] h-full flex-1 animate-puff-grow items-center justify-center rounded-lg border-dashed bg-background p-8 fill-mode-both"
+				className="flex h-full w-full flex-1 animate-puff-grow items-center justify-center rounded-lg border-dashed p-8 fill-mode-both"
 			>
 				<ButtonIconLoading icon={Plus} />
-				{m.images_pools_create()}
+				{m.image_pool_create()}
 			</ButtonSubmit>
 		</form>
 	);

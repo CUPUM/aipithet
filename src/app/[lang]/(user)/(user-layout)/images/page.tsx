@@ -21,9 +21,6 @@ async function ImagePools() {
 			imagesPoolsTranslations,
 			and(eq(imagesPools.id, imagesPoolsTranslations.id), eq(imagesPoolsTranslations.lang, lang))
 		);
-	if (!pools.length) {
-		return <li>{m.images_pools_none_found()}</li>;
-	}
 	return pools.map((pool, i) => (
 		<li key={pool.id}>
 			<Link
@@ -37,7 +34,7 @@ async function ImagePools() {
 	));
 }
 
-async function Images(props: { page?: number }) {
+async function Prompts(props: { page?: number }) {
 	const pageSize = 20;
 	const { user } = await authorize();
 	const { id, createdAt, storageName } = getColumns(images);
@@ -49,8 +46,8 @@ async function Images(props: { page?: number }) {
 		.offset((props.page ?? 0) * pageSize);
 	if (!imgs.length) {
 		return (
-			<li className="flex aspect-square items-center justify-center rounded-sm bg-accent/10 text-sm italic text-muted-foreground">
-				{m.images_none_found()}
+			<li className="flex items-center justify-center rounded-sm bg-accent/10 text-sm italic text-muted-foreground">
+				{m.prompts_none_found()}
 			</li>
 		);
 	}
@@ -80,10 +77,10 @@ export default async function Page() {
 				</ul>
 			</section>
 			<section className="flex flex-col gap-6">
-				<h2 className="text-4xl font-semibold">{m.images()}</h2>
+				<h2 className="text-4xl font-semibold">{m.prompts()}</h2>
 				<ul className="grid grid-cols-5 gap-4 rounded-lg border border-border bg-background p-6">
 					<Suspense>
-						<Images />
+						<Prompts />
 					</Suspense>
 				</ul>
 			</section>

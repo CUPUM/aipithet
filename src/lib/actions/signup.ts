@@ -5,9 +5,10 @@ import { emailPasswordSignupSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { emailVerificationCodes, users } from '@lib/database/schema/auth';
 import { SENDERS } from '@lib/email/constants';
-import { resend } from '@lib/email/resend';
+import { transporter } from '@lib/email/email';
 import VerifyEmailTemplate from '@lib/email/templates/verify-email';
 import { languageTagServer, redirect } from '@lib/i18n/utilities-server';
+import { render } from '@react-email/render';
 import * as m from '@translations/messages';
 import { setLanguageTag } from '@translations/runtime';
 import { eq } from 'drizzle-orm';
@@ -62,14 +63,19 @@ export default async function signup(state: unknown, formData: FormData) {
 		}
 		return { ...inserted, ...verification };
 	});
+	await transporter
+		.sendMail({
+			from: SENDERS.DEFAULT,
+			to: [parsed.data.email],
+			subject: 'Verify your email',
+			html: render(VerifyEmailTemplate({ code, expiresAt })),
+		})
+		.catch(async () => {
+			await db.delete(users).where(eq(users.id, id));
+			throw new Error(m.signup_error());
+		});
 	const session = await auth.createSession(id, {});
 	const sessionCookie = auth.createSessionCookie(session.id);
 	cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-	await resend.emails.send({
-		from: SENDERS.DEFAULT,
-		to: [parsed.data.email],
-		subject: 'Verify your email',
-		react: VerifyEmailTemplate({ code, expiresAt }),
-	});
 	return redirect('/verify-email');
 }

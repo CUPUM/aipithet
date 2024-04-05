@@ -138,4 +138,6 @@ export function SurveyChapterConfigurationForm(props: EditorLabelingSurveyChapte
 	);
 }
 
-export function SurveyChapterLeafPresetForm() {}
+export function SurveyChapterLeafPresetsForm() {
+	return <section>Leaf presets</section>;
+}

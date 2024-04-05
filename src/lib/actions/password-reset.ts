@@ -4,9 +4,10 @@ import { passwordResetSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { passwordResetTokens, users } from '@lib/database/schema/auth';
 import { SENDERS } from '@lib/email/constants';
-import { resend } from '@lib/email/resend';
+import { transporter } from '@lib/email/email';
 import ResetPasswordTemplate from '@lib/email/templates/reset-password';
 import { languageTagServer } from '@lib/i18n/utilities-server';
+import { render } from '@react-email/render';
 import * as m from '@translations/messages';
 import { setLanguageTag } from '@translations/runtime';
 import { eq } from 'drizzle-orm';
@@ -47,11 +48,11 @@ export default async function passwordReset(state: unknown, formData: FormData) 
 		if (!inserted) {
 			throw new Error('No inserted password reset row was returned.');
 		}
-		await resend.emails.send({
+		await transporter.sendMail({
 			from: SENDERS.DEFAULT,
 			to: [parsed.data.email],
 			subject: m.reset_password_email_subject(),
-			react: ResetPasswordTemplate(inserted),
+			html: render(ResetPasswordTemplate(inserted)),
 		});
 	} catch (err) {
 		console.error(err);

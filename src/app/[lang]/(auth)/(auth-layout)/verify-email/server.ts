@@ -5,9 +5,10 @@ import { emailVerificationSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { emailVerificationCodes, users } from '@lib/database/schema/auth';
 import { SENDERS } from '@lib/email/constants';
-import { resend } from '@lib/email/resend';
+import { transporter } from '@lib/email/email';
 import VerifyEmailTemplate from '@lib/email/templates/verify-email';
 import { redirect } from '@lib/i18n/utilities-server';
+import { render } from '@react-email/render';
 import { and, eq, exists, gte } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { now, toExcluded } from 'drizzle-orm-helpers/pg';
@@ -29,11 +30,11 @@ export async function emailVerificationSend() {
 		if (!inserted) {
 			throw new Error('No verification code was returned');
 		}
-		await resend.emails.send({
+		await transporter.sendMail({
 			from: SENDERS.DEFAULT,
 			to: [user.email],
 			subject: 'Verify your email',
-			react: VerifyEmailTemplate(inserted),
+			html: render(VerifyEmailTemplate(inserted)),
 		});
 	} catch (err) {
 		console.error(err);

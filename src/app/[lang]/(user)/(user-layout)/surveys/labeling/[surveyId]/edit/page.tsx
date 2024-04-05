@@ -9,7 +9,7 @@ import {
 	labels,
 	labelsTranslations,
 } from '@lib/database/schema/public';
-import { languagesJoin, translationsAgg, translationsJoin } from '@lib/i18n/aggregation';
+import { aggTranslations, languagesJoin, translationsJoin } from '@lib/i18n/aggregation';
 import { canEditLabelingSurvey } from '@lib/queries/queries';
 import { languageTag } from '@translations/runtime';
 import { and, asc, eq } from 'drizzle-orm';
@@ -26,7 +26,7 @@ const getEditorLabelingSurvey = cache(
 				await db
 					.select({
 						...getColumns(labelingSurveys),
-						translations: translationsAgg(getColumns(labelingSurveysTranslations)),
+						translations: aggTranslations(getColumns(labelingSurveysTranslations)),
 					})
 					.from(labelingSurveys)
 					.leftJoin(...languagesJoin)
@@ -55,7 +55,7 @@ const getEditorLabelingSurveyLabels = cache(
 		return await db
 			.select({
 				...getColumns(labels),
-				translations: translationsAgg(getColumns(labelsTranslations)).as('labels_t_agg'),
+				translations: aggTranslations(getColumns(labelsTranslations)).as('labels_t_agg'),
 			})
 			.from(labels)
 			.leftJoin(...languagesJoin)

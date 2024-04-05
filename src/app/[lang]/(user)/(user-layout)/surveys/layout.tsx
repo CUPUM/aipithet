@@ -6,7 +6,7 @@ export default function Layout(props: { children: ReactNode }) {
 	return (
 		<>
 			<div className="absolute inset-0 -z-10 overflow-hidden rounded-[inherit]">
-				<div className="fixed h-full w-full text-accent">
+				<div className="fixed h-full w-full text-border">
 					<ScatteredNodes
 						count={80}
 						pool={[File, FolderPen, Tag, Ticket].map((Node) => (

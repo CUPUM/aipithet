@@ -49,7 +49,7 @@ export function passwordResetFinalize(token: string) {
 		const session = await auth.createSession(updated.id, {});
 		const sessionCookie = auth.createSessionCookie(session.id);
 		cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-		redirect('/i');
+		redirect('/');
 	};
 }
 

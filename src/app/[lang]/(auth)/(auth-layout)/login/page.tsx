@@ -9,7 +9,7 @@ import { LoginForm } from './client';
 export default async function Page() {
 	const { user } = await validate();
 	if (user) {
-		redirect('/i');
+		redirect('/settings');
 	}
 	return (
 		<>

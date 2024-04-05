@@ -50,7 +50,7 @@ export function SurveyCreateForm() {
 				size="lg"
 				style={{ animationDelay: '100ms' }}
 				variant="outline"
-				className="text-md flex h-[unset] flex-1 animate-fly-down items-center justify-center rounded-lg border-dashed bg-background p-8 fill-mode-both"
+				className="text-md flex h-[unset] flex-1 animate-fly-down items-center justify-center rounded-lg border-dashed p-8 fill-mode-both"
 			>
 				<ButtonIconLoading icon={Plus} />
 				{m.survey_create_long()}

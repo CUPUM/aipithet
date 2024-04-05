@@ -9,7 +9,11 @@ import { canEditLabelingSurvey } from '@lib/queries/queries';
 import { and, eq } from 'drizzle-orm';
 import { unstable_cache as cache } from 'next/cache';
 import { notFound } from 'next/navigation';
-import { SurveyChapterConfigurationForm, SurveyChapterPresentationForm } from './client';
+import {
+	SurveyChapterConfigurationForm,
+	SurveyChapterLeafPresetsForm,
+	SurveyChapterPresentationForm,
+} from './client';
 
 const getEditorLabelingSurveyChapter = cache(
 	async function getEditorLabelingSurvey(chapterId: string) {
@@ -51,6 +55,7 @@ export default async function Page(props: { params: { surveyId: string; chapterI
 		<>
 			<SurveyChapterPresentationForm {...chapter} />
 			<SurveyChapterConfigurationForm {...chapter} />
+			<SurveyChapterLeafPresetsForm />
 		</>
 	);
 }

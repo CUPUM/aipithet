@@ -5,7 +5,7 @@ import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle';
 import * as m from '@translations/messages';
 import type { InferSelectModel } from 'drizzle-orm';
 import { Lucia } from 'lucia';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { RedirectType } from 'next/navigation';
 import { cache } from 'react';
 import type { PermissionKey } from './constants';
@@ -41,7 +41,8 @@ declare module 'lucia' {
 }
 
 export const validate = cache(async () => {
-	const sessionId = cookies().get(auth.sessionCookieName)?.value ?? null;
+	const cookiesSessionId = cookies().get(auth.sessionCookieName)?.value ?? null;
+	const sessionId = cookiesSessionId ?? auth.readBearerToken(headers().get('Authorization') ?? '');
 	if (!sessionId) {
 		return {
 			user: null,
@@ -50,13 +51,15 @@ export const validate = cache(async () => {
 	}
 	const result = await auth.validateSession(sessionId);
 	try {
-		if (result.session && result.session.fresh) {
-			const sessionCookie = auth.createSessionCookie(result.session.id);
-			cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-		}
-		if (!result.session) {
-			const sessionCookie = auth.createBlankSessionCookie();
-			cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+		if (cookiesSessionId) {
+			if (result.session && result.session.fresh) {
+				const sessionCookie = auth.createSessionCookie(result.session.id);
+				cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+			}
+			if (!result.session) {
+				const sessionCookie = auth.createBlankSessionCookie();
+				cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+			}
 		}
 	} catch {
 		// next.js throws when you attempt to set cookie when rendering page
@@ -79,6 +82,21 @@ export const authorize = cache(async (key?: PermissionKey, message?: string) => 
 	}
 	if (!isAllowed(validated.user, key)) {
 		throw new Error(message ?? m.insufficient_permissions());
+	}
+	return validated;
+});
+
+export const authorizeRequest = cache(async (key?: PermissionKey, message?: string) => {
+	'use server';
+	const validated = await validate();
+	if (!validated.user) {
+		throw new Response('No valid authorization found.', { status: 401 });
+	}
+	if (!isAllowed(validated.user, key)) {
+		throw new Response(
+			message ?? 'Your authorization has insufficient permissions for this request.',
+			{ status: 403 }
+		);
 	}
 	return validated;
 });
