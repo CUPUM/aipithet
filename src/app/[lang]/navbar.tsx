@@ -4,9 +4,9 @@ import { NavbarSettingsMenu, NavbarUserMenu } from './navbar-client';
 
 export default function Navbar() {
 	return (
-		<header className="flex flex-row gap-2 p-3 justify-between self-stretch">
+		<header className="flex flex-row justify-between gap-2 self-stretch p-3">
 			<nav className="flex flex-row gap-2">
-				<NavbarButton href="/" className="text-primary border border-accent px-5 font-bold">
+				<NavbarButton href="/" className="px-5 font-bold text-primary">
 					<Tag className="h-[1.25em] w-[1.25em]" strokeWidth={3} />
 					Aipithet
 				</NavbarButton>

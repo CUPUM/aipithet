@@ -18,5 +18,5 @@ export default async function surveyLabelCreate(surveyId: string) {
 	if (!inserted) {
 		throw new Error('Error when creating label.');
 	}
-	revalidateTag(CACHE_TAGS.EDITOR_SURVEY_LABELS);
+	revalidateTag(CACHE_TAGS.SURVEY_LABELS);
 }

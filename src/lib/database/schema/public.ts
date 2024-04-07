@@ -112,7 +112,12 @@ export const workshopScenarios = pgTable(
 			.notNull(),
 		externalId: text('external_id'),
 		name: text('name').notNull(),
-		body: text('body').notNull(),
+		description: text('description').notNull(),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		createdById: text('created_by_id').references(() => users.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
 	},
 	(table) => {
 		return {
@@ -136,7 +141,12 @@ export const imagesPrompts = pgTable(
 			.references(() => imagesPools.id, { onDelete: 'cascade', onUpdate: 'cascade' })
 			.notNull(),
 		prompt: text('prompt').notNull(),
+		method: text('method'),
 		createdAt: timestamp('created_at').notNull().defaultNow(),
+		createdById: text('created_by_id').references(() => users.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
 	},
 	(table) => {
 		return {
@@ -311,6 +321,7 @@ export const labelingSurveysInvitations = pgTable(
 		email: text('email').notNull(),
 		editor: boolean('editor').default(false).notNull(),
 		pending: boolean('pending').default(true).notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 	},
 	(table) => {
 		return {

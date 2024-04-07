@@ -32,6 +32,6 @@ export default async function surveyChapterConfigurationUpdate(state: unknown, f
 				canEditLabelingSurvey({ userId: user.id, surveyId: labelingSurveysChapters.surveyId })
 			)
 		);
-	revalidateTag(CACHE_TAGS.EDITOR_SURVEY_CHAPTER_CONFIG);
+	revalidateTag(CACHE_TAGS.SURVEY_CHAPTER_CONFIG);
 	return parsed.succeed;
 }

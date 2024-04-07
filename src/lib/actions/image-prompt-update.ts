@@ -28,5 +28,5 @@ export default async function imagePromptUpdate(state: unknown, formData: FormDa
 				canEditImagePool({ userId: user.id, poolId: imagesPrompts.poolId })
 			)
 		);
-	revalidateTag(CACHE_TAGS.EDITOR_IMAGE_PROMPT);
+	revalidateTag(CACHE_TAGS.IMAGE_PROMPT);
 }

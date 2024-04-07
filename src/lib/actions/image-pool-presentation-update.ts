@@ -33,6 +33,6 @@ export default async function imagePoolPresentationUpdate(state: unknown, formDa
 				set: toExcluded(getColumns(imagesPoolsTranslations)),
 			});
 	});
-	revalidateTag(CACHE_TAGS.EDITOR_IMAGE_POOL_PRESENTATION);
+	revalidateTag(CACHE_TAGS.IMAGE_POOL_PRESENTATION);
 	return parsed.succeed;
 }

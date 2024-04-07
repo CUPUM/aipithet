@@ -11,6 +11,7 @@ import {
 	LABELING_SURVEY_TITLE_MAX,
 } from './constants';
 import {
+	images,
 	imagesPools,
 	imagesPoolsInvitations,
 	imagesPoolsTranslations,
@@ -38,6 +39,8 @@ export const imagesPoolsWithTranslationsSchema = withTranslationsSchema(
 export const imagesPoolsInvitationsSchema = createInsertSchema(imagesPoolsInvitations);
 
 export const imagesPromptsSchema = createInsertSchema(imagesPrompts);
+
+export const imagesSchema = createInsertSchema(images);
 
 export const labelsSchema = createInsertSchema(labels);
 export const labelsTranslationsSchema = createInsertSchema(labelsTranslations, {

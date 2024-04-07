@@ -22,5 +22,5 @@ export default async function surveyLabelDelete(options: { id: string; surveyId:
 				canEditLabelingSurvey({ userId: user.id, surveyId: options.surveyId })
 			)
 		);
-	revalidateTag(CACHE_TAGS.EDITOR_SURVEY_LABELS);
+	revalidateTag(CACHE_TAGS.SURVEY_LABELS);
 }

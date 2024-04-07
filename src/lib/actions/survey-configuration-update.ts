@@ -36,6 +36,6 @@ export default async function surveyConfigurationUpdate(state: unknown, formData
 			updatedById: user.id,
 		})
 		.where(and(eq(labelingSurveys.id, surveyId), canEditLabelingSurvey({ userId: user.id })));
-	revalidateTag(CACHE_TAGS.EDITOR_SURVEY_CONFIG);
+	revalidateTag(CACHE_TAGS.SURVEY_CONFIG);
 	return parsed.succeed;
 }

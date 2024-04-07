@@ -49,6 +49,6 @@ export default async function surveyPresentationUpdate(state: unknown, formData:
 				)
 			);
 	});
-	revalidateTag(CACHE_TAGS.EDITOR_SURVEY_PRESENTATION);
+	revalidateTag(CACHE_TAGS.SURVEY_PRESENTATION);
 	return parsed.succeed;
 }

@@ -176,6 +176,20 @@
       "when": 1712253460740,
       "tag": "0024_silky_master_mold",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1712360215957,
+      "tag": "0025_careless_lady_deathstrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "5",
+      "when": 1712525663591,
+      "tag": "0026_old_grandmaster",
+      "breakpoints": true
     }
   ]
 }

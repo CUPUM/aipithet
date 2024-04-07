@@ -19,20 +19,6 @@ function middleware(request: NextRequest) {
 	const headers = new Headers(request.headers);
 	headers.set(LANG_HEADER_NAME, pathnameLang ?? headersLang);
 	setLanguageTag(languageTagServer);
-	// if (!pathnameLang && headersLang) {
-	// 	// headers = new Headers();
-	// 	// headers.set(LANG_HEADER_NAME, lang);
-	// 	const redirect = request.headers.get('x-action-redirect');
-	// 	if (redirect) {
-	// 		const langRedirect = withLang(redirect, lang);
-	// 		const res = NextResponse.redirect(new URL(langRedirect, request.nextUrl.origin), {
-	// 			headers,
-	// 			status: 303,
-	// 		});
-	// 		console.log(res);
-	// 		return res;
-	// 	}
-	// }
 	if (!pathnameLang) {
 		return NextResponse.rewrite(
 			new URL(withLang(request.url.replace(request.nextUrl.origin, '')), request.nextUrl.origin),

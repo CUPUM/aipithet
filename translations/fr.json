@@ -128,9 +128,17 @@
 	"invitations_pending": "Invitations en attente",
 	"del": "Supprimer",
 	"time_left": "Restant",
-	"images_and_prompts": "Images et prompts",
 	"prompts": "Prompts",
 	"prompts_none_found": "Aucun prompt trouvé",
 	"editor_invite_new": "Inviter un nouvel éditeur",
-	"signup_error": "Impossible de créer le nouvel utilisateur."
+	"signup_error": "Impossible de créer le nouvel utilisateur.",
+	"upload": "Téléverser",
+	"image_pool_join": "Rejoindre une collection d'images",
+	"code_claim": "Réclamer le code",
+	"account": "Compte",
+	"survey_joined_pariticpant_email_title": "Vous avez été ajouté à un sondage en tant que participant!",
+	"survey_joined_editor_email_title": "Vous avez été ajouté en tant qu'éditeur pour un sondage",
+	"images_and_metadata": "Images et meta-données",
+	"survey_open": "Ouvrir le sondage",
+	"edit": "Éditer"
 }

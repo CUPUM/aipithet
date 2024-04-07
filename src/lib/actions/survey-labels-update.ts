@@ -18,7 +18,6 @@ export default async function surveyLabelsUpdate(state: unknown, formData: FormD
 		formData,
 		z.object({ labels: labelsWithTranslationsSchema.pick({ translations: true }).array() })
 	);
-	console.log(formData);
 	if (!parsed.success) {
 		return parsed.fail;
 	}

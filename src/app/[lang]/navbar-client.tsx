@@ -35,7 +35,7 @@ import {
 } from '../../lib/components/primitives/dropdown-menu';
 import { LANG_NAMES } from '../../lib/i18n/constants';
 import { availableLanguageTags, languageTag } from '../../lib/i18n/generated/runtime';
-import { USER_ROUTES_ARR, USER_ROUTES_DETAILS } from './(user)/(user-layout)/constants';
+import { USER_ROUTES_ARR, USER_ROUTES_DETAILS } from './(dashboard)/(dashboard-layout)/constants';
 import NavbarButton from './navbar-button';
 
 export function NavbarUserMenu() {
@@ -70,7 +70,7 @@ export function NavbarUserMenu() {
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
-								<Link href="/i">
+								<Link href="/settings">
 									<DropdownMenuItemIcon icon={UserCircle} />
 									{m.my_account()}
 								</Link>
