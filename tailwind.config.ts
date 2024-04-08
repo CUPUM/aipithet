@@ -108,6 +108,7 @@ const config = {
 	},
 	plugins: [
 		require('tailwindcss-animate'),
+		require('@tailwindcss/typography'),
 		plugin(({ addVariant, matchUtilities, theme, addUtilities }) => {
 			addVariant('light', '[data-theme="light"] &');
 			matchUtilities(

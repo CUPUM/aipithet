@@ -140,5 +140,6 @@
 	"survey_joined_editor_email_title": "Vous avez été ajouté en tant qu'éditeur pour un sondage",
 	"images_and_metadata": "Images et meta-données",
 	"survey_open": "Ouvrir le sondage",
-	"edit": "Éditer"
+	"edit": "Éditer",
+	"answers_history": "Historique de réponses"
 }

@@ -48,9 +48,12 @@ async function getSurveys() {
 async function Surveys() {
 	const surveys = await getSurveys();
 	const lang = languageTag();
-	return surveys.map((survey) => (
-		<li className="group/link relative rounded-md border border-border bg-background">
-			<div className="grid cursor-pointer grid-cols-[3fr_1fr] place-content-stretch p-6">
+	return surveys.map((survey, i) => (
+		<li
+			className="group/link relative animate-fly-down rounded-md border border-border bg-background fill-mode-both"
+			style={{ animationDelay: `${i * 100}ms` }}
+		>
+			<div className="grid cursor-pointer grid-cols-[3fr_1fr] place-content-stretch p-8">
 				<div className="pointer-events-none z-10 flex flex-col gap-2">
 					<h3 className="text-ellipsis whitespace-nowrap text-xl font-medium">
 						{survey.title || <span className="italic opacity-50">{m.untitled()}</span>}
@@ -100,7 +103,7 @@ export default async function Page() {
 	const { user } = await authorize();
 	return (
 		<div className="flex w-full max-w-screen-lg flex-1 flex-col items-stretch gap-4 self-center">
-			<h2 className="mb-4 text-4xl font-semibold">{m.my_surveys()}</h2>
+			<h2 className="mb-4 animate-fly-up text-4xl font-semibold">{m.my_surveys()}</h2>
 			<ul className="flex flex-col gap-4">
 				<Suspense fallback={<Skeleton className="h-40 rounded-sm bg-border/50" />}>
 					<Surveys />

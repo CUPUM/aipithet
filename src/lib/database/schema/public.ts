@@ -180,6 +180,7 @@ export const images = pgTable(
 			onDelete: 'set null',
 			onUpdate: 'cascade',
 		}),
+		declaredNotFoundCount: integer('declared_not_found_count').notNull().default(0),
 	},
 	(table) => {
 		return {
