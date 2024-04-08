@@ -137,9 +137,14 @@
 	"code_claim": "Réclamer le code",
 	"account": "Compte",
 	"survey_joined_pariticpant_email_title": "Vous avez été ajouté à un sondage en tant que participant!",
-	"survey_joined_editor_email_title": "Vous avez été ajouté en tant qu'éditeur pour un sondage",
+	"survey_joined_editor_email_title": "Vous avez été ajouté en tant qu'éditeur pour un sondage!",
 	"images_and_metadata": "Images et meta-données",
 	"survey_open": "Ouvrir le sondage",
 	"edit": "Éditer",
-	"answers_history": "Historique de réponses"
+	"answers_history": "Historique de réponses",
+	"image_pool_joined_editor_email_title": "Vous avez été ajouté à une collection d'images en tant qu'éditeur!",
+	"image_pool_invited_editor_email_title": "Vous avez été invité à rejoindre une collection d'images en tant qu'éditeur!",
+	"image_pool_joined_editor_email_body": "Vous pouvez dorénavant éditer le contenu de la collection d'images «{poolTitle}».",
+	"survey_joined_email_body": "Vous êtes dorénavant {userType} pour le sondage «{surveyTitle}».",
+	"no_user_session": "Aucune session utilisateur détectée."
 }

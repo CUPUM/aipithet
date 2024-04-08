@@ -1,0 +1,2 @@
+ALTER TABLE "images_prompts" DROP CONSTRAINT "images_prompts_prompt_pool_id_method_unique";--> statement-breakpoint
+ALTER TABLE "images_prompts" ADD CONSTRAINT "images_prompts_prompt_pool_id_method_scenario_id_unique" UNIQUE NULLS NOT DISTINCT("prompt","pool_id","method","scenario_id");

@@ -14,9 +14,11 @@ export function ImagePoolCreateForm() {
 		<form action={formAction} className="list-item aspect-[5/3]">
 			<ButtonSubmit
 				variant="outline"
-				className="flex h-full w-full flex-1 animate-puff-grow items-center justify-center rounded-lg border-dashed p-8 fill-mode-both"
+				className="text-md flex h-full w-full flex-1 animate-puff-grow items-center justify-center gap-4 rounded-lg border-dashed p-8 fill-mode-both"
 			>
-				<ButtonIconLoading icon={Plus} />
+				<span className="rounded-sm bg-primary p-2 text-primary-foreground">
+					<ButtonIconLoading icon={Plus} />
+				</span>
 				{m.image_pool_create()}
 			</ButtonSubmit>
 		</form>

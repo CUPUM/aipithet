@@ -1,6 +1,6 @@
 'use server';
 
-import { authorize } from '@lib/auth/auth';
+import { validate } from '@lib/auth/auth';
 import { db } from '@lib/database/db';
 import { emailVerificationCodes } from '@lib/database/schema/auth';
 import { SENDERS } from '@lib/email/constants';
@@ -8,13 +8,17 @@ import { transporter } from '@lib/email/email';
 import VerifyEmailTemplate from '@lib/email/templates/verify-email';
 import { languageTagServer } from '@lib/i18n/utilities-server';
 import { render } from '@react-email/render';
+import * as m from '@translations/messages';
 import { setLanguageTag } from '@translations/runtime';
 import { getColumns } from 'drizzle-orm-helpers';
 import { toExcluded } from 'drizzle-orm-helpers/pg';
 
 export default async function emailVerificationSend() {
 	setLanguageTag(languageTagServer);
-	const { user } = await authorize();
+	const { user } = await validate();
+	if (!user) {
+		throw new Error(m.no_user_session());
+	}
 	try {
 		const [inserted] = await db
 			.insert(emailVerificationCodes)

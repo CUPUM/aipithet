@@ -14,8 +14,11 @@ async function Prompts(props: { poolId: string }) {
 		.where(eq(imagesPrompts.poolId, props.poolId))
 		.leftJoin(images, eq(images.promptId, imagesPrompts.id))
 		.groupBy(imagesPrompts.id);
+	console.log(prompts);
 	return prompts.map((prompt) => <li>{prompt.id}</li>);
 }
+
+async function Images() {}
 
 export default async function Page(props: { params: { poolId: string } }) {
 	return (
@@ -51,9 +54,11 @@ export default async function Page(props: { params: { poolId: string } }) {
 						</li>
 						<li>Upload the json file below.</li>
 					</ol>
-					<code className="flex-1 whitespace-pre rounded-sm bg-border p-4 font-mono text-sm leading-relaxed tracking-wide">
+					<code className="flex-1 whitespace-pre rounded-sm bg-border/50 p-6 font-mono text-sm leading-relaxed tracking-wide">
 						{JSON.stringify(
 							{
+								'prefix?': 'string',
+								'bucket': 'string',
 								'scenarios?': [{ id: 'string', name: 'string', description: 'string' }],
 								'prompts': [
 									{

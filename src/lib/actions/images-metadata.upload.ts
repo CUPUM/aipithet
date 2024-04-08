@@ -33,6 +33,8 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 				})
 				.pipe(
 					z.object({
+						bucket: z.string(),
+						prefix: z.string().optional(),
 						scenarios: z
 							.object({
 								id: z.string(),
@@ -49,8 +51,8 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 								images: z
 									.object({
 										path: z.string(),
-										width: z.number(),
-										height: z.number(),
+										width: z.coerce.number(),
+										height: z.coerce.number(),
 									})
 									.array(),
 							})
@@ -63,7 +65,8 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 		return parsed.fail;
 	}
 	const scenarioIds: Record<string, string> = {};
-	await db.transaction(async (tx) => {
+	const promptIds: Record<string, string> = {};
+	const addedImages = await db.transaction(async (tx) => {
 		if (parsed.data.file.scenarios) {
 			const insertedScenarios = await tx
 				.insert(workshopScenarios)
@@ -74,53 +77,80 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 						description: s.description,
 						poolId: parsed.data.poolId,
 						createdById: user.id,
+						updatedById: user.id,
 					}))
 				)
 				.onConflictDoUpdate({
 					target: [workshopScenarios.name, workshopScenarios.poolId],
 					set: toExcluded({
 						description: workshopScenarios.description,
-						createdById: workshopScenarios.createdById,
+						updatedById: workshopScenarios.updatedById,
 					}),
 				})
-				.returning({ id: workshopScenarios.id, externalId: workshopScenarios.externalId });
+				.returning({
+					id: workshopScenarios.id,
+					externalId: workshopScenarios.externalId,
+				});
 			insertedScenarios.forEach((s) => {
 				if (s.externalId) {
 					scenarioIds[s.externalId] = s.id;
 				}
 			});
 		}
-		const promptIds: Record<string, string> = {};
 		const insertedPrompts = await tx
 			.insert(imagesPrompts)
 			.values(
 				parsed.data.file.prompts.map((p) => ({
 					createdById: user.id,
+					updatedById: user.id,
 					method: p.method,
 					prompt: p.text,
 					poolId: parsed.data.poolId,
 					scenarioIds: (p.scenarioId && scenarioIds[p.scenarioId]) ?? undefined,
 				}))
 			)
-			.onConflictDoUpdate({
-				target: [imagesPrompts.prompt, imagesPrompts.poolId],
-				set: toExcluded({ prompt: imagesPrompts.prompt, method: imagesPrompts.method }),
+			.onConflictDoNothing({
+				target: [
+					imagesPrompts.prompt,
+					imagesPrompts.poolId,
+					imagesPrompts.method,
+					imagesPrompts.scenarioId,
+				],
 			})
-			.returning({ id: imagesPrompts.id, prompt: imagesPrompts.prompt });
+			.returning({
+				id: imagesPrompts.id,
+				prompt: imagesPrompts.prompt,
+				method: imagesPrompts.method,
+			});
 		insertedPrompts.forEach((p) => {
 			promptIds[p.prompt] = p.id;
 		});
-		await tx.insert(images).values(
-			parsed.data.file.prompts.flatMap((p) =>
-				p.images.map((img) => ({
-					poolId: parsed.data.poolId,
-					createdById: user.id,
-					width: img.width,
-					height: img.height,
-					storageName: img.path,
-					promptId: promptIds[p.text],
-				}))
+		return await tx
+			.insert(images)
+			.values(
+				parsed.data.file.prompts.flatMap((p) =>
+					p.images.map((img) => ({
+						poolId: parsed.data.poolId,
+						createdById: user.id,
+						updatedById: user.id,
+						width: img.width,
+						height: img.height,
+						path: (parsed.data.file.prefix ?? '') + img.path,
+						bucket: parsed.data.file.bucket,
+						promptId: promptIds[p.text],
+					}))
+				)
 			)
-		);
+			.onConflictDoUpdate({
+				target: [images.poolId, images.path, images.bucket],
+				set: toExcluded({
+					promptId: images.promptId,
+					updatedById: images.updatedById,
+					width: images.width,
+					height: images.height,
+				}),
+			})
+			.returning({ id: images.id });
 	});
+	return { addedImages, scenarioIds, promptIds };
 }

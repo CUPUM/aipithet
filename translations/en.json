@@ -140,5 +140,10 @@
 	"email_survey_invitation_title": "You've received an invitation to join a survey!",
 	"survey_pariticpant_email_title": "You have been as a participant to a survey!",
 	"survey_editor_email_title": "You have been added to a survey as an editor!",
-	"answers_history": "Answers history"
+	"answers_history": "Answers history",
+	"image_pool_joined_editor_email_title": "You have been added as an editor to an image pool!",
+	"image_pool_invited_editor_email_title": "You have been invited to join an image pool as an editor!",
+	"image_pool_joined_editor_email_body": "You can now edit the content of the image pool \"{poolTitle}\".",
+	"survey_joined_email_body": "You are now {userType} for the survey \"{surveyTitle}\".",
+	"no_user_session": "No user sesison detected."
 }

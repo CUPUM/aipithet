@@ -34,7 +34,6 @@ export default async function surveyInvite(state: unknown, formData: FormData) {
 	if (!parsed.success) {
 		return parsed.fail;
 	}
-	console.log(formData);
 	const surveysUsers = parsed.data.editor ? labelingSurveysEditors : labelingSurveysParticipants;
 	const [surveyText] = await db
 		.select({ title: labelingSurveysTranslations.title })
@@ -46,7 +45,6 @@ export default async function surveyInvite(state: unknown, formData: FormData) {
 			)
 		)
 		.limit(1);
-	const surveyTitle = surveyText?.title ?? m.untitled();
 	const [existingUser] = await db
 		.select({ id: users.id })
 		.from(users)
@@ -60,7 +58,7 @@ export default async function surveyInvite(state: unknown, formData: FormData) {
 			.returning();
 		if (added) {
 			await transporter.sendMail({
-				from: SENDERS.AUTH,
+				from: SENDERS.SURVEY,
 				to: parsed.data.email,
 				subject: parsed.data.editor
 					? m.survey_joined_editor_email_title()
@@ -69,7 +67,7 @@ export default async function surveyInvite(state: unknown, formData: FormData) {
 					SurveyJoinedTemplate({
 						editor: parsed.data.editor,
 						lang: parsed.data.preferredLang,
-						surveyTitle,
+						surveyTitle: surveyText?.title ?? m.untitled(),
 					})
 				),
 			});
@@ -83,14 +81,14 @@ export default async function surveyInvite(state: unknown, formData: FormData) {
 	}
 	revalidateTag(CACHE_TAGS.SURVEY_INVITATIONS);
 	await transporter.sendMail({
-		from: SENDERS.AUTH,
+		from: SENDERS.SURVEY,
 		to: [user.email],
 		subject: m.survey_invitation_email_title(),
 		html: render(
 			SurveyInvitationTemplate({
 				...invited,
 				lang: parsed.data.preferredLang,
-				surveyTitle,
+				surveyTitle: surveyText?.title ?? m.untitled(),
 			})
 		),
 	});

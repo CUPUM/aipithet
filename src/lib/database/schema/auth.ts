@@ -68,7 +68,7 @@ export const emailVerificationCodes = authSchema.table('email_verification_codes
 	email: text('email').notNull(),
 	expiresAt: timestamp('expires_at', { withTimezone: true })
 		.notNull()
-		.default(add(now(), toInterval({ minutes: 5 })).inlineParams()),
+		.default(add(now(), toInterval({ hours: 1 })).inlineParams()),
 });
 
 export const passwordResetTokens = authSchema.table('password_reset_tokens', {
@@ -88,3 +88,33 @@ export const passwordResetTokens = authSchema.table('password_reset_tokens', {
 		.notNull()
 		.default(add(now(), toInterval({ hours: 1 })).inlineParams()),
 });
+
+// export const emailInvitations = authSchema.table(
+// 	'email_invitations',
+// 	{
+// 		email: text('email').notNull(),
+// 		editor: boolean('editor'),
+// 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+// 		expiresAt: timestamp('expires_at')
+// 			.default(add(now(), toInterval({ months: 1 })).inlineParams())
+// 			.notNull(),
+// 		code: text('code')
+// 			.default(nanoid({ size: 8, alphabet: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' }))
+// 			.notNull(),
+// 		surveyId: text('survey_id').references(() => labelingSurveys.id, {
+// 			onDelete: 'cascade',
+// 			onUpdate: 'cascade',
+// 		}),
+// 		imagePoolId: text('image_pool_id').references(() => imagesPools.id, {
+// 			onDelete: 'cascade',
+// 			onUpdate: 'cascade',
+// 		}),
+// 	},
+// 	(table) => {
+// 		return {
+// 			unq: unique()
+// 				.on(table.editor, table.surveyId, table.imagePoolId, table.email)
+// 				.nullsNotDistinct(),
+// 		};
+// 	}
+// );

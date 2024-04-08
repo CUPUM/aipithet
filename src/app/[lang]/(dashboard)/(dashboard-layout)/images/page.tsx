@@ -39,7 +39,7 @@ export default async function Page() {
 		<div className="flex w-full max-w-screen-lg flex-1 flex-col items-stretch gap-6 self-center">
 			<section className="flex flex-col gap-6">
 				<h2 className="text-4xl font-semibold">{m.image_pools()}</h2>
-				<ul className="grid grid-cols-3 gap-4">
+				<ul className="grid grid-cols-2 gap-4">
 					<Suspense>
 						<ImagePools />
 					</Suspense>

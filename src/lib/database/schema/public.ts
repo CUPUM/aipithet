@@ -118,6 +118,10 @@ export const workshopScenarios = pgTable(
 			onDelete: 'set null',
 			onUpdate: 'cascade',
 		}),
+		updatedById: text('updated_by_id').references(() => users.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
 	},
 	(table) => {
 		return {
@@ -147,10 +151,16 @@ export const imagesPrompts = pgTable(
 			onDelete: 'set null',
 			onUpdate: 'cascade',
 		}),
+		updatedById: text('updated_by_id').references(() => users.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
 	},
 	(table) => {
 		return {
-			unq: unique().on(table.prompt, table.poolId),
+			unq: unique()
+				.on(table.prompt, table.poolId, table.method, table.scenarioId)
+				.nullsNotDistinct(),
 		};
 	}
 );
@@ -167,7 +177,12 @@ export const images = pgTable(
 			onDelete: 'set null',
 			onUpdate: 'cascade',
 		}),
-		storageName: text('storage_name').notNull(),
+		updatedById: text('updated_by_id').references(() => users.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
+		path: text('path').notNull(),
+		bucket: text('bucket').notNull(),
 		poolId: text('pool_id')
 			.references(() => imagesPools.id, {
 				onDelete: 'cascade',
@@ -184,7 +199,7 @@ export const images = pgTable(
 	},
 	(table) => {
 		return {
-			unq: unique().on(table.storageName, table.poolId),
+			unq: unique().on(table.path, table.poolId, table.bucket),
 		};
 	}
 );
@@ -197,12 +212,14 @@ export const labels = pgTable('labels', {
 			onUpdate: 'cascade',
 		})
 		.notNull(),
-	createdById: text('created_by_id')
-		.references(() => users.id, {
-			onDelete: 'cascade',
-			onUpdate: 'cascade',
-		})
-		.notNull(),
+	createdById: text('created_by_id').references(() => users.id, {
+		onDelete: 'set null',
+		onUpdate: 'cascade',
+	}),
+	updatedById: text('updated_by_id').references(() => users.id, {
+		onDelete: 'set null',
+		onUpdate: 'cascade',
+	}),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 export const labelsTranslations = pgTable(

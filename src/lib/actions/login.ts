@@ -55,5 +55,5 @@ export default async function login(state: unknown, formData: FormData) {
 	if (!parsed.data.emailVerified) {
 		redirect('/verify-email');
 	}
-	redirect('/');
+	redirect('/surveys');
 }
