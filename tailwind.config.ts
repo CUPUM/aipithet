@@ -111,6 +111,8 @@ const config = {
 		require('@tailwindcss/typography'),
 		plugin(({ addVariant, matchUtilities, theme, addUtilities }) => {
 			addVariant('light', '[data-theme="light"] &');
+			addVariant('slider-thumb', ['&::-webkit-slider-thumb']);
+			addVariant('slider-track', ['&::-webkit-slider-runnable-track']);
 			matchUtilities(
 				{
 					'animation-delay': (value) => {

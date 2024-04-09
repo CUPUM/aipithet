@@ -65,16 +65,18 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 			<input type="hidden" value={props.surveyId} readOnly name="surveyId" />
 			<input type="hidden" value={props.chapterId} readOnly name="chapterId" />
 			<input type="hidden" value={props.id} readOnly name="id" />
-			<input
-				name="+score"
-				type="range"
-				step={step}
-				min={-1}
-				max={1}
-				defaultValue={props.score || 0}
-				className="pointer-events-auto w-full"
-				onClick={() => setDirty(true)}
-			/>
+			<label className="pointer-events-auto w-full px-10">
+				<input
+					name="+score"
+					type="range"
+					step={step}
+					min={-1}
+					max={1}
+					defaultValue={props.score || 0}
+					className="slider-thumb:bg-primary slider-thumb:rounded-full slider-thumb:-mt-8 slider-thumb:size-20 slider-thumb:appearance-none slider-track:h-3 slider-track:rounded-full slider-track:bg-input/50 slider-track:border slider-thumb:shadow-[0_0.5em_1em_-0.25em_black] w-full cursor-pointer appearance-none bg-transparent"
+					onClick={() => setDirty(true)}
+				/>
+			</label>
 			{dirty ? (
 				<menu className="absolute bottom-0">
 					<ButtonSubmit className="pointer-events-auto">

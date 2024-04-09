@@ -97,6 +97,7 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 				}
 			});
 		}
+		console.log('scenarios ok');
 		const insertedPrompts = await tx
 			.insert(imagesPrompts)
 			.values(
@@ -110,12 +111,7 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 				}))
 			)
 			.onConflictDoNothing({
-				target: [
-					imagesPrompts.prompt,
-					imagesPrompts.poolId,
-					imagesPrompts.method,
-					imagesPrompts.scenarioId,
-				],
+				target: [imagesPrompts.prompt, imagesPrompts.poolId, imagesPrompts.method],
 			})
 			.returning({
 				id: imagesPrompts.id,
@@ -125,6 +121,7 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 		insertedPrompts.forEach((p) => {
 			promptIds[p.prompt] = p.id;
 		});
+		console.log('prompts ok');
 		return await tx
 			.insert(images)
 			.values(
