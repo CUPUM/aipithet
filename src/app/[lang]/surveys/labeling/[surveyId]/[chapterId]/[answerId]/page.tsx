@@ -108,8 +108,8 @@ async function AnswerImage(props: { answerId: string; index: ImageIndex }) {
 			key={src}
 			src={src}
 			alt={`Image ${props.index}`}
-			width={image.width}
-			height={image.height}
+			// width={image.width}
+			// height={image.height}
 		/>
 	);
 }
@@ -146,7 +146,7 @@ export default async function Page(props: {
 					<Label answerId={props.params.answerId} />
 				</Suspense>
 			</header>
-			<section className="relative grid flex-1 grid-cols-2 grid-rows-1 items-center gap-6 p-12">
+			<section className="relative grid flex-1 grid-cols-2 grid-rows-1 items-center justify-center gap-6 px-12 py-6">
 				<Suspense
 					fallback={
 						<Skeleton className="flex aspect-square flex-1 items-center justify-center rounded-sm bg-border/50">
@@ -169,7 +169,7 @@ export default async function Page(props: {
 					<LabelingForm answerId={props.params.answerId} surveyId={props.params.surveyId} />
 				</Suspense>
 			</section>
-			<footer className="flex flex-none flex-col items-center px-10 py-6">
+			<footer className="flex flex-none flex-col items-center px-8 py-4">
 				<Progress chapterId={props.params.chapterId} />
 				<nav className="flex flex-row gap-2">
 					{/* <div>Previous</div>

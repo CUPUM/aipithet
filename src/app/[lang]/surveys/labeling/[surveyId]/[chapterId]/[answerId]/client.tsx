@@ -23,7 +23,7 @@ export function LabelClient(props: SurveyAnswer) {
 	return (
 		<hgroup>
 			<Dialog>
-				<DialogTrigger className="cursor-help rounded-md px-6 py-3 text-6xl font-semibold text-foreground transition-all hover:bg-primary/10 hover:text-primary">
+				<DialogTrigger className="cursor-help rounded-md px-5 py-2 text-5xl font-semibold text-foreground transition-all hover:bg-primary/10 hover:text-primary">
 					{props.label?.text || (
 						<span className="italic text-muted-foreground">{m.label_no_text()}</span>
 					)}
@@ -66,10 +66,11 @@ export function AnswerImageClient({
 }: ImageProps & { imageId: string; index: ImageIndex; answerId: string }) {
 	const [broken, setBroken] = useState(false);
 	return (
-		<div className="relative">
+		<div className="relative h-full w-full">
 			<Image
 				{...imageProps}
-				className="rounded-sm bg-border/50 object-contain"
+				className="aspect-square rounded-sm bg-border/50 object-cover"
+				fill
 				onError={() => {
 					setBroken(true);
 				}}
@@ -108,7 +109,7 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 			</label>
 			{dirty ? (
 				<menu className="absolute bottom-0">
-					<ButtonSubmit className="pointer-events-auto">
+					<ButtonSubmit className="pointer-events-auto animate-puff-grow text-lg font-medium shadow-lg">
 						{m.submit()}
 						<ButtonIconLoading icon={Star} />
 					</ButtonSubmit>
