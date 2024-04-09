@@ -60,26 +60,28 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 	return (
 		<form
 			action={formAction}
-			className="pointer-events-none absolute inset-0 flex items-center justify-center p-[inherit]"
+			className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center p-[inherit]"
 		>
 			<input type="hidden" value={props.surveyId} readOnly name="surveyId" />
 			<input type="hidden" value={props.chapterId} readOnly name="chapterId" />
 			<input type="hidden" value={props.id} readOnly name="id" />
 			<input
-				name="score"
+				name="+score"
 				type="range"
 				step={step}
 				min={-1}
 				max={1}
 				defaultValue={props.score || 0}
 				className="pointer-events-auto w-full"
-				onChange={() => setDirty(true)}
+				onClick={() => setDirty(true)}
 			/>
 			{dirty ? (
-				<ButtonSubmit className="pointer-events-auto">
-					{m.submit()}
-					<ButtonIconLoading icon={Star} />
-				</ButtonSubmit>
+				<menu className="absolute bottom-0">
+					<ButtonSubmit className="pointer-events-auto">
+						{m.submit()}
+						<ButtonIconLoading icon={Star} />
+					</ButtonSubmit>
+				</menu>
 			) : null}
 		</form>
 	);

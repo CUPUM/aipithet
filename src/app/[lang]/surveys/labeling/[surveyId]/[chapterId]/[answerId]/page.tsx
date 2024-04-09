@@ -11,7 +11,7 @@ import {
 } from '@lib/database/schema/public';
 import * as m from '@translations/messages';
 import { languageTag } from '@translations/runtime';
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { jsonBuildObject } from 'drizzle-orm-helpers/pg';
 import { alias } from 'drizzle-orm/pg-core';
@@ -21,7 +21,29 @@ import { AnswerImageClient, LabelingFormClient } from './client';
 
 export type ImageIndex = 1 | 2;
 
-const getChapter = cache(async function (chapterId: string) {});
+const getChapter = cache(async function (chapterId: string) {
+	const { user } = await authorize();
+	return (
+		(
+			await db
+				.select({
+					...getColumns(labelingSurveysChapters),
+					progress: count(labelingSurveysAnswers),
+				})
+				.from(labelingSurveysChapters)
+				.where(eq(labelingSurveysChapters.id, chapterId))
+				.leftJoin(
+					labelingSurveysAnswers,
+					and(
+						eq(labelingSurveysAnswers.chapterId, labelingSurveysChapters.id),
+						eq(labelingSurveysAnswers.userId, user.id)
+					)
+				)
+				.groupBy(labelingSurveysChapters.id)
+				.limit(1)
+		)[0] || notFound()
+	);
+});
 
 const getSurveyAnswer = cache(async function (answerId: string) {
 	const { user } = await authorize();
@@ -104,6 +126,13 @@ async function LabelingForm(props: { answerId: string; surveyId: string }) {
 	return <LabelingFormClient {...surveyAnswer} surveyId={props.surveyId} />;
 }
 
+async function Progress(props: { chapterId: string }) {
+	const chapter = await getChapter(props.chapterId);
+	return (
+		<progress value={chapter.progress} max={chapter.maxAnswersCount || undefined} className="" />
+	);
+}
+
 export default async function Page(props: {
 	params: { surveyId: string; chapterId: string; answerId: string };
 }) {
@@ -144,9 +173,7 @@ export default async function Page(props: {
 				</Suspense>
 			</section>
 			<footer className="flex flex-none flex-col items-center p-6">
-				<div>
-					<progress />
-				</div>
+				<Progress chapterId={props.params.chapterId} />
 				<nav className="flex flex-row gap-2">
 					<div>Previous</div>
 					<div>Next</div>

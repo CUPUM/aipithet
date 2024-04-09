@@ -137,8 +137,8 @@ export default async function Page(props: { params: { surveyId: string } }) {
 					</Suspense>
 				</nav>
 			</section>
-			<section className="flex w-full max-w-screen-lg flex-col self-center rounded-lg bg-accent/50 dark:bg-border/30">
-				<h2 className="text-md p-8 pb-0 font-semibold">{m.answers_history()}</h2>
+			<section className="flex w-full max-w-screen-xl flex-col self-center rounded-lg border border-border">
+				<h2 className="text-md p-8 px-12 pb-0 font-semibold">{m.answers_history()}</h2>
 				<ul className="flex flex-row overflow-x-scroll p-8">
 					<Suspense>
 						<RecentAnswers surveyId={props.params.surveyId} />

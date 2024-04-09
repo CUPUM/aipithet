@@ -82,9 +82,9 @@ export const authorize = cache(async (key?: PermissionKey, message?: string) => 
 	if (!validated.user) {
 		return redirect('/login', RedirectType.push);
 	}
-	if (!validated.user.emailVerified) {
-		return redirect('/verify-email', RedirectType.push);
-	}
+	// if (!validated.user.emailVerified) {
+	// 	return redirect('/verify-email', RedirectType.push);
+	// }
 	if (!isAllowed(validated.user, key)) {
 		throw new Error(message ?? m.insufficient_permissions());
 	}
@@ -97,9 +97,9 @@ export const authorizeRequest = cache(async (key?: PermissionKey, message?: stri
 	if (!validated.user) {
 		throw new Response('No valid authorization found.', { status: 401 });
 	}
-	if (!validated.user.emailVerified) {
-		throw new Response('Account initialization is incomplete, please verify your email.');
-	}
+	// if (!validated.user.emailVerified) {
+	// 	throw new Response('Account initialization is incomplete, please verify your email.');
+	// }
 	if (!isAllowed(validated.user, key)) {
 		throw new Response(
 			message ?? 'Your authorization has insufficient permissions for this request.',
