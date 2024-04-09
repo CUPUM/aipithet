@@ -9,7 +9,6 @@ import {
 	labelingSurveysChapters,
 	labelsTranslations,
 } from '@lib/database/schema/public';
-import * as m from '@translations/messages';
 import { languageTag } from '@translations/runtime';
 import { and, count, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
@@ -17,7 +16,7 @@ import { jsonBuildObject } from 'drizzle-orm-helpers/pg';
 import { alias } from 'drizzle-orm/pg-core';
 import { notFound } from 'next/navigation';
 import { Suspense, cache } from 'react';
-import { AnswerImageClient, LabelingFormClient } from './client';
+import { AnswerImageClient, LabelClient, LabelingFormClient } from './client';
 
 export type ImageIndex = 1 | 2;
 
@@ -94,13 +93,7 @@ const getNextSurveyAnswer = cache(async function (answerId: string) {
 
 async function Label(props: { answerId: string }) {
 	const surveyAnswer = await getSurveyAnswer(props.answerId);
-	return (
-		<h2 className="text-2xl font-semibold md:text-4xl lg:text-6xl">
-			{surveyAnswer.label?.text || (
-				<span className="italic text-muted-foreground">{m.label_no_text()}</span>
-			)}
-		</h2>
-	);
+	return <LabelClient {...surveyAnswer} />;
 }
 
 async function AnswerImage(props: { answerId: string; index: ImageIndex }) {
@@ -129,7 +122,11 @@ async function LabelingForm(props: { answerId: string; surveyId: string }) {
 async function Progress(props: { chapterId: string }) {
 	const chapter = await getChapter(props.chapterId);
 	return (
-		<progress value={chapter.progress} max={chapter.maxAnswersCount || undefined} className="" />
+		<progress
+			value={chapter.maxAnswersCount ? chapter.progress : undefined}
+			max={chapter.maxAnswersCount || undefined}
+			className="h-3 w-full [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-border [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-500"
+		/>
 	);
 }
 
@@ -172,11 +169,11 @@ export default async function Page(props: {
 					<LabelingForm answerId={props.params.answerId} surveyId={props.params.surveyId} />
 				</Suspense>
 			</section>
-			<footer className="flex flex-none flex-col items-center p-6">
+			<footer className="flex flex-none flex-col items-center px-10 py-6">
 				<Progress chapterId={props.params.chapterId} />
 				<nav className="flex flex-row gap-2">
-					<div>Previous</div>
-					<div>Next</div>
+					{/* <div>Previous</div>
+					<div>Next</div> */}
 				</nav>
 			</footer>
 		</article>

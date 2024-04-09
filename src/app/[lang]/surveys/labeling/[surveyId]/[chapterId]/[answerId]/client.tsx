@@ -3,19 +3,48 @@
 import surveyAnswerUpdate from '@lib/actions/survey-answer-update';
 import ButtonSubmit from '@lib/components/button-submit';
 import { ButtonIconLoading } from '@lib/components/primitives/button';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@lib/components/primitives/dialog';
 import * as m from '@translations/messages';
 import { RefreshCcw, Star } from 'lucide-react';
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useFormState } from 'react-dom';
+import Markdown from 'react-markdown';
 import type { ImageIndex, SurveyAnswer } from './page';
 
-/**
- * @todo Add expandable description.
- */
 export function LabelClient(props: SurveyAnswer) {
-	return <hgroup></hgroup>;
+	return (
+		<hgroup>
+			<Dialog>
+				<DialogTrigger className="cursor-help rounded-md px-6 py-3 text-6xl font-semibold text-foreground transition-all hover:bg-primary/10 hover:text-primary">
+					{props.label?.text || (
+						<span className="italic text-muted-foreground">{m.label_no_text()}</span>
+					)}
+				</DialogTrigger>
+				<DialogContent className="border-none">
+					<DialogHeader>
+						<DialogTitle className="text-4xl font-semibold">
+							{props.label?.text || (
+								<span className="italic text-muted-foreground">{m.label_no_text()}</span>
+							)}
+						</DialogTitle>
+					</DialogHeader>
+					{props.label?.description ? (
+						<Markdown>{props.label.description}</Markdown>
+					) : (
+						<p className="italic text-muted-foreground">{m.description_none()}</p>
+					)}
+				</DialogContent>
+			</Dialog>
+		</hgroup>
+	);
 }
 
 function ImageErrorForm() {
@@ -73,7 +102,7 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 					min={-1}
 					max={1}
 					defaultValue={props.score || 0}
-					className="slider-thumb:bg-primary slider-thumb:rounded-full slider-thumb:-mt-8 slider-thumb:size-20 slider-thumb:appearance-none slider-track:h-3 slider-track:rounded-full slider-track:bg-input/50 slider-track:border slider-thumb:shadow-[0_0.5em_1em_-0.25em_black] w-full cursor-pointer appearance-none bg-transparent"
+					className="hover:slider-track:bg-input slider-thumb:bg-primary slider-thumb:rounded-full slider-thumb:size-20 slider-thumb:mt-1.5 slider-thumb:appearance-none slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-track:transition-all slider-track:duration-500 hover:slider-thumb:size-24 slider-thumb:-translate-y-1/2 slider-thumb:transition-all w-full cursor-pointer appearance-none bg-transparent transition-all"
 					onClick={() => setDirty(true)}
 				/>
 			</label>
