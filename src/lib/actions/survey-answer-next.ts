@@ -4,6 +4,7 @@ import { authorize } from '@lib/auth/auth';
 import { db } from '@lib/database/db';
 import {
 	images,
+	imagesPrompts,
 	labelingSurveys,
 	labelingSurveysAnswers,
 	labels,
@@ -29,11 +30,19 @@ export default async function surveyAnswerNext(surveyId: string, chapterId: stri
 	if (empty) {
 		redirect(`/surveys/labeling/${surveyId}/${chapterId}/${empty.id}`);
 	}
+	const [prompt] = await db
+		.select({ id: imagesPrompts.id })
+		.from(imagesPrompts)
+		.limit(1)
+		.orderBy(random());
+	if (!prompt) {
+		throw new Error('Could not pick random prompt');
+	}
 	const [image1, image2] = await db
 		.select({ id: images.id })
 		.from(images)
 		.leftJoin(labelingSurveys, and(eq(images.poolId, labelingSurveys.imagePoolId)))
-		.where(eq(labelingSurveys.id, surveyId))
+		.where(and(eq(labelingSurveys.id, surveyId), eq(images.promptId, prompt.id)))
 		.orderBy(random())
 		.limit(2);
 	if (!image1 || !image2) {
