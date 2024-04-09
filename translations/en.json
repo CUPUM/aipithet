@@ -149,9 +149,11 @@
 	"inactive": "Inactive",
 	"resume": "Resume",
 	"resume_labeling": "Resume labeling",
+	"label_no_text": "No label text defined",
 	"images_and_prompts": "Images and prompts",
 	"email_survey_invitation_title": "You've received an invitation to join a survey!",
 	"survey_pariticpant_email_title": "You have been as a participant to a survey!",
 	"survey_editor_email_title": "You have been added to a survey as an editor!",
-	"label_no_text": "No label text defined"
+	"image_broken": "Image broken",
+	"submit": "Submit"
 }

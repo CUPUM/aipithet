@@ -154,5 +154,7 @@
 	"inactive": "Inactif",
 	"resume": "Poursuivre",
 	"resume_labeling": "Poursuivre l'annotation",
-	"label_no_text": "Étiquette non défini"
+	"label_no_text": "Étiquette non défini",
+	"image_broken": "Image brisée ?",
+	"submit": "Soumettre"
 }

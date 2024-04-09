@@ -15,10 +15,13 @@ import { and, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { jsonBuildObject } from 'drizzle-orm-helpers/pg';
 import { alias } from 'drizzle-orm/pg-core';
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Suspense, cache } from 'react';
-import { LabelingForm } from './client';
+import { AnswerImageClient, LabelingFormClient } from './client';
+
+export type ImageIndex = 1 | 2;
+
+const getChapter = cache(async function (chapterId: string) {});
 
 const getSurveyAnswer = cache(async function (answerId: string) {
 	const { user } = await authorize();
@@ -70,54 +73,54 @@ const getNextSurveyAnswer = cache(async function (answerId: string) {
 async function Label(props: { answerId: string }) {
 	const surveyAnswer = await getSurveyAnswer(props.answerId);
 	return (
-		<hgroup>
+		<h2 className="text-2xl font-semibold md:text-4xl lg:text-6xl">
 			{surveyAnswer.label?.text || (
 				<span className="italic text-muted-foreground">{m.label_no_text()}</span>
 			)}
-		</hgroup>
+		</h2>
 	);
 }
 
-async function AnswerImage(props: { answerId: string; index: 1 | 2 }) {
+async function AnswerImage(props: { answerId: string; index: ImageIndex }) {
 	const surveyAnswer = await getSurveyAnswer(props.answerId);
 	const image = surveyAnswer.images[props.index];
 	const src = `https://storage.googleapis.com/${image.bucket}${image.path}`;
 	return (
-		<>
-			{/* <img src={src} /> */}
-			<Image
-				src={src}
-				alt={`Image ${props.index}`}
-				width={image.width}
-				height={image.height}
-				className="flex-1 rounded-sm bg-border/50 p-12 text-center"
-			/>
-		</>
+		<AnswerImageClient
+			imageId={image.id}
+			index={props.index}
+			answerId={props.answerId}
+			key={src}
+			src={src}
+			alt={`Image ${props.index}`}
+			width={image.width}
+			height={image.height}
+		/>
 	);
 }
 
-async function LabelingFormServer(props: { answerId: string }) {
+async function LabelingForm(props: { answerId: string; surveyId: string }) {
 	const surveyAnswer = await getSurveyAnswer(props.answerId);
-	return <LabelingForm {...surveyAnswer} />;
+	return <LabelingFormClient {...surveyAnswer} surveyId={props.surveyId} />;
 }
 
 export default async function Page(props: {
 	params: { surveyId: string; chapterId: string; answerId: string };
 }) {
 	return (
-		<article className="flex flex-1 flex-col">
-			<header>
+		<article className="flex h-[calc(100vh-72px)] w-full flex-col items-stretch">
+			<header className="self-center">
 				<Suspense
 					fallback={
 						<hgroup>
-							<Skeleton>Test</Skeleton>
+							<Skeleton className="text-transparent">...</Skeleton>
 						</hgroup>
 					}
 				>
 					<Label answerId={props.params.answerId} />
 				</Suspense>
 			</header>
-			<section className="relative flex flex-1 flex-row items-center justify-center gap-6 p-8 xl:gap-12 xl:p-16">
+			<section className="relative grid flex-1 grid-cols-2 grid-rows-1 items-center gap-6 p-12">
 				<Suspense
 					fallback={
 						<Skeleton className="flex aspect-square flex-1 items-center justify-center rounded-sm bg-border/50">
@@ -137,10 +140,18 @@ export default async function Page(props: {
 					<AnswerImage index={2} answerId={props.params.answerId} />
 				</Suspense>
 				<Suspense>
-					<LabelingFormServer answerId={props.params.answerId} />
+					<LabelingForm answerId={props.params.answerId} surveyId={props.params.surveyId} />
 				</Suspense>
 			</section>
-			<footer>Stuff</footer>
+			<footer className="flex flex-none flex-col items-center p-6">
+				<div>
+					<progress />
+				</div>
+				<nav className="flex flex-row gap-2">
+					<div>Previous</div>
+					<div>Next</div>
+				</nav>
+			</footer>
 		</article>
 	);
 }

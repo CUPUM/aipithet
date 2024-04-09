@@ -17,6 +17,7 @@ import {
 	imagesPoolsTranslations,
 	imagesPrompts,
 	labelingSurveys,
+	labelingSurveysAnswers,
 	labelingSurveysChapters,
 	labelingSurveysChaptersTranslations,
 	labelingSurveysInvitations,
@@ -90,3 +91,7 @@ export const labelingSurveysChaptersWithTranslationsSchema = withTranslationsSch
 	labelingSurveysChaptersSchema,
 	labelingSurveysChaptersTranslationsSchema
 );
+
+export const labelingSurveysAnswersSchema = createInsertSchema(labelingSurveysAnswers, {
+	score: (s) => s.score.min(-1).max(1),
+});

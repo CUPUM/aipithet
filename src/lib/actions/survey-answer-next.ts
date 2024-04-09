@@ -9,11 +9,26 @@ import {
 	labels,
 } from '@lib/database/schema/public';
 import { redirect } from '@lib/i18n/utilities-server';
-import { and, eq } from 'drizzle-orm';
+import { and, asc, eq, isNull } from 'drizzle-orm';
 import { random } from 'drizzle-orm-helpers/pg';
 
-export default async function surveyChapterAnswerNext(surveyId: string, chapterId: string) {
+export default async function surveyAnswerNext(surveyId: string, chapterId: string) {
 	const { user } = await authorize();
+	const [empty] = await db
+		.select({ id: labelingSurveysAnswers.id })
+		.from(labelingSurveysAnswers)
+		.where(
+			and(
+				isNull(labelingSurveysAnswers.answeredAt),
+				eq(labelingSurveysAnswers.userId, user.id),
+				eq(labelingSurveysAnswers.chapterId, chapterId)
+			)
+		)
+		.orderBy(asc(labelingSurveysAnswers.createdAt))
+		.limit(1);
+	if (empty) {
+		redirect(`/surveys/labeling/${surveyId}/${chapterId}/${empty.id}`);
+	}
 	const [image1, image2] = await db
 		.select({ id: images.id })
 		.from(images)

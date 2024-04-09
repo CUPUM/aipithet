@@ -2,11 +2,11 @@ import { add } from 'drizzle-orm-helpers';
 import { nanoid, now, toInterval } from 'drizzle-orm-helpers/pg';
 import {
 	boolean,
-	decimal,
 	integer,
 	interval,
 	pgTable,
 	primaryKey,
+	real,
 	text,
 	timestamp,
 	unique,
@@ -448,7 +448,7 @@ export const labelingSurveysAnswers = pgTable('labeling_surveys_answers', {
 		onDelete: 'restrict',
 		onUpdate: 'cascade',
 	}),
-	score: decimal('score'),
+	score: real('score'),
 	timeToAnswerServer: interval('time_to_answer_server'),
 	timeToAnswerClient: interval('time_to_answer_client'),
 	answeredAt: timestamp('answered_at', { withTimezone: true }),
