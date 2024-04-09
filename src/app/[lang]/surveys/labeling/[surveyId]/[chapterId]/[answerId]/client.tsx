@@ -11,7 +11,7 @@ import {
 	DialogTrigger,
 } from '@lib/components/primitives/dialog';
 import * as m from '@translations/messages';
-import { RefreshCcw, Star } from 'lucide-react';
+import { RefreshCcw } from 'lucide-react';
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
@@ -90,11 +90,19 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 	return (
 		<form
 			action={formAction}
-			className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center p-[inherit]"
+			className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between p-[inherit]"
 		>
 			<input type="hidden" value={props.surveyId} readOnly name="surveyId" />
 			<input type="hidden" value={props.chapterId} readOnly name="chapterId" />
 			<input type="hidden" value={props.id} readOnly name="id" />
+			{dirty ? (
+				<menu>
+					<ButtonSubmit className="pointer-events-auto animate-puff-grow text-lg font-medium shadow-md">
+						{m.submit()}
+						{/* <ButtonIconLoading icon={Star} /> */}
+					</ButtonSubmit>
+				</menu>
+			) : null}
 			<label className="pointer-events-auto w-full px-10">
 				<input
 					name="+score"
@@ -103,18 +111,10 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 					min={-1}
 					max={1}
 					defaultValue={props.score || 0}
-					className="hover:slider-track:bg-input slider-thumb:bg-primary slider-thumb:rounded-full slider-thumb:size-20 slider-thumb:mt-1.5 slider-thumb:appearance-none slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-track:transition-all slider-track:duration-500 hover:slider-thumb:size-24 slider-thumb:-translate-y-1/2 slider-thumb:transition-all w-full cursor-pointer appearance-none bg-transparent transition-all"
+					className="hover:slider-track:bg-slate-800 slider-thumb:bg-primary slider-thumb:rounded-full slider-thumb:size-20 slider-thumb:mt-2 slider-thumb:appearance-none slider-track:h-4 slider-track:rounded-full slider-track:bg-transparent slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-track:transition-all slider-track:duration-500 hover:slider-thumb:size-24 slider-thumb:-translate-y-1/2 slider-thumb:transition-all w-full cursor-pointer appearance-none bg-transparent transition-all"
 					onClick={() => setDirty(true)}
 				/>
 			</label>
-			{dirty ? (
-				<menu className="absolute bottom-0">
-					<ButtonSubmit className="pointer-events-auto animate-puff-grow text-lg font-medium shadow-lg">
-						{m.submit()}
-						<ButtonIconLoading icon={Star} />
-					</ButtonSubmit>
-				</menu>
-			) : null}
 		</form>
 	);
 }

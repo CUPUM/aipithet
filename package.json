@@ -80,7 +80,7 @@
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
-		"@inlang/paraglide-js": "1.4.0",
+		"@inlang/paraglide-js": "1.5.0",
 		"@tailwindcss/typography": "^0.5.12",
 		"@types/node": "^20.12.6",
 		"@types/react": "^18.2.75",
