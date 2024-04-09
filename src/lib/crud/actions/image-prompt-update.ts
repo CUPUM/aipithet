@@ -10,7 +10,7 @@ import { canEditImagePool } from '@lib/queries/queries';
 import { setLanguageTag } from '@translations/runtime';
 import { and, eq } from 'drizzle-orm';
 import { revalidateTag } from 'next/cache';
-import { validateFormData } from './validation';
+import { validateFormData } from '../validation';
 
 export default async function imagePromptUpdate(state: unknown, formData: FormData) {
 	setLanguageTag(languageTagServer);

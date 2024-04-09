@@ -1,7 +1,7 @@
 'use client';
 
-import surveyDelete from '@lib/actions/survey-delete';
 import ButtonSubmit from '@lib/components/button-submit';
+import surveyDelete from '@lib/crud/actions/survey-delete';
 import * as m from '@translations/messages';
 
 export function SurveyDeleteForm(props: { surveyId: string }) {

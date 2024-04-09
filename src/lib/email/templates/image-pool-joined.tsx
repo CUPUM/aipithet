@@ -2,7 +2,7 @@ import { withLang } from '@lib/i18n/utilities';
 import { Button, Heading, Section, Text } from '@react-email/components';
 import * as m from '@translations/messages';
 import type { AvailableLanguageTag } from '@translations/runtime';
-import { Template } from '../template';
+import { Template } from '../email-layout';
 
 export default function ImagePoolJoinedTemplate(props: {
 	poolTitle: string;

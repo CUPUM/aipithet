@@ -1,6 +1,5 @@
 'use client';
 
-import surveyAnswerUpdate from '@lib/actions/survey-answer-update';
 import ButtonSubmit from '@lib/components/button-submit';
 import { ButtonIconLoading } from '@lib/components/primitives/button';
 import {
@@ -10,6 +9,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@lib/components/primitives/dialog';
+import surveyAnswerUpdate from '@lib/crud/actions/survey-answer-update';
 import * as m from '@translations/messages';
 import { RefreshCcw } from 'lucide-react';
 import type { ImageProps } from 'next/image';

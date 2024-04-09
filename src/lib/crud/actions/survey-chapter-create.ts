@@ -6,7 +6,7 @@ import { labelingSurveysChapters } from '@lib/database/schema/public';
 import { labelingSurveysChaptersSchema } from '@lib/database/validation';
 import { languageTagServer, redirect } from '@lib/i18n/utilities-server';
 import { setLanguageTag } from '@translations/runtime';
-import { validateFormData } from './validation';
+import { validateFormData } from '../validation';
 
 export default async function surveyChapterCreate(formData: FormData) {
 	setLanguageTag(languageTagServer);

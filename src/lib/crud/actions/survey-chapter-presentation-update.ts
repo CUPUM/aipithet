@@ -16,7 +16,7 @@ import { and, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { now, toExcluded } from 'drizzle-orm-helpers/pg';
 import { revalidateTag } from 'next/cache';
-import { validateFormData } from './validation';
+import { validateFormData } from '../validation';
 
 export default async function surveyChapterPresentationUpdate(state: unknown, formData: FormData) {
 	setLanguageTag(languageTagServer);

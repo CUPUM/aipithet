@@ -6,7 +6,7 @@ import { images, labelingSurveysAnswers } from '@lib/database/schema/public';
 import { revalidatePath } from '@lib/i18n/utilities-server';
 import { eq } from 'drizzle-orm';
 import { add } from 'drizzle-orm-helpers';
-import type { ImageIndex } from '../../app/[lang]/surveys/labeling/[surveyId]/[chapterId]/[answerId]/page';
+import type { ImageIndex } from '../../../app/[lang]/surveys/labeling/[surveyId]/[chapterId]/[answerId]/page';
 
 export default async function surveyAnswerImageBroken(options: {
 	chapterId: string;

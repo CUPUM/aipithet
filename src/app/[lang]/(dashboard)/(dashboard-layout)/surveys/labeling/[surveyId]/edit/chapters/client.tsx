@@ -1,8 +1,8 @@
 'use client';
 
-import surveyChapterCreate from '@lib/actions/survey-chapter-create';
 import ButtonSubmit from '@lib/components/button-submit';
 import { ButtonIconLoading } from '@lib/components/primitives/button';
+import surveyChapterCreate from '@lib/crud/actions/survey-chapter-create';
 import * as m from '@translations/messages';
 import { Plus } from 'lucide-react';
 

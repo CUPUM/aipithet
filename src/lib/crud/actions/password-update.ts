@@ -11,7 +11,7 @@ import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { Argon2id } from 'oslo/password';
 import { NEVER } from 'zod';
-import { validateFormDataAsync } from './validation';
+import { validateFormDataAsync } from '../validation';
 
 export default async function passwordUpdate(state: unknown, formData: FormData) {
 	setLanguageTag(languageTagServer);

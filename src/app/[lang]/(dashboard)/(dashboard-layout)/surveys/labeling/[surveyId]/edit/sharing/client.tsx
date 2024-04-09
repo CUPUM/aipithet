@@ -1,9 +1,9 @@
 'use client';
 
-import surveyInvite from '@lib/actions/survey-invite';
 import ButtonSubmit from '@lib/components/button-submit';
 import { Button, ButtonIconLoading } from '@lib/components/primitives/button';
 import { Input } from '@lib/components/primitives/input';
+import surveyInvite from '@lib/crud/actions/survey-invite';
 import * as m from '@translations/messages';
 import { availableLanguageTags, sourceLanguageTag } from '@translations/runtime';
 import { RefreshCcw, Send, X } from 'lucide-react';

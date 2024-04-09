@@ -10,7 +10,7 @@ import { and, eq, gte } from 'drizzle-orm';
 import { now } from 'drizzle-orm-helpers/pg';
 import { cookies } from 'next/headers';
 import { Argon2id } from 'oslo/password';
-import { validateFormData } from './validation';
+import { validateFormData } from '../validation';
 
 export default async function passwordResetFinalize(state: unknown, formData: FormData) {
 	const parsed = validateFormData(formData, passwordResetFinalizeSchema);

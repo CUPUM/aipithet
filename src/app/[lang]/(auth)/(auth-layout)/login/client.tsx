@@ -1,6 +1,5 @@
 'use client';
 
-import login from '@lib/actions/login';
 import ButtonSubmit from '@lib/components/button-submit';
 import {
 	Button,
@@ -12,6 +11,7 @@ import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
+import login from '@lib/crud/actions/login';
 import * as m from '@translations/messages';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useMemo, useState } from 'react';

@@ -1,12 +1,12 @@
 'use client';
 
-import surveyCreate from '@lib/actions/survey-create';
-import surveyInvitationClaim from '@lib/actions/survey-invitation-claim';
 import ButtonSubmit from '@lib/components/button-submit';
 import { ButtonIconLoading } from '@lib/components/primitives/button';
 import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
+import surveyCreate from '@lib/crud/actions/survey-create';
+import surveyInvitationClaim from '@lib/crud/actions/survey-invitation-claim';
 import * as m from '@translations/messages';
 import { ArrowRight, Plus } from 'lucide-react';
 import { useFormState } from 'react-dom';

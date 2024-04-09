@@ -12,7 +12,7 @@ import { and, eq } from 'drizzle-orm';
 import { now } from 'drizzle-orm-helpers/pg';
 import { revalidateTag } from 'next/cache';
 import { notFound } from 'next/navigation';
-import { validateFormData } from './validation';
+import { validateFormData } from '../validation';
 
 export default async function surveyConfigurationUpdate(state: unknown, formData: FormData) {
 	setLanguageTag(languageTagServer);

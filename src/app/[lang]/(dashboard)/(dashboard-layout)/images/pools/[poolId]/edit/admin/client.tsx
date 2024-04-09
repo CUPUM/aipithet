@@ -1,11 +1,11 @@
 'use client';
 
-import imagePoolDelete from '@lib/actions/image-pool-delete';
-import imagePoolEditorDelete from '@lib/actions/image-pool-editor-delete';
-import imagePoolEditorInvite from '@lib/actions/image-pool-editor-invite';
 import ButtonSubmit from '@lib/components/button-submit';
 import { Button, ButtonIconLoading } from '@lib/components/primitives/button';
 import { Input } from '@lib/components/primitives/input';
+import imagePoolDelete from '@lib/crud/actions/image-pool-delete';
+import imagePoolEditorDelete from '@lib/crud/actions/image-pool-editor-delete';
+import imagePoolEditorInvite from '@lib/crud/actions/image-pool-editor-invite';
 import * as m from '@translations/messages';
 import { availableLanguageTags, sourceLanguageTag } from '@translations/runtime';
 import { Send, Trash2, X } from 'lucide-react';

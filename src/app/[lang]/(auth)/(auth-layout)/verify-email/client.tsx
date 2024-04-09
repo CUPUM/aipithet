@@ -1,12 +1,12 @@
 'use client';
 
-import emailVerificationSend from '@lib/actions/email-verification-send';
-import emailVerify from '@lib/actions/email-verify';
 import ButtonSubmit from '@lib/components/button-submit';
 import { ButtonIconLoading, ButtonIconSpace } from '@lib/components/primitives/button';
 import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
+import emailVerificationSend from '@lib/crud/actions/email-verification-send';
+import emailVerify from '@lib/crud/actions/email-verify';
 import * as m from '@translations/messages';
 import { KeyRound, RefreshCw } from 'lucide-react';
 import { useFormState } from 'react-dom';

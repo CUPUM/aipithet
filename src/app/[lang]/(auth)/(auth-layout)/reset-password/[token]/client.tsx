@@ -1,6 +1,5 @@
 'use client';
 
-import passwordResetFinalize from '@lib/actions/password-reset-finalize';
 import ButtonSubmit from '@lib/components/button-submit';
 import {
 	Button,
@@ -12,6 +11,7 @@ import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
+import passwordResetFinalize from '@lib/crud/actions/password-reset-finalize';
 import * as m from '@translations/messages';
 import { Check, Eye, EyeOff } from 'lucide-react';
 import { useMemo, useState } from 'react';

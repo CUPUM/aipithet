@@ -1,6 +1,5 @@
 'use client';
 
-import passwordUpdate from '@lib/actions/password-update';
 import ButtonPasswordToggle from '@lib/components/button-password-toggle';
 import ButtonSubmit from '@lib/components/button-submit';
 import { ButtonIconLoading } from '@lib/components/primitives/button';
@@ -8,6 +7,7 @@ import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
+import passwordUpdate from '@lib/crud/actions/password-update';
 import useActionSuccess from '@lib/hooks/action-success';
 import { usePasswordReveal } from '@lib/hooks/password-reveal';
 import * as m from '@translations/messages';

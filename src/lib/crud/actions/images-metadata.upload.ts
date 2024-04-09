@@ -7,7 +7,7 @@ import { languageTagServer } from '@lib/i18n/utilities-server';
 import { setLanguageTag } from '@translations/runtime';
 import { toExcluded } from 'drizzle-orm-helpers/pg';
 import { NEVER, z } from 'zod';
-import { validateFormDataAsync } from './validation';
+import { validateFormDataAsync } from '../validation';
 
 export default async function imagesMetadataUpload(state: unknown, formData: FormData) {
 	setLanguageTag(languageTagServer);

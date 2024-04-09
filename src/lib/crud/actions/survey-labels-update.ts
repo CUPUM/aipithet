@@ -9,7 +9,7 @@ import { languageTag, setLanguageTag } from '@translations/runtime';
 import { toExcluded } from 'drizzle-orm-helpers/pg';
 import { revalidateTag } from 'next/cache';
 import { z } from 'zod';
-import { validateFormData } from './validation';
+import { validateFormData } from '../validation';
 
 export default async function surveyLabelsUpdate(state: unknown, formData: FormData) {
 	setLanguageTag(languageTag);

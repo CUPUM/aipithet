@@ -1,7 +1,7 @@
-import surveyAnswerNext from '@lib/actions/survey-answer-next';
 import { authorize } from '@lib/auth/auth';
 import ButtonSubmit from '@lib/components/button-submit';
 import { ButtonIconLoading } from '@lib/components/primitives/button';
+import surveyAnswerNext from '@lib/crud/actions/survey-answer-next';
 import { db } from '@lib/database/db';
 import {
 	labelingSurveysChapters,
@@ -13,10 +13,12 @@ import { languageTag } from '@translations/runtime';
 import { and, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { Tag } from 'lucide-react';
+import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import Markdown from 'react-markdown';
 
 async function getChapter(chapterId: string) {
+	headers().set();
 	const { user } = await authorize();
 	const { title, description } = getColumns(labelingSurveysChaptersTranslations);
 	return (

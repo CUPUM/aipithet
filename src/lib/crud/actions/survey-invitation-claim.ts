@@ -14,7 +14,7 @@ import { setLanguageTag } from '@translations/runtime';
 import { and, eq, gte, not } from 'drizzle-orm';
 import { now } from 'drizzle-orm-helpers/pg';
 import { NEVER } from 'zod';
-import { validateFormDataAsync } from './validation';
+import { validateFormDataAsync } from '../validation';
 
 export default async function surveyInvitationClaim(state: unknown, formData: FormData) {
 	setLanguageTag(languageTagServer);

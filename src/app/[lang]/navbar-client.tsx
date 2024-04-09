@@ -21,7 +21,6 @@ import {
 import { useTheme } from 'next-themes';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useMemo, useTransition } from 'react';
-import logout from '../../lib/actions/logout';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -33,6 +32,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '../../lib/components/primitives/dropdown-menu';
+import logout from '../../lib/crud/actions/logout';
 import { LANG_NAMES } from '../../lib/i18n/constants';
 import { availableLanguageTags, languageTag } from '../../lib/i18n/generated/runtime';
 import { USER_ROUTES_ARR, USER_ROUTES_DETAILS } from './(dashboard)/(dashboard-layout)/constants';

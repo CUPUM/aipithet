@@ -1,6 +1,5 @@
 'use client';
 
-import passwordReset from '@lib/actions/password-reset';
 import ButtonSubmit from '@lib/components/button-submit';
 import {
 	Button,
@@ -13,6 +12,7 @@ import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
 import ScatteredNodes from '@lib/components/scattered-nodes';
+import passwordReset from '@lib/crud/actions/password-reset';
 import * as m from '@translations/messages';
 import { MailSearch, RefreshCw } from 'lucide-react';
 import { useEffect, useRef } from 'react';

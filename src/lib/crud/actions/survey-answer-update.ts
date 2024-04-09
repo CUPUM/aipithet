@@ -6,8 +6,8 @@ import { labelingSurveysAnswers } from '@lib/database/schema/public';
 import { labelingSurveysAnswersSchema, labelingSurveysSchema } from '@lib/database/validation';
 import { and, eq } from 'drizzle-orm';
 import { now } from 'drizzle-orm-helpers/pg';
+import { validateFormData } from '../validation';
 import surveyAnswerNext from './survey-answer-next';
-import { validateFormData } from './validation';
 
 export default async function surveyAnswerUpdate(state: unknown, formData: FormData) {
 	const { user } = await authorize();

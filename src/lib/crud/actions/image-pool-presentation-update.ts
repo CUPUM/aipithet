@@ -11,7 +11,7 @@ import { setLanguageTag } from '@translations/runtime';
 import { getColumns } from 'drizzle-orm-helpers';
 import { toExcluded } from 'drizzle-orm-helpers/pg';
 import { revalidateTag } from 'next/cache';
-import { validateFormData } from './validation';
+import { validateFormData } from '../validation';
 
 export default async function imagePoolPresentationUpdate(state: unknown, formData: FormData) {
 	setLanguageTag(languageTagServer);

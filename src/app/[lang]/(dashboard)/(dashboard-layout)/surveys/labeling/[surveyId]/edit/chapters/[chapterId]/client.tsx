@@ -1,9 +1,5 @@
 'use client';
 
-import surveyChapterConfigurationUpdate from '@lib/actions/survey-chapter-configuration-update';
-import surveyChapterEnd from '@lib/actions/survey-chapter-end';
-import surveyChapterPresentationUpdate from '@lib/actions/survey-chapter-presentation-update';
-import surveyChapterStart from '@lib/actions/survey-chapter-start';
 import ButtonSubmit from '@lib/components/button-submit';
 import LanguagesFieldsets from '@lib/components/languages-fieldset';
 import { ButtonIconLoading } from '@lib/components/primitives/button';
@@ -13,6 +9,10 @@ import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
 import { Textarea } from '@lib/components/primitives/textarea';
 import { toDateTimeLocalString } from '@lib/components/utilities';
+import surveyChapterConfigurationUpdate from '@lib/crud/actions/survey-chapter-configuration-update';
+import surveyChapterEnd from '@lib/crud/actions/survey-chapter-end';
+import surveyChapterPresentationUpdate from '@lib/crud/actions/survey-chapter-presentation-update';
+import surveyChapterStart from '@lib/crud/actions/survey-chapter-start';
 import * as m from '@translations/messages';
 import { Check } from 'lucide-react';
 import { useFormState } from 'react-dom';

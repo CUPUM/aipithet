@@ -1,5 +1,5 @@
-import { validateFormData } from '@lib/actions/validation';
 import { authorizeRequest } from '@lib/auth/auth';
+import { validateFormData } from '@lib/crud/validation';
 import type { NextRequest } from 'next/server';
 import { z } from 'zod';
 

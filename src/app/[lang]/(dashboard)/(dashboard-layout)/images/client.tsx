@@ -1,9 +1,9 @@
 'use client';
 
-import imagePoolCreate from '@lib/actions/image-pool-create';
 import ButtonSubmit from '@lib/components/button-submit';
 import { ButtonIconLoading } from '@lib/components/primitives/button';
 import { Input } from '@lib/components/primitives/input';
+import imagePoolCreate from '@lib/crud/actions/image-pool-create';
 import * as m from '@translations/messages';
 import { Plus, Ticket } from 'lucide-react';
 import { useFormState } from 'react-dom';

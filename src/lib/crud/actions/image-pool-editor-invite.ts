@@ -18,7 +18,7 @@ import * as m from '@translations/messages';
 import { setLanguageTag } from '@translations/runtime';
 import { and, eq } from 'drizzle-orm';
 import { revalidateTag } from 'next/cache';
-import { validateFormData } from './validation';
+import { validateFormData } from '../validation';
 
 export default async function imagePoolEditorInvite(state: unknown, formData: FormData) {
 	setLanguageTag(languageTagServer);

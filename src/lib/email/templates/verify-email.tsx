@@ -2,7 +2,7 @@ import { withLang } from '@lib/i18n/utilities';
 import { languageTagServer } from '@lib/i18n/utilities-server';
 import { Button, Heading, Section, Text } from '@react-email/components';
 import * as m from '@translations/messages';
-import { Template } from '../template';
+import { Template } from '../email-layout';
 
 export default function VerifyEmailTemplate(props: { code: string; expiresAt: Date }) {
 	const lang = languageTagServer();

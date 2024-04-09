@@ -1,9 +1,9 @@
 'use client';
 
-import imagesMetadataUpload from '@lib/actions/images-metadata.upload';
 import ButtonSubmit from '@lib/components/button-submit';
 import { Button, ButtonIconLoading } from '@lib/components/primitives/button';
 import { ErrorMessages } from '@lib/components/primitives/error-messages';
+import imagesMetadataUpload from '@lib/crud/actions/images-metadata.upload';
 import * as m from '@translations/messages';
 import { Upload } from 'lucide-react';
 import { useState } from 'react';

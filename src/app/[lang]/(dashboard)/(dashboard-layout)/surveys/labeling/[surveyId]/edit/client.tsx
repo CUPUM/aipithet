@@ -1,10 +1,5 @@
 'use client';
 
-import surveyConfigurationUpdate from '@lib/actions/survey-configuration-update';
-import surveyLabelCreate from '@lib/actions/survey-label-create';
-import surveyLabelDelete from '@lib/actions/survey-label-delete';
-import surveyLabelsUpdate from '@lib/actions/survey-labels-update';
-import surveyPresentationUpdate from '@lib/actions/survey-presentation-update';
 import ButtonSubmit from '@lib/components/button-submit';
 import LanguagesFieldsets from '@lib/components/languages-fieldset';
 import { Button, ButtonIcon, ButtonIconLoading } from '@lib/components/primitives/button';
@@ -21,6 +16,11 @@ import {
 } from '@lib/components/primitives/select';
 import { Slider } from '@lib/components/primitives/slider';
 import { Textarea } from '@lib/components/primitives/textarea';
+import surveyConfigurationUpdate from '@lib/crud/actions/survey-configuration-update';
+import surveyLabelCreate from '@lib/crud/actions/survey-label-create';
+import surveyLabelDelete from '@lib/crud/actions/survey-label-delete';
+import surveyLabelsUpdate from '@lib/crud/actions/survey-labels-update';
+import surveyPresentationUpdate from '@lib/crud/actions/survey-presentation-update';
 import { LABELING_SURVEY_SLIDER_STEP_COUNT_MAX } from '@lib/database/constants';
 import * as m from '@translations/messages';
 import { availableLanguageTags, languageTag } from '@translations/runtime';
