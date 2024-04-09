@@ -151,5 +151,8 @@
 	"start_now": "Débuter maintenant",
 	"end_now": "Fermer maintenant",
 	"active": "Actif",
-	"inactive": "Inactif"
+	"inactive": "Inactif",
+	"resume": "Poursuivre",
+	"resume_labeling": "Poursuivre l'annotation",
+	"label_no_text": "Étiquette non défini"
 }

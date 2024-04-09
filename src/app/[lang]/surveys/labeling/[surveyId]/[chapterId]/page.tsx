@@ -1,4 +1,7 @@
+import surveyChapterAnswerNext from '@lib/actions/survey-chapter-answer-next';
 import { authorize } from '@lib/auth/auth';
+import ButtonSubmit from '@lib/components/button-submit';
+import { ButtonIconLoading } from '@lib/components/primitives/button';
 import { db } from '@lib/database/db';
 import {
 	labelingSurveysChapters,
@@ -9,6 +12,7 @@ import * as m from '@translations/messages';
 import { languageTag } from '@translations/runtime';
 import { and, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
+import { Tag } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import Markdown from 'react-markdown';
 
@@ -67,6 +71,14 @@ export default async function Page(props: { params: { surveyId: string; chapterI
 					<p>{m.description_none()}</p>
 				)}
 			</section>
+			<form
+				action={surveyChapterAnswerNext.bind(null, props.params.surveyId, props.params.chapterId)}
+			>
+				<ButtonSubmit>
+					{m.resume_labeling()}
+					<ButtonIconLoading icon={Tag} />
+				</ButtonSubmit>
+			</form>
 		</article>
 	);
 }

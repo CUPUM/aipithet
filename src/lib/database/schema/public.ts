@@ -3,7 +3,6 @@ import { nanoid, now, toInterval } from 'drizzle-orm-helpers/pg';
 import {
 	boolean,
 	decimal,
-	foreignKey,
 	integer,
 	interval,
 	pgTable,
@@ -158,9 +157,7 @@ export const imagesPrompts = pgTable(
 	},
 	(table) => {
 		return {
-			unq: unique()
-				.on(table.prompt, table.poolId, table.method, table.scenarioId)
-				.nullsNotDistinct(),
+			unq: unique().on(table.poolId, table.prompt, table.method).nullsNotDistinct(),
 		};
 	}
 );
@@ -181,14 +178,14 @@ export const images = pgTable(
 			onDelete: 'set null',
 			onUpdate: 'cascade',
 		}),
-		path: text('path').notNull(),
-		bucket: text('bucket').notNull(),
 		poolId: text('pool_id')
 			.references(() => imagesPools.id, {
 				onDelete: 'cascade',
 				onUpdate: 'cascade',
 			})
 			.notNull(),
+		path: text('path').notNull(),
+		bucket: text('bucket').notNull(),
 		width: integer('width').notNull(),
 		height: integer('height').notNull(),
 		promptId: text('prompt_id').references(() => imagesPrompts.id, {
@@ -199,7 +196,7 @@ export const images = pgTable(
 	},
 	(table) => {
 		return {
-			unq: unique().on(table.path, table.poolId, table.bucket),
+			unq: unique().on(table.poolId, table.path, table.bucket),
 		};
 	}
 );
@@ -387,8 +384,8 @@ export const labelingSurveysChaptersTranslations = pgTable(
 	}
 );
 
-export const labelingSurveysLeafs = pgTable(
-	'labeling_surveys_leafs',
+export const labelingSurveysAnswersPresets = pgTable(
+	'labeling_surveys_answers_presets',
 	{
 		id: text('id').default(nanoid()).primaryKey(),
 		chapterId: text('chapter_id').references(() => labelingSurveysChapters.id, {
@@ -399,16 +396,20 @@ export const labelingSurveysLeafs = pgTable(
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 		image1Id: text('image_1_id')
 			.references(() => images.id, {
-				onDelete: 'restrict',
+				onDelete: 'cascade',
 				onUpdate: 'cascade',
 			})
 			.notNull(),
 		image2Id: text('image_2_id')
 			.references(() => images.id, {
-				onDelete: 'restrict',
+				onDelete: 'cascade',
 				onUpdate: 'cascade',
 			})
 			.notNull(),
+		labelId: text('label_id').references(() => labels.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
 	},
 	(table) => {
 		return {
@@ -417,39 +418,39 @@ export const labelingSurveysLeafs = pgTable(
 	}
 );
 
-export const labelingSurveysAnswers = pgTable(
-	'labeling_surveys_answers',
-	{
-		id: text('id').default(nanoid()).primaryKey(),
-		userId: text('user_id')
-			.references(() => users.id, {
-				onDelete: 'cascade',
-				onUpdate: 'cascade',
-			})
-			.notNull(),
-		chapterId: text('chapter_id')
-			.references(() => labelingSurveysChapters.id, {
-				onDelete: 'cascade',
-				onUpdate: 'cascade',
-			})
-			.notNull(),
-		leafId: text('leaf_id')
-			.references(() => labelingSurveysLeafs.id, {
-				onDelete: 'cascade',
-				onUpdate: 'cascade',
-			})
-			.notNull(),
-		score: decimal('score'),
-		timeToAnswerServer: interval('time_to_answer_server').notNull(),
-		timeToAnswerClient: interval('time_to_answer_client').notNull(),
-		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-	},
-	(table) => ({
-		cfk: foreignKey({
-			columns: [table.userId, table.chapterId],
-			foreignColumns: [labelingSurveysParticipants.userId, labelingSurveysParticipants.surveyId],
+export const labelingSurveysAnswers = pgTable('labeling_surveys_answers', {
+	id: text('id').default(nanoid()).primaryKey(),
+	userId: text('user_id')
+		.references(() => users.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
 		})
-			.onDelete('cascade')
-			.onUpdate('cascade'),
-	})
-);
+		.notNull(),
+	chapterId: text('chapter_id')
+		.references(() => labelingSurveysChapters.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		})
+		.notNull(),
+	image1Id: text('image_1_id')
+		.references(() => images.id, {
+			onDelete: 'restrict',
+			onUpdate: 'cascade',
+		})
+		.notNull(),
+	image2Id: text('image_2_id')
+		.references(() => images.id, {
+			onDelete: 'restrict',
+			onUpdate: 'cascade',
+		})
+		.notNull(),
+	labelId: text('label_id').references(() => labels.id, {
+		onDelete: 'restrict',
+		onUpdate: 'cascade',
+	}),
+	score: decimal('score'),
+	timeToAnswerServer: interval('time_to_answer_server'),
+	timeToAnswerClient: interval('time_to_answer_client'),
+	answeredAt: timestamp('answered_at', { withTimezone: true }),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});

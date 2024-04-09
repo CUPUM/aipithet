@@ -2,8 +2,14 @@
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
-	experimental: {
-		serverComponentsExternalPackages: ['@node-rs/argon2'],
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'storage.googleapis.com',
+				port: '',
+			},
+		],
 	},
 	webpack: (config) => {
 		// https://lucia-auth.com/getting-started/nextjs-app

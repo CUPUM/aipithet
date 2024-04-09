@@ -1,0 +1,1 @@
+ALTER TABLE "labeling_surveys_answers" ADD COLUMN "score" numeric;

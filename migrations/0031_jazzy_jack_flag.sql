@@ -1,0 +1,1 @@
+ALTER TABLE "labeling_surveys_answers" DROP CONSTRAINT "labeling_surveys_answers_user_id_chapter_id_labeling_surveys_participants_user_id_survey_id_fk";
