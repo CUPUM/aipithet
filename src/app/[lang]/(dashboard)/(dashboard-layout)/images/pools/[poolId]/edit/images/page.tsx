@@ -1,6 +1,7 @@
 import { Skeleton } from '@lib/components/primitives/skeleton';
 import { db } from '@lib/database/db';
 import { images, imagesPrompts } from '@lib/database/schema/public';
+import * as m from '@translations/messages';
 import { eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { jsonAgg, jsonBuildObject } from 'drizzle-orm-helpers/pg';
@@ -14,18 +15,19 @@ async function Prompts(props: { poolId: string }) {
 		.where(eq(imagesPrompts.poolId, props.poolId))
 		.leftJoin(images, eq(images.promptId, imagesPrompts.id))
 		.groupBy(imagesPrompts.id);
-	console.log(prompts);
-	return prompts.map((prompt) => <li>{prompt.id}</li>);
+	return prompts.map((prompt) => <li className="rounded-sm bg-border p-2">{prompt.id}</li>);
 }
-
-async function Images() {}
 
 export default async function Page(props: { params: { poolId: string } }) {
 	return (
 		<>
 			<section className="border-boder flex animate-fly-up flex-col gap-6 rounded-lg border bg-background p-6 fill-mode-both">
-				<h2 className="text-xl font-semibold">Prompts</h2>
-				<ul className="flex flex-col gap-2 bg-border/50 p-2">
+				<menu className="flex flex-row">
+					<button className="text-md flex flex-row px-6 font-semibold">{m.images()}</button>
+					<button className="text-md flex flex-row px-6 font-semibold">{m.prompts()}</button>
+					<button className="text-md flex flex-row px-6 font-semibold">{m.scenarios()}</button>
+				</menu>
+				<ul className="flex max-h-[70vh] flex-col gap-2 overflow-y-auto rounded-md bg-border/50 p-6">
 					<Suspense
 						fallback={
 							<li>
@@ -36,9 +38,6 @@ export default async function Page(props: { params: { poolId: string } }) {
 						<Prompts poolId={props.params.poolId} />
 					</Suspense>
 				</ul>
-			</section>
-			<section className="border-boder flex animate-fly-up flex-col gap-6 rounded-lg border bg-background p-6 delay-100 fill-mode-both">
-				<h2 className="text-xl font-semibold">Images</h2>
 			</section>
 			<section className="border-boder flex animate-fly-up flex-col gap-6 rounded-lg border bg-background p-6 delay-200 fill-mode-both">
 				<h2 className="text-xl font-semibold">Upload</h2>

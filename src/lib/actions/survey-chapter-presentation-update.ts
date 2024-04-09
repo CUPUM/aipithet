@@ -1,6 +1,7 @@
 'use server';
 
 import { authorize } from '@lib/auth/auth';
+import { CACHE_TAGS } from '@lib/constants';
 import { db } from '@lib/database/db';
 import {
 	labelingSurveys,
@@ -8,12 +9,13 @@ import {
 	labelingSurveysChaptersTranslations,
 } from '@lib/database/schema/public';
 import { labelingSurveysChaptersWithTranslationsSchema } from '@lib/database/validation';
-import { languageTagServer, revalidatePath } from '@lib/i18n/utilities-server';
+import { languageTagServer } from '@lib/i18n/utilities-server';
 import { canEditLabelingSurvey } from '@lib/queries/queries';
 import { setLanguageTag, sourceLanguageTag } from '@translations/runtime';
 import { and, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { now, toExcluded } from 'drizzle-orm-helpers/pg';
+import { revalidateTag } from 'next/cache';
 import { validateFormData } from './validation';
 
 export default async function surveyChapterPresentationUpdate(state: unknown, formData: FormData) {
@@ -56,9 +58,6 @@ export default async function surveyChapterPresentationUpdate(state: unknown, fo
 			.where(eq(labelingSurveys.id, survey.id));
 		return survey.id;
 	});
-	revalidatePath(
-		`/surveys/labeling/${surveyId}/edit/chapters/${parsed.data[sourceLanguageTag].id}`,
-		'layout'
-	);
+	revalidateTag(CACHE_TAGS.SURVEY_CHAPTER_PRESENTATION);
 	return parsed.succeed;
 }

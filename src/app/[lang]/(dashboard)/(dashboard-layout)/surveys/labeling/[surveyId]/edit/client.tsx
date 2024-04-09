@@ -213,7 +213,7 @@ function SurveyLabelFieldset(
 	const [currentLang, setCurrentLang] = useState(languageTag());
 	const deleteLabel = surveyLabelDelete.bind(null, { id: props.id, surveyId: props.surveyId });
 	return (
-		<li className="flex flex-row items-center gap-2">
+		<li className="flex flex-row items-start gap-2">
 			<span className="flex h-11 w-6 items-center font-mono text-[.75rem] font-medium text-muted-foreground">
 				{props.index + 1}.
 			</span>
@@ -244,8 +244,9 @@ function SurveyLabelFieldset(
 						name={`labels[${props.index}].translations.${lang}.text`}
 						form="labels-form"
 					/>
-					<Input
-						className="flex-1 delay-75 duration-300 animate-in fade-in slide-in-from-left-4 fill-mode-both"
+					<Textarea
+						rows={4}
+						className="flex-1 resize-none leading-relaxed delay-75 duration-300 animate-in fade-in slide-in-from-left-4 fill-mode-both"
 						placeholder={m.description(undefined, { languageTag: lang })}
 						defaultValue={props.translations[lang].description || ''}
 						name={`labels[${props.index}].translations.${lang}.description`}

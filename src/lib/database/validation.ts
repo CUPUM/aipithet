@@ -74,8 +74,8 @@ export const labelingSurveysWithTranslationsSchema = withTranslationsSchema(
 export const labelingSurveysInvitationsSchema = createInsertSchema(labelingSurveysInvitations);
 
 export const labelingSurveysChaptersSchema = createInsertSchema(labelingSurveysChapters, {
-	start: z.string().pipe(z.coerce.date()),
-	end: z.string().pipe(z.coerce.date()),
+	start: z.string().pipe(z.coerce.date().nullable().catch(null)),
+	end: z.string().pipe(z.coerce.date().nullable().catch(null)),
 });
 export const labelingSurveysChaptersTranslationsSchema = createInsertSchema(
 	labelingSurveysChaptersTranslations,

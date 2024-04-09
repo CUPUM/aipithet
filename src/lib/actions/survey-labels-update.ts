@@ -1,13 +1,13 @@
 'use server';
 
 import { authorize } from '@lib/auth/auth';
+import { CACHE_TAGS } from '@lib/constants';
 import { db } from '@lib/database/db';
 import { labelsTranslations } from '@lib/database/schema/public';
 import { labelsWithTranslationsSchema } from '@lib/database/validation';
-import { canEditLabelingSurvey } from '@lib/queries/queries';
 import { languageTag, setLanguageTag } from '@translations/runtime';
-import { getColumns } from 'drizzle-orm-helpers';
 import { toExcluded } from 'drizzle-orm-helpers/pg';
+import { revalidateTag } from 'next/cache';
 import { z } from 'zod';
 import { validateFormData } from './validation';
 
@@ -21,12 +21,16 @@ export default async function surveyLabelsUpdate(state: unknown, formData: FormD
 	if (!parsed.success) {
 		return parsed.fail;
 	}
+	console.log(JSON.stringify(parsed.data, null, 2));
 	await db
 		.insert(labelsTranslations)
 		.values(parsed.data.labels.flatMap((label) => Object.values(label.translations)))
 		.onConflictDoUpdate({
-			where: canEditLabelingSurvey({ userId: user.id, surveyId: labelsTranslations.id }),
 			target: [labelsTranslations.id, labelsTranslations.lang],
-			set: toExcluded(getColumns(labelsTranslations)),
+			set: toExcluded({
+				text: labelsTranslations.text,
+				description: labelsTranslations.description,
+			}),
 		});
+	revalidateTag(CACHE_TAGS.SURVEY_LABELS);
 }

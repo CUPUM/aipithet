@@ -146,5 +146,10 @@
 	"image_pool_invited_editor_email_title": "Vous avez été invité à rejoindre une collection d'images en tant qu'éditeur!",
 	"image_pool_joined_editor_email_body": "Vous pouvez dorénavant éditer le contenu de la collection d'images «{poolTitle}».",
 	"survey_joined_email_body": "Vous êtes dorénavant {userType} pour le sondage «{surveyTitle}».",
-	"no_user_session": "Aucune session utilisateur détectée."
+	"no_user_session": "Aucune session utilisateur détectée.",
+	"scenarios": "Scénarios",
+	"start_now": "Débuter maintenant",
+	"end_now": "Fermer maintenant",
+	"active": "Actif",
+	"inactive": "Inactif"
 }

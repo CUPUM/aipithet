@@ -14,13 +14,13 @@ export function ImagesMetadataUploadForm(props: { poolId: string }) {
 	console.log(formState);
 	const [value, setValue] = useState(false);
 	return (
-		<form action={formAction} className="flex flex-col items-start">
+		<form action={formAction} className="sticky bottom-0 flex flex-col items-start">
 			<input type="hidden" value={props.poolId} name="poolId" readOnly />
 			<fieldset className="flex flex-row gap-2">
 				<Button
 					asChild
 					variant="secondary"
-					className="cursor-pointer p-0 file:mr-4 file:h-full file:cursor-pointer file:border-none file:bg-input file:px-6"
+					className="cursor-pointer p-1 file:mr-4 file:h-full file:cursor-pointer file:rounded-sm file:border-none file:bg-input file:px-5"
 				>
 					<input
 						type="file"

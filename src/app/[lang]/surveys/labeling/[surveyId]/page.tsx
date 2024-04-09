@@ -8,7 +8,7 @@ import {
 	labelingSurveysTranslations,
 } from '@lib/database/schema/public';
 import Link from '@lib/i18n/Link';
-import { canParticipateLabelingSurvey } from '@lib/queries/queries';
+import { canParticipateLabelingSurvey, isActiveChapter } from '@lib/queries/queries';
 import * as m from '@translations/messages';
 import { languageTag } from '@translations/runtime';
 import { and, eq } from 'drizzle-orm';
@@ -49,6 +49,7 @@ async function Chapters(props: { surveyId: string }) {
 	const { title, summary } = getColumns(labelingSurveysChaptersTranslations);
 	const chapters = await db
 		.select({
+			isActive: isActiveChapter(),
 			...getColumns(labelingSurveysChapters),
 			title,
 			summary,
@@ -64,10 +65,29 @@ async function Chapters(props: { surveyId: string }) {
 		);
 	return chapters.map((chapter) => (
 		<Link
+			aria-disabled={!chapter.isActive || undefined}
 			href={`/surveys/labeling/${props.surveyId}/${chapter.id}`}
-			className="flex aspect-[5/3] w-full max-w-screen-sm rounded-md border border-transparent bg-background p-6 transition-all hover:border-primary dark:bg-border/50"
+			className="flex aspect-[5/3] w-full max-w-screen-sm flex-col gap-6 rounded-md border border-transparent bg-background p-12 transition-all hover:border-primary aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:bg-border/50"
 		>
-			{chapter.title || <span className="italic text-muted-foreground">{m.untitled()}</span>}
+			<span className="relative flex flex-row items-center self-start rounded-full bg-input p-2 text-sm">
+				<div
+					data-active={chapter.isActive}
+					className="aspect-square w-3 rounded-full bg-input data-[active]:animate-pulse data-[active]:bg-green-500"
+				/>
+				<span className="pl-3 pr-2 font-medium opacity-50">
+					{chapter.isActive ? m.active() : m.inactive()}
+				</span>
+			</span>
+			<span className="text-4xl font-medium">
+				{chapter.title || <span className="italic text-muted-foreground">{m.untitled()}</span>}
+			</span>
+			<section>
+				{chapter.summary ? (
+					<Markdown></Markdown>
+				) : (
+					<p className="italic text-muted-foreground">{m.description_none()}</p>
+				)}
+			</section>
 		</Link>
 	));
 }
@@ -96,8 +116,8 @@ export default async function Page(props: { params: { surveyId: string } }) {
 					<Button disabled>Pick up where I left</Button>
 				</menu>
 			</section>
-			<section className="flex w-full max-w-screen-lg flex-col self-center rounded-lg bg-accent/50 dark:bg-border/30">
-				<h2 className="p-8 pb-0 text-3xl font-semibold">{m.survey_chapters()}</h2>
+			<section className="flex w-full max-w-screen-lg flex-col self-center rounded-lg border border-border">
+				<h2 className="text-md p-8 pb-0 font-semibold">{m.survey_chapters()}</h2>
 				<nav className="flex flex-row overflow-x-scroll p-8">
 					<Suspense>
 						<Chapters surveyId={props.params.surveyId} />
@@ -105,7 +125,7 @@ export default async function Page(props: { params: { surveyId: string } }) {
 				</nav>
 			</section>
 			<section className="flex w-full max-w-screen-lg flex-col self-center rounded-lg bg-accent/50 dark:bg-border/30">
-				<h2 className="p-8 pb-0 text-3xl font-semibold">{m.answers_history()}</h2>
+				<h2 className="text-md p-8 pb-0 font-semibold">{m.answers_history()}</h2>
 				<ul className="flex flex-row overflow-x-scroll p-8">
 					<Suspense>
 						<RecentAnswers surveyId={props.params.surveyId} />

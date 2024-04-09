@@ -3,11 +3,20 @@ import {
 	imagesPools,
 	imagesPoolsEditors,
 	labelingSurveys,
+	labelingSurveysChapters,
 	labelingSurveysEditors,
 	labelingSurveysParticipants,
 } from '@lib/database/schema/public';
 import type { SQLWrapper } from 'drizzle-orm';
-import { and, eq, exists, or } from 'drizzle-orm';
+import { and, eq, exists, gt, isNotNull, isNull, lt, or } from 'drizzle-orm';
+import { now } from 'drizzle-orm-helpers/pg';
+
+export function isActiveChapter() {
+	return and(
+		and(isNotNull(labelingSurveysChapters.start), gt(now(), labelingSurveysChapters.start)),
+		or(isNull(labelingSurveysChapters.end), lt(now(), labelingSurveysChapters.end))
+	)!.mapWith(Boolean);
+}
 
 /**
  * @todo Implement restrictive filter.

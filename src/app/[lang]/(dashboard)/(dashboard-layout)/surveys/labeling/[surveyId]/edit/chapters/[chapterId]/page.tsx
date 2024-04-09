@@ -6,7 +6,7 @@ import {
 	labelingSurveysChaptersTranslations,
 } from '@lib/database/schema/public';
 import { aggTranslations, joinTranslations } from '@lib/i18n/aggregation';
-import { canEditLabelingSurvey } from '@lib/queries/queries';
+import { canEditLabelingSurvey, isActiveChapter } from '@lib/queries/queries';
 import { and, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { unstable_cache as cache } from 'next/cache';
@@ -23,6 +23,7 @@ const getEditorLabelingSurveyChapter = cache(
 		const agg = await joinTranslations(
 			db
 				.select({
+					isActive: isActiveChapter(),
 					...getColumns(labelingSurveysChapters),
 					translations: aggTranslations(getColumns(labelingSurveysChaptersTranslations)),
 				})

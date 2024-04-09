@@ -1,7 +1,9 @@
 'use client';
 
 import surveyChapterConfigurationUpdate from '@lib/actions/survey-chapter-configuration-update';
+import surveyChapterEnd from '@lib/actions/survey-chapter-end';
 import surveyChapterPresentationUpdate from '@lib/actions/survey-chapter-presentation-update';
+import surveyChapterStart from '@lib/actions/survey-chapter-start';
 import ButtonSubmit from '@lib/components/button-submit';
 import LanguagesFieldsets from '@lib/components/languages-fieldset';
 import { ButtonIconLoading } from '@lib/components/primitives/button';
@@ -85,14 +87,14 @@ export function SurveyChapterConfigurationForm(props: EditorLabelingSurveyChapte
 		>
 			<input type="hidden" name="id" value={props.id} readOnly />
 			<h4 className="px-8 pb-0 text-xl font-semibold">{m.settings()}</h4>
-			<Field className="p-8 md:flex-row md:gap-8">
+			<Field className="p-8 pb-0 md:flex-row md:gap-8">
 				<div className="flex flex-col gap-2">
 					<Label>{m.date_range_active()}</Label>
 					<p className="my-4 text-sm leading-relaxed text-muted-foreground">
 						{m.date_range_active_long()}
 					</p>
 				</div>
-				<div className="flex flex-row items-center gap-4">
+				<div className="flex flex-row items-start gap-4">
 					<Field>
 						<Label>{m.start()}</Label>
 						<Input
@@ -100,8 +102,9 @@ export function SurveyChapterConfigurationForm(props: EditorLabelingSurveyChapte
 							type="datetime-local"
 							defaultValue={props.start ? toDateTimeLocalString(props.start) : undefined}
 						/>
+						<ErrorMessages errors={formState?.errors?.start?._errors} />
 					</Field>
-					<span className="mt-5 group-disabled:opacity-10">&mdash;</span>
+					<span className="mt-9 group-disabled:opacity-10">&mdash;</span>
 					<Field>
 						<Label>{m.end()}</Label>
 						<Input
@@ -109,8 +112,20 @@ export function SurveyChapterConfigurationForm(props: EditorLabelingSurveyChapte
 							type="datetime-local"
 							defaultValue={props.end ? toDateTimeLocalString(props.end) : undefined}
 						/>
+						<ErrorMessages errors={formState?.errors?.end?._errors} />
 					</Field>
 				</div>
+			</Field>
+			<Field className="self-end p-8 pt-0">
+				{props.isActive ? (
+					<ButtonSubmit variant="secondary" formAction={surveyChapterEnd.bind(null, props.id)}>
+						{m.end_now()}
+					</ButtonSubmit>
+				) : (
+					<ButtonSubmit formAction={surveyChapterStart.bind(null, props.id)}>
+						{m.start_now()}
+					</ButtonSubmit>
+				)}
 			</Field>
 			<hr />
 			<Field className="p-8">
