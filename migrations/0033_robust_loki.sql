@@ -1,0 +1,1 @@
+ALTER TABLE "labeling_surveys_answers" ALTER COLUMN "score" SET DATA TYPE real;

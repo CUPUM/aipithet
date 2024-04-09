@@ -34,6 +34,7 @@ export default async function surveyConfigurationUpdate(state: unknown, formData
 			...data,
 			updatedAt: now(),
 			updatedById: user.id,
+			imagePoolId: data.imagePoolId || null,
 		})
 		.where(and(eq(labelingSurveys.id, surveyId), canEditLabelingSurvey({ userId: user.id })));
 	revalidateTag(CACHE_TAGS.SURVEY_CONFIG);
