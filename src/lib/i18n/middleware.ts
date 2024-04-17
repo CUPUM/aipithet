@@ -13,7 +13,7 @@ import { languageTagServer } from './utilities-server';
  * to witness how dumb next's handling of redirects is. Until this behavior is improved,
  * we must provide our own next/navigation wrappers to facilitate localization of redirects.
  */
-function middleware(request: NextRequest) {
+export default function middleware(request: NextRequest) {
 	const pathnameLang = getPathnameLang(request.nextUrl.pathname);
 	const headersLang = languageTagServer();
 	const headers = new Headers(request.headers);
@@ -27,5 +27,3 @@ function middleware(request: NextRequest) {
 	}
 	return NextResponse.next({ request: { headers } });
 }
-
-export default middleware;
