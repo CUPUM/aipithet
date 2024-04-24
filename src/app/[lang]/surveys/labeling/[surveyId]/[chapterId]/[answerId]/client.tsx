@@ -19,25 +19,21 @@ import { useFormState } from 'react-dom';
 import Markdown from 'react-markdown';
 import type { ImageIndex, SurveyAnswer } from './page';
 
-export function LabelClient(props: SurveyAnswer) {
+export function LabelClient(props: { text: string | null; description: string | null }) {
 	return (
 		<hgroup>
 			<Dialog>
 				<DialogTrigger className="cursor-help rounded-md px-5 py-2 text-5xl font-semibold text-foreground transition-all hover:bg-primary/10 hover:text-primary">
-					{props.label?.text || (
-						<span className="italic text-muted-foreground">{m.label_no_text()}</span>
-					)}
+					{props.text || <span className="italic text-muted-foreground">{m.label_no_text()}</span>}
 				</DialogTrigger>
 				<DialogContent className="border-none">
 					<DialogHeader>
 						<DialogTitle className="text-4xl font-semibold">
-							{props.label?.text || (
-								<span className="italic text-muted-foreground">{m.label_no_text()}</span>
-							)}
+							{props.text || <span className="italic text-muted-foreground">{m.label_no_text()}</span>}
 						</DialogTitle>
 					</DialogHeader>
-					{props.label?.description ? (
-						<Markdown>{props.label.description}</Markdown>
+					{props.description ? (
+						<Markdown>{props.description}</Markdown>
 					) : (
 						<p className="italic text-muted-foreground">{m.description_none()}</p>
 					)}
@@ -103,7 +99,7 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 					min={-1}
 					max={1}
 					defaultValue={props.score || 0}
-					className="hover:slider-track:bg-input slider-thumb:bg-primary slider-thumb:rounded-full slider-thumb:size-20 slider-thumb:mt-1.5 slider-thumb:appearance-none slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-track:transition-all slider-track:duration-500 hover:slider-thumb:size-24 slider-thumb:-translate-y-1/2 slider-thumb:transition-all w-full cursor-pointer appearance-none bg-transparent transition-all"
+					className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-20 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-24 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
 					onClick={() => setDirty(true)}
 				/>
 			</label>

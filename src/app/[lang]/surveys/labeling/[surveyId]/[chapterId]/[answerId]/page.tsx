@@ -19,6 +19,7 @@ import { Suspense, cache } from 'react';
 import { AnswerImageClient, LabelClient, LabelingFormClient } from './client';
 
 export type ImageIndex = 1 | 2;
+export type LabelIndex = 1 | 2 | 3;
 
 const getChapter = cache(async function (chapterId: string) {
 	const { user } = await authorize();
@@ -48,13 +49,16 @@ const getSurveyAnswer = cache(async function (answerId: string) {
 	const { user } = await authorize();
 	const image1 = alias(images, 'image1');
 	const image2 = alias(images, 'image2');
+	const label1 = alias(labelsTranslations, 'label1');
+	const label2 = alias(labelsTranslations, 'label2');
+	const label3 = alias(labelsTranslations, 'label3');
 	const { sliderStepCount } = getColumns(labelingSurveys);
 	return (
 		(
 			await db
 				.select({
 					...getColumns(labelingSurveysAnswers),
-					label: getColumns(labelsTranslations),
+					labels: jsonBuildObject({ 1: label1, 2: label2, 3: label3 }),
 					images: jsonBuildObject({ 1: image1, 2: image2 }),
 					sliderStepCount,
 				})
@@ -63,10 +67,24 @@ const getSurveyAnswer = cache(async function (answerId: string) {
 					and(eq(labelingSurveysAnswers.id, answerId), eq(labelingSurveysAnswers.userId, user.id))
 				)
 				.leftJoin(
-					labelsTranslations,
+					label1,
 					and(
-						eq(labelsTranslations.id, labelingSurveysAnswers.labelId),
-						eq(labelsTranslations.lang, languageTag())
+						eq(label1.id, labelingSurveysAnswers.label1Id),
+						eq(label1.lang, languageTag())
+					)
+				)
+				.leftJoin(
+					label2,
+					and(
+						eq(label2.id, labelingSurveysAnswers.label2Id),
+						eq(label2.lang, languageTag())
+					)
+				)
+				.leftJoin(
+					label3,
+					and(
+						eq(label3.id, labelingSurveysAnswers.label3Id),
+						eq(label3.lang, languageTag())
 					)
 				)
 				.leftJoin(image1, eq(image1.id, labelingSurveysAnswers.image1Id))
@@ -91,9 +109,10 @@ const getNextSurveyAnswer = cache(async function (answerId: string) {
 	const { user } = await authorize();
 });
 
-async function Label(props: { answerId: string }) {
+async function Label(props: { index: LabelIndex; answerId: string }) {
 	const surveyAnswer = await getSurveyAnswer(props.answerId);
-	return <LabelClient {...surveyAnswer} />;
+	const label = surveyAnswer.labels[props.index];
+	return <LabelClient text={label.text} description={label.description} />;
 }
 
 async function AnswerImage(props: { answerId: string; index: ImageIndex }) {
@@ -135,17 +154,6 @@ export default async function Page(props: {
 }) {
 	return (
 		<article className="flex h-[calc(100vh-72px)] w-full flex-col items-stretch">
-			<header className="self-center">
-				<Suspense
-					fallback={
-						<hgroup>
-							<Skeleton className="text-transparent">...</Skeleton>
-						</hgroup>
-					}
-				>
-					<Label answerId={props.params.answerId} />
-				</Suspense>
-			</header>
 			<section className="relative grid flex-1 grid-cols-2 grid-rows-1 items-center justify-center gap-6 px-12 py-6">
 				<Suspense
 					fallback={
@@ -164,6 +172,17 @@ export default async function Page(props: {
 					}
 				>
 					<AnswerImage index={2} answerId={props.params.answerId} />
+				</Suspense>
+			</section>
+			<section>
+				<Suspense
+					fallback={
+						<hgroup>
+							<Skeleton className="text-transparent">...</Skeleton>
+						</hgroup>
+					}
+				>
+					<Label index={1} answerId={props.params.answerId} />
 				</Suspense>
 				<Suspense>
 					<LabelingForm answerId={props.params.answerId} surveyId={props.params.surveyId} />

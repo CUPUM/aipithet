@@ -406,7 +406,15 @@ export const labelingSurveysAnswersPresets = pgTable(
 				onUpdate: 'cascade',
 			})
 			.notNull(),
-		labelId: text('label_id').references(() => labels.id, {
+		label1Id: text('label_1_id').references(() => labels.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
+		label2Id: text('label_2_id').references(() => labels.id, {
+			onDelete: 'set null',
+			onUpdate: 'cascade',
+		}),
+		label3Id: text('label_3_id').references(() => labels.id, {
 			onDelete: 'set null',
 			onUpdate: 'cascade',
 		}),
@@ -444,8 +452,16 @@ export const labelingSurveysAnswers = pgTable('labeling_surveys_answers', {
 			onUpdate: 'cascade',
 		})
 		.notNull(),
-	labelId: text('label_id').references(() => labels.id, {
-		onDelete: 'restrict',
+	label1Id: text('label_1_id').references(() => labels.id, {
+		onDelete: 'set null',
+		onUpdate: 'cascade',
+	}),
+	label2Id: text('label_2_id').references(() => labels.id, {
+		onDelete: 'set null',
+		onUpdate: 'cascade',
+	}),
+	label3Id: text('label_3_id').references(() => labels.id, {
+		onDelete: 'set null',
 		onUpdate: 'cascade',
 	}),
 	score: real('score'),
