@@ -246,6 +246,20 @@
       "when": 1713987809346,
       "tag": "0034_daffy_blazing_skull",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "5",
+      "when": 1713990244812,
+      "tag": "0035_steady_otto_octavius",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "5",
+      "when": 1713993381298,
+      "tag": "0036_empty_domino",
+      "breakpoints": true
     }
   ]
 }

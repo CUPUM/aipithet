@@ -93,5 +93,7 @@ export const labelingSurveysChaptersWithTranslationsSchema = withTranslationsSch
 );
 
 export const labelingSurveysAnswersSchema = createInsertSchema(labelingSurveysAnswers, {
-	score: (s) => s.score.min(-1).max(1),
+	score1: (s) => s.score1.min(-1).max(1),
+	score2: (s) => s.score2.min(-1).max(1),
+	score3: (s) => s.score3.min(-1).max(1),
 });

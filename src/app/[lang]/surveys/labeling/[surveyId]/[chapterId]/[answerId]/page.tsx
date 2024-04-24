@@ -16,7 +16,7 @@ import { jsonBuildObject } from 'drizzle-orm-helpers/pg';
 import { alias } from 'drizzle-orm/pg-core';
 import { notFound } from 'next/navigation';
 import { Suspense, cache } from 'react';
-import { AnswerImageClient, LabelClient, LabelingFormClient } from './client';
+import { AnswerImageClient, LabelingFormClient } from './client';
 
 export type ImageIndex = 1 | 2;
 export type LabelIndex = 1 | 2 | 3;
@@ -68,24 +68,15 @@ const getSurveyAnswer = cache(async function (answerId: string) {
 				)
 				.leftJoin(
 					label1,
-					and(
-						eq(label1.id, labelingSurveysAnswers.label1Id),
-						eq(label1.lang, languageTag())
-					)
+					and(eq(label1.id, labelingSurveysAnswers.label1Id), eq(label1.lang, languageTag()))
 				)
 				.leftJoin(
 					label2,
-					and(
-						eq(label2.id, labelingSurveysAnswers.label2Id),
-						eq(label2.lang, languageTag())
-					)
+					and(eq(label2.id, labelingSurveysAnswers.label2Id), eq(label2.lang, languageTag()))
 				)
 				.leftJoin(
 					label3,
-					and(
-						eq(label3.id, labelingSurveysAnswers.label3Id),
-						eq(label3.lang, languageTag())
-					)
+					and(eq(label3.id, labelingSurveysAnswers.label3Id), eq(label3.lang, languageTag()))
 				)
 				.leftJoin(image1, eq(image1.id, labelingSurveysAnswers.image1Id))
 				.leftJoin(image2, eq(image2.id, labelingSurveysAnswers.image2Id))
@@ -108,12 +99,6 @@ const getPreviousSurveyAnswer = cache(async function (answerId: string) {
 const getNextSurveyAnswer = cache(async function (answerId: string) {
 	const { user } = await authorize();
 });
-
-async function Label(props: { index: LabelIndex; answerId: string }) {
-	const surveyAnswer = await getSurveyAnswer(props.answerId);
-	const label = surveyAnswer.labels[props.index];
-	return <LabelClient text={label.text} description={label.description} />;
-}
 
 async function AnswerImage(props: { answerId: string; index: ImageIndex }) {
 	const surveyAnswer = await getSurveyAnswer(props.answerId);
@@ -175,15 +160,6 @@ export default async function Page(props: {
 				</Suspense>
 			</section>
 			<section>
-				<Suspense
-					fallback={
-						<hgroup>
-							<Skeleton className="text-transparent">...</Skeleton>
-						</hgroup>
-					}
-				>
-					<Label index={1} answerId={props.params.answerId} />
-				</Suspense>
 				<Suspense>
 					<LabelingForm answerId={props.params.answerId} surveyId={props.params.surveyId} />
 				</Suspense>

@@ -48,13 +48,13 @@ export default async function surveyAnswerNext(surveyId: string, chapterId: stri
 	if (!image1 || !image2) {
 		throw new Error('Too few images were gathered to build an answer leaf.');
 	}
-	const [label] = await db
+	const [label1, label2, label3] = await db
 		.select()
 		.from(labels)
 		.where(eq(labels.surveyId, surveyId))
 		.orderBy(random())
-		.limit(1);
-	if (!label) {
+		.limit(3);
+	if (!label1 || !label2 || !label3) {
 		throw new Error('No label found to generate image.');
 	}
 	const [newLeaf] = await db
@@ -64,7 +64,9 @@ export default async function surveyAnswerNext(surveyId: string, chapterId: stri
 			chapterId: chapterId,
 			image1Id: image1.id,
 			image2Id: image2.id,
-			labelId: label.id,
+			label1Id: label1.id,
+			label2Id: label2.id,
+			label3Id: label3.id,
 		})
 		.returning();
 	if (!newLeaf) {

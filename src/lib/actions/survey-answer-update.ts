@@ -16,7 +16,9 @@ export default async function surveyAnswerUpdate(state: unknown, formData: FormD
 		labelingSurveysAnswersSchema
 			.pick({
 				chapterId: true,
-				score: true,
+				score1: true,
+				score2: true,
+				score3: true,
 				id: true,
 			})
 			.required({ id: true })
@@ -30,7 +32,12 @@ export default async function surveyAnswerUpdate(state: unknown, formData: FormD
 	}
 	await db
 		.update(labelingSurveysAnswers)
-		.set({ score: parsed.data.score, answeredAt: now() })
+		.set({
+			score1: parsed.data.score1,
+			score2: parsed.data.score2,
+			score3: parsed.data.score3,
+			answeredAt: now(),
+		})
 		.where(
 			and(eq(labelingSurveysAnswers.id, parsed.data.id), eq(labelingSurveysAnswers.userId, user.id))
 		);
