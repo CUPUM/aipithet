@@ -309,6 +309,13 @@
       "when": 1714539471714,
       "tag": "0043_chunky_squadron_supreme",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "5",
+      "when": 1714579342866,
+      "tag": "0044_omniscient_blade",
+      "breakpoints": true
     }
   ]
 }

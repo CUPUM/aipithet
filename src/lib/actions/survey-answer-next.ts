@@ -224,41 +224,52 @@ export default async function surveyAnswerNext(
 			.where(eq(labelingSurveysAnswers.id, answerId));
 	}
 
-	// Check if the user has answered 5 questions, if so, insert a new break.
-	const [answersCount] = await db
-		.select({
-			chapterId: labelingSurveysAnswers.chapterId,
-			count: count(labelingSurveysAnswers.id),
-		})
-		.from(labelingSurveysAnswers)
-		.where(
-			and(
-				eq(labelingSurveysAnswers.userId, user.id),
-				eq(labelingSurveysAnswers.chapterId, chapterId)
-			)
-		)
-		.groupBy(labelingSurveysAnswers.chapterId)
+	const [survey] = await db
+		.select()
+		.from(labelingSurveys)
+		.where(eq(labelingSurveys.id, surveyId))
 		.limit(1);
+	if (!survey) {
+		throw new Error('Could not find the survey for the current chapter.');
+	}
 
-	const answerCount = answersCount?.count ?? 0;
-	const now = new Date();
-
-	// If the user has answered 5 questions, insert a new break.
-	if (answerCount > 0 && answerCount % 100 === 0) {
-		const [newBreak] = await db
-			.insert(labelingSurveysBreaks)
-			.values({
-				userId: user.id,
-				chapterId,
-				startAt: now,
-				endAt: new Date(now.getTime() + 1000 * 60 * 15), // 15min break
+	if (survey.allowBreaks) {
+		// Check if the user has answered 5 questions, if so, insert a new break.
+		const [answersCount] = await db
+			.select({
+				chapterId: labelingSurveysAnswers.chapterId,
+				count: count(labelingSurveysAnswers.id),
 			})
-			.returning();
-		if (!newBreak) {
-			throw new Error('New break could not be inserted for an unknown reason.');
-		}
+			.from(labelingSurveysAnswers)
+			.where(
+				and(
+					eq(labelingSurveysAnswers.userId, user.id),
+					eq(labelingSurveysAnswers.chapterId, chapterId)
+				)
+			)
+			.groupBy(labelingSurveysAnswers.chapterId)
+			.limit(1);
 
-		redirect(`/surveys/labeling/${surveyId}/${chapterId}/break`);
+		const answerCount = answersCount?.count ?? 0;
+		const now = new Date();
+
+		// If the user has answered 5 questions, insert a new break.
+		if (answerCount > 0 && answerCount % survey.breakFrequency === 0) {
+			const [newBreak] = await db
+				.insert(labelingSurveysBreaks)
+				.values({
+					userId: user.id,
+					chapterId,
+					startAt: now,
+					endAt: new Date(now.getTime() + 1000 * 60 * survey.breakDuration),
+				})
+				.returning();
+			if (!newBreak) {
+				throw new Error('New break could not be inserted for an unknown reason.');
+			}
+
+			redirect(`/surveys/labeling/${surveyId}/${chapterId}/break`);
+		}
 	}
 
 	redirect(`/surveys/labeling/${surveyId}/${chapterId}/${newLeaf.id}`);

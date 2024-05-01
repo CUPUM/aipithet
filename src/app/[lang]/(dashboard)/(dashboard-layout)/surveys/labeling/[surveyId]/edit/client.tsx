@@ -1,5 +1,6 @@
 'use client';
 
+import surveyBreakUpdate from '@lib/actions/survey-break-update';
 import surveyConfigurationUpdate from '@lib/actions/survey-configuration-update';
 import surveyLabelCreate from '@lib/actions/survey-label-create';
 import surveyLabelDelete from '@lib/actions/survey-label-delete';
@@ -20,6 +21,7 @@ import {
 	SelectValue,
 } from '@lib/components/primitives/select';
 import { Slider } from '@lib/components/primitives/slider';
+import { Switch } from '@lib/components/primitives/switch';
 import { Textarea } from '@lib/components/primitives/textarea';
 import { LABELING_SURVEY_SLIDER_STEP_COUNT_MAX } from '@lib/database/constants';
 import * as m from '@translations/messages';
@@ -205,6 +207,63 @@ export function SurveyConfigurationForm(
 							))}
 						</SelectContent>
 					</Select>
+				</div>
+			</Field>
+			<div className="sticky bottom-0 my-8 flex flex-row justify-end px-8">
+				<ButtonSubmit className=" bottom-0">
+					<ButtonIconLoading icon={Check} />
+					{m.save()}
+				</ButtonSubmit>
+			</div>
+		</form>
+	);
+}
+
+export function SurveyBreakForm(props: EditorLabelingSurvey) {
+	const [formState, formAction] = useFormState(surveyBreakUpdate, undefined);
+	return (
+		<form
+			action={formAction}
+			className="flex animate-fly-up flex-col gap-12 rounded-lg border border-border bg-background delay-300 fill-mode-both"
+		>
+			<div className="flex flex-row items-center justify-between p-8 pb-0">
+				<h2 className="text-xl font-semibold">Break</h2>
+				<Switch name="&allowBreaks" defaultChecked={props.allowBreaks} />
+			</div>
+			<input type="hidden" name="id" value={props.id} readOnly />
+			<Field className="gap-4 px-8 md:flex-row">
+				<div className="flex flex-1 flex-col gap-4">
+					<Label>Frequency</Label>
+					<p className="my-4 text-sm leading-relaxed text-muted-foreground">
+						How often should there be a break ?
+					</p>
+				</div>
+				<div className="flex flex-1 flex-col md:pt-6">
+					<Input
+						type="number"
+						name="+breakFrequency"
+						className="w-auto min-w-60 self-center"
+						defaultValue={props.breakFrequency}
+						min={0}
+					/>
+				</div>
+			</Field>
+			<hr />
+			<Field className="gap-4 px-8 md:flex-row">
+				<div className="flex flex-1 flex-col gap-4">
+					<Label>Duration</Label>
+					<p className="my-4 text-sm leading-relaxed text-muted-foreground">
+						How long should the break last ? (in minutes)
+					</p>
+				</div>
+				<div className="flex flex-1 flex-col md:pt-6">
+					<Input
+						type="number"
+						name="+breakDuration"
+						className="w-auto min-w-60 self-center"
+						defaultValue={props.breakDuration}
+						min={0}
+					/>
 				</div>
 			</Field>
 			<div className="sticky bottom-0 my-8 flex flex-row justify-end px-8">

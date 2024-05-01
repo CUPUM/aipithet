@@ -257,6 +257,9 @@ export const labelingSurveys = pgTable('labeling_surveys', {
 		onDelete: 'set null',
 		onUpdate: 'cascade',
 	}),
+	breakDuration: integer('break_duration').notNull().default(15),
+	allowBreaks: boolean('allow_breaks').notNull().default(true),
+	breakFrequency: integer('break_frequency').notNull().default(100),
 });
 export const labelingSurveysTranslations = pgTable(
 	'labeling_surveys_t',

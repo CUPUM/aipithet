@@ -16,7 +16,7 @@ import { and, asc, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { unstable_cache as cache } from 'next/cache';
 import { notFound } from 'next/navigation';
-import { SurveyConfigurationForm, SurveyLabelsForm, SurveyPresentationForm } from './client';
+import { SurveyBreakForm, SurveyConfigurationForm, SurveyLabelsForm, SurveyPresentationForm } from './client';
 
 const getEditorLabelingSurvey = cache(
 	async function getEditorLabelingSurvey(surveyId: string) {
@@ -95,6 +95,7 @@ export default async function Page(props: { params: { surveyId: string } }) {
 		<>
 			<SurveyPresentationForm {...survey} />
 			<SurveyConfigurationForm {...survey} selectableImagesPools={pools} />
+			<SurveyBreakForm {...survey} />
 			<SurveyLabelsForm {...survey} labels={labels} />
 		</>
 	);
