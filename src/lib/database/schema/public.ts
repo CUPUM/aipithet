@@ -10,6 +10,7 @@ import {
 	text,
 	timestamp,
 	unique,
+	type AnyPgColumn,
 } from 'drizzle-orm/pg-core';
 import { users } from './auth';
 import { LANG_COLUMN } from './i18n';
@@ -270,6 +271,7 @@ export const labelingSurveysTranslations = pgTable(
 		title: text('title'),
 		summary: text('summary'),
 		description: text('description'),
+		help: text('help'),
 	},
 	(table) => {
 		return {
@@ -384,14 +386,35 @@ export const labelingSurveysChaptersTranslations = pgTable(
 	}
 );
 
-export const labelingSurveysAnswersPresets = pgTable(
-	'labeling_surveys_answers_presets',
-	{
-		id: text('id').default(nanoid()).primaryKey(),
-		chapterId: text('chapter_id').references(() => labelingSurveysChapters.id, {
+export const labelingSurveysBreaks = pgTable('labeling_surveys_breaks', {
+	id: text('id').default(nanoid()).primaryKey(),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	userId: text('user_id')
+		.references(() => users.id, {
 			onDelete: 'cascade',
 			onUpdate: 'cascade',
-		}),
+		})
+		.notNull(),
+	chapterId: text('chapter_id')
+		.references(() => labelingSurveysChapters.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		})
+		.notNull(),
+	startAt: timestamp('start', { withTimezone: true }).notNull(),
+	endAt: timestamp('end', { withTimezone: true }).notNull(),
+});
+
+export const labelingSurveysPairs = pgTable(
+	'labeling_surveys_pairs',
+	{
+		id: text('id').default(nanoid()).primaryKey(),
+		chapterId: text('chapter_id')
+			.references(() => labelingSurveysChapters.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
 		index: integer('index'),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 		image1Id: text('image_1_id')
@@ -406,69 +429,75 @@ export const labelingSurveysAnswersPresets = pgTable(
 				onUpdate: 'cascade',
 			})
 			.notNull(),
-		label1Id: text('label_1_id').references(() => labels.id, {
-			onDelete: 'set null',
-			onUpdate: 'cascade',
-		}),
-		label2Id: text('label_2_id').references(() => labels.id, {
-			onDelete: 'set null',
-			onUpdate: 'cascade',
-		}),
-		label3Id: text('label_3_id').references(() => labels.id, {
-			onDelete: 'set null',
-			onUpdate: 'cascade',
-		}),
-	},
-	(table) => {
-		return {
-			unq: unique().on(table.chapterId, table.index),
-		};
+		label1Id: text('label_1_id')
+			.references(() => labels.id, {
+				onDelete: 'set null',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
+		label2Id: text('label_2_id')
+			.references(() => labels.id, {
+				onDelete: 'set null',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
+		label3Id: text('label_3_id')
+			.references(() => labels.id, {
+				onDelete: 'set null',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
+		maxAnswersCount: integer('max_answers_count').default(1).notNull(),
+		generationMethod: text('generation_method').notNull(),
 	}
+	// (table) => {
+	// 	return {
+	// 		unq: unique().on(table.chapterId, table.index), // Ask Emmanuel about this
+	// 	};
+	// }
 );
 
 export const labelingSurveysAnswers = pgTable('labeling_surveys_answers', {
 	id: text('id').default(nanoid()).primaryKey(),
-	userId: text('user_id')
-		.references(() => users.id, {
+	pairId: text('pair_id')
+		.references(() => labelingSurveysPairs.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		})
+		.notNull(),
+	surveyId: text('survey_id')
+		.references(() => labelingSurveys.id, {
 			onDelete: 'cascade',
 			onUpdate: 'cascade',
 		})
 		.notNull(),
 	chapterId: text('chapter_id')
 		.references(() => labelingSurveysChapters.id, {
+			// Should the chapterId be defined in labelingSurveysPairs or in labelingSurveysAnswers?
 			onDelete: 'cascade',
 			onUpdate: 'cascade',
 		})
 		.notNull(),
-	image1Id: text('image_1_id')
-		.references(() => images.id, {
-			onDelete: 'restrict',
+	userId: text('user_id')
+		.references(() => users.id, {
+			onDelete: 'cascade',
 			onUpdate: 'cascade',
 		})
 		.notNull(),
-	image2Id: text('image_2_id')
-		.references(() => images.id, {
-			onDelete: 'restrict',
-			onUpdate: 'cascade',
-		})
-		.notNull(),
-	label1Id: text('label_1_id').references(() => labels.id, {
-		onDelete: 'set null',
-		onUpdate: 'cascade',
-	}),
-	label2Id: text('label_2_id').references(() => labels.id, {
-		onDelete: 'set null',
-		onUpdate: 'cascade',
-	}),
-	label3Id: text('label_3_id').references(() => labels.id, {
-		onDelete: 'set null',
-		onUpdate: 'cascade',
-	}),
 	score1: real('score_1'),
 	score2: real('score_2'),
 	score3: real('score_3'),
+	comment: text('comment'),
 	timeToAnswerServer: interval('time_to_answer_server'),
 	timeToAnswerClient: interval('time_to_answer_client'),
 	answeredAt: timestamp('answered_at', { withTimezone: true }),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+	nextAnswerId: text('next_answer_id').references((): AnyPgColumn => labelingSurveysAnswers.id, {
+		onDelete: 'cascade',
+		onUpdate: 'cascade',
+	}),
+	prevAnswerId: text('prev_answer_id').references((): AnyPgColumn => labelingSurveysAnswers.id, {
+		onDelete: 'cascade',
+		onUpdate: 'cascade',
+	}),
 });

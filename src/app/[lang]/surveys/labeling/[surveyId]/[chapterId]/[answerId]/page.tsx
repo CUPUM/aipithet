@@ -1,3 +1,5 @@
+import { checkIfChapterCompleted } from '@lib/actions/check-if-chapter-completed';
+import { checkIfUserBreak } from '@lib/actions/check-if-user-break';
 import { authorize } from '@lib/auth/auth';
 import { Skeleton } from '@lib/components/primitives/skeleton';
 import { Spinner } from '@lib/components/primitives/spinner';
@@ -7,8 +9,11 @@ import {
 	labelingSurveys,
 	labelingSurveysAnswers,
 	labelingSurveysChapters,
+	labelingSurveysPairs,
+	labelingSurveysTranslations,
 	labelsTranslations,
 } from '@lib/database/schema/public';
+import { canParticipateLabelingSurvey } from '@lib/queries/queries';
 import { languageTag } from '@translations/runtime';
 import { and, count, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
@@ -16,10 +21,36 @@ import { jsonBuildObject } from 'drizzle-orm-helpers/pg';
 import { alias } from 'drizzle-orm/pg-core';
 import { notFound } from 'next/navigation';
 import { Suspense, cache } from 'react';
-import { AnswerImageClient, LabelingFormClient } from './client';
+import { AnswerImageClient, HelpClient, LabelingFormClient } from './client';
 
 export type ImageIndex = 1 | 2;
 export type LabelIndex = 1 | 2 | 3;
+
+const getSurvey = cache(async function (surveyId: string) {
+	const { user } = await authorize();
+	const { help } = getColumns(labelingSurveysTranslations);
+	return (
+		(
+			await db
+				.select({
+					...getColumns(labelingSurveys),
+					help,
+				})
+				.from(labelingSurveys)
+				.where(
+					and(eq(labelingSurveys.id, surveyId), canParticipateLabelingSurvey({ userId: user.id }))
+				)
+				.leftJoin(
+					labelingSurveysTranslations,
+					and(
+						eq(labelingSurveysTranslations.id, labelingSurveys.id),
+						eq(labelingSurveysTranslations.lang, languageTag())
+					)
+				)
+				.limit(1)
+		)[0] || notFound()
+	);
+});
 
 const getChapter = cache(async function (chapterId: string) {
 	const { user } = await authorize();
@@ -60,6 +91,7 @@ const getSurveyAnswer = cache(async function (answerId: string) {
 					...getColumns(labelingSurveysAnswers),
 					labels: jsonBuildObject({ 1: label1, 2: label2, 3: label3 }),
 					images: jsonBuildObject({ 1: image1, 2: image2 }),
+					chapterId: labelingSurveysAnswers.chapterId,
 					sliderStepCount,
 				})
 				.from(labelingSurveysAnswers)
@@ -67,19 +99,23 @@ const getSurveyAnswer = cache(async function (answerId: string) {
 					and(eq(labelingSurveysAnswers.id, answerId), eq(labelingSurveysAnswers.userId, user.id))
 				)
 				.leftJoin(
+					labelingSurveysPairs,
+					and(eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId))
+				)
+				.leftJoin(
 					label1,
-					and(eq(label1.id, labelingSurveysAnswers.label1Id), eq(label1.lang, languageTag()))
+					and(eq(label1.id, labelingSurveysPairs.label1Id), eq(label1.lang, languageTag()))
 				)
 				.leftJoin(
 					label2,
-					and(eq(label2.id, labelingSurveysAnswers.label2Id), eq(label2.lang, languageTag()))
+					and(eq(label2.id, labelingSurveysPairs.label2Id), eq(label2.lang, languageTag()))
 				)
 				.leftJoin(
 					label3,
-					and(eq(label3.id, labelingSurveysAnswers.label3Id), eq(label3.lang, languageTag()))
+					and(eq(label3.id, labelingSurveysPairs.label3Id), eq(label3.lang, languageTag()))
 				)
-				.leftJoin(image1, eq(image1.id, labelingSurveysAnswers.image1Id))
-				.leftJoin(image2, eq(image2.id, labelingSurveysAnswers.image2Id))
+				.leftJoin(image1, eq(image1.id, labelingSurveysPairs.image1Id))
+				.leftJoin(image2, eq(image2.id, labelingSurveysPairs.image2Id))
 				.leftJoin(
 					labelingSurveysChapters,
 					eq(labelingSurveysChapters.id, labelingSurveysAnswers.chapterId)
@@ -134,11 +170,26 @@ async function Progress(props: { chapterId: string }) {
 	);
 }
 
+async function Help(props: { surveyId: string }) {
+	const survey = await getSurvey(props.surveyId);
+
+	return <HelpClient help={survey.help} />;
+}
+
 export default async function Page(props: {
 	params: { surveyId: string; chapterId: string; answerId: string };
 }) {
+	const { user } = await authorize();
+	await checkIfChapterCompleted(props.params.surveyId, props.params.chapterId);
+	await checkIfUserBreak(props.params.surveyId, props.params.chapterId);
+
 	return (
 		<article className="flex h-[calc(100vh-72px)] w-full flex-col items-stretch">
+			<header className="flex justify-end px-8">
+				<Suspense>
+					<Help surveyId={props.params.surveyId} />
+				</Suspense>
+			</header>
 			<section className="relative grid flex-1 grid-cols-2 grid-rows-1 items-center justify-center gap-6 px-12 py-6">
 				<Suspense
 					fallback={
@@ -164,12 +215,8 @@ export default async function Page(props: {
 					<LabelingForm answerId={props.params.answerId} surveyId={props.params.surveyId} />
 				</Suspense>
 			</section>
-			<footer className="flex flex-none flex-col items-center px-8 py-4">
+			<footer className="flex flex-none flex-col items-center gap-2 px-8 py-4">
 				<Progress chapterId={props.params.chapterId} />
-				<nav className="flex flex-row gap-2">
-					{/* <div>Previous</div>
-					<div>Next</div> */}
-				</nav>
 			</footer>
 		</article>
 	);

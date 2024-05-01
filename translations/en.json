@@ -155,5 +155,17 @@
 	"survey_pariticpant_email_title": "You have been as a participant to a survey!",
 	"survey_editor_email_title": "You have been added to a survey as an editor!",
 	"image_broken": "Image broken",
-	"submit": "Submit"
+	"submit": "Submit",
+	"cancel": "Cancel",
+	"add_comment": "Add comment",
+	"write_comment": "Write your comment here...",
+	"completed": "Completed",
+	"congratulations_title": "Congratulations!",
+	"congratulations_body": "You have successfully completed a chapter of this survey.",
+	"back_to_dashboard": "Go back to Dashboard",
+	"break_title": "Take a break",
+	"break_body": "Thank you for your valuable input. Each image you label helps tailor our AI model to better reflect Montreal’s diverse needs in public spaces. Please take a moment to relax—your participation is crucial in shaping welcoming, inclusive environments for everyone.",
+	"break_timer": "Time left",
+	"break_continue": "Continue",
+	"help": "Help"
 }

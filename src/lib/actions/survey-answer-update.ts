@@ -9,7 +9,11 @@ import { now } from 'drizzle-orm-helpers/pg';
 import surveyAnswerNext from './survey-answer-next';
 import { validateFormData } from './validation';
 
-export default async function surveyAnswerUpdate(state: unknown, formData: FormData) {
+export default async function surveyAnswerUpdate(
+	comment: string | undefined,
+	state: unknown,
+	formData: FormData
+) {
 	const { user } = await authorize();
 	const parsed = validateFormData(
 		formData,
@@ -30,6 +34,7 @@ export default async function surveyAnswerUpdate(state: unknown, formData: FormD
 	if (!parsed.success) {
 		return parsed.fail;
 	}
+
 	await db
 		.update(labelingSurveysAnswers)
 		.set({
@@ -37,9 +42,11 @@ export default async function surveyAnswerUpdate(state: unknown, formData: FormD
 			score2: parsed.data.score2,
 			score3: parsed.data.score3,
 			answeredAt: now(),
+			comment: comment,
 		})
 		.where(
 			and(eq(labelingSurveysAnswers.id, parsed.data.id), eq(labelingSurveysAnswers.userId, user.id))
 		);
-	return surveyAnswerNext(parsed.data.surveyId, parsed.data.chapterId);
+
+	await surveyAnswerNext(parsed.data.surveyId, parsed.data.chapterId, parsed.data.id);
 }

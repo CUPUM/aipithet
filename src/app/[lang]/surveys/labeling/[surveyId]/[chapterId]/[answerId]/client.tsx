@@ -2,22 +2,55 @@
 
 import surveyAnswerUpdate from '@lib/actions/survey-answer-update';
 import ButtonSubmit from '@lib/components/button-submit';
-import { ButtonIconLoading } from '@lib/components/primitives/button';
+import { Button, ButtonIconLoading } from '@lib/components/primitives/button';
+import { Checkbox } from '@lib/components/primitives/checkbox';
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
+	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from '@lib/components/primitives/dialog';
+import { DialogPortal } from '@radix-ui/react-dialog';
 import * as m from '@translations/messages';
-import { RefreshCcw, Star } from 'lucide-react';
+import { CircleHelp, MessageCircleMore, RefreshCcw, Save, Star } from 'lucide-react';
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useFormState } from 'react-dom';
 import Markdown from 'react-markdown';
 import type { ImageIndex, SurveyAnswer } from './page';
+
+export function HelpClient(props: { help: string | null }) {
+	return (
+		<hgroup>
+			<Dialog>
+				<DialogTrigger className="cursor-help rounded-md px-5 py-2 text-2xl font-semibold text-foreground transition-all hover:bg-primary/10 hover:text-primary">
+					<CircleHelp />
+				</DialogTrigger>
+				<DialogContent className="max-w-xl border-none">
+					<DialogHeader>
+						<DialogTitle className="text-4xl font-semibold">{m.help()}</DialogTitle>
+					</DialogHeader>
+					<Markdown
+						components={{
+							a: ({ children, href }) => (
+								<a className="text-primary underline" href={href as string} target="_blank">
+									{children}
+								</a>
+							),
+						}}
+					>
+						{props.help}
+					</Markdown>
+				</DialogContent>
+			</Dialog>
+		</hgroup>
+	);
+}
 
 export function LabelClient(props: {
 	id: string;
@@ -69,27 +102,48 @@ export function AnswerImageClient({
 }: ImageProps & { imageId: string; index: ImageIndex; answerId: string }) {
 	const [broken, setBroken] = useState(false);
 	return (
-		<div className="relative h-full w-full">
-			<Image
-				{...imageProps}
-				className="aspect-square rounded-sm bg-border/50 object-cover"
-				fill
-				onError={() => {
-					setBroken(true);
-				}}
-			/>
-			{broken ? <ImageErrorForm /> : null}
-		</div>
+		<Dialog>
+			<DialogTrigger asChild>
+				<div className="relative h-full w-full">
+					<Image
+						{...imageProps}
+						className="aspect-square rounded-sm bg-border/50 object-cover"
+						fill
+						onError={() => {
+							setBroken(true);
+						}}
+					/>
+					{broken ? <ImageErrorForm /> : null}
+				</div>
+			</DialogTrigger>
+			<DialogContent className="h-full max-w-screen-lg">
+				<DialogHeader>
+					<DialogTitle></DialogTitle>
+				</DialogHeader>
+				<Image
+					{...imageProps}
+					className="aspect-square rounded-sm bg-border/50 object-cover"
+					fill
+					onError={() => {
+						setBroken(true);
+					}}
+				/>
+				{broken ? <ImageErrorForm /> : null}
+			</DialogContent>
+		</Dialog>
 	);
 }
 
 export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
-	const [formState, formAction] = useFormState(surveyAnswerUpdate, undefined);
+	const [comment, setComment] = useState<string>();
+	const surveyAnswerUpdateWithComment = surveyAnswerUpdate.bind(null, comment); // Currently this is a hack because calling submit inside the dialog doesn't work.
+	const [formState, formAction] = useFormState(surveyAnswerUpdateWithComment, undefined);
+
 	const step = useMemo(
 		() => (props.sliderStepCount ? 1 / props.sliderStepCount : 0.01),
 		[props.sliderStepCount]
 	);
-	const [dirty, setDirty] = useState(false);
+	const [active, setActive] = useState({ 0: false, 1: false, 2: false });
 	return (
 		<form
 			action={formAction}
@@ -99,9 +153,16 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 			<input type="hidden" value={props.chapterId} readOnly name="chapterId" />
 			<input type="hidden" value={props.id} readOnly name="id" />
 			<div className="pointer-events-auto w-full px-10">
-				<label>
-					<LabelClient {...props.labels[1]}></LabelClient>
-				</label>
+				<div className="flex items-center">
+					<label>
+						<LabelClient {...props.labels[1]}></LabelClient>
+					</label>
+					<Checkbox
+						name="&checked1"
+						checked={active[0]}
+						onCheckedChange={() => setActive((prev) => ({ ...prev, 0: !prev[0] }))}
+					/>
+				</div>
 				<input
 					name="+score1"
 					type="range"
@@ -109,14 +170,21 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 					min={-1}
 					max={1}
 					defaultValue={props.score1 || 0}
-					className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-24 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
-					onClick={() => setDirty(true)}
+					className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-8 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
+					onClick={() => setActive((prev) => ({ ...prev, 0: true }))}
 				/>
 			</div>
 			<div className="pointer-events-auto w-full px-10">
-				<label>
-					<LabelClient {...props.labels[2]}></LabelClient>
-				</label>
+				<div className="flex items-center">
+					<label>
+						<LabelClient {...props.labels[2]}></LabelClient>
+					</label>
+					<Checkbox
+						name="&checked2"
+						checked={active[1]}
+						onCheckedChange={() => setActive((prev) => ({ ...prev, 1: !prev[1] }))}
+					/>
+				</div>
 				<input
 					name="+score2"
 					type="range"
@@ -124,14 +192,21 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 					min={-1}
 					max={1}
 					defaultValue={props.score2 || 0}
-					className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-24 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
-					onClick={() => setDirty(true)}
+					className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-8 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
+					onClick={() => setActive((prev) => ({ ...prev, 1: true }))}
 				/>
 			</div>
 			<div className="pointer-events-auto w-full px-10">
-				<label>
-					<LabelClient {...props.labels[3]}></LabelClient>
-				</label>
+				<div className="flex items-center">
+					<label>
+						<LabelClient {...props.labels[3]}></LabelClient>
+					</label>
+					<Checkbox
+						name="&checked3"
+						checked={active[2]}
+						onCheckedChange={() => setActive((prev) => ({ ...prev, 2: !prev[2] }))}
+					/>
+				</div>
 				<input
 					name="+score3"
 					type="range"
@@ -139,114 +214,79 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 					min={-1}
 					max={1}
 					defaultValue={props.score3 || 0}
-					className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-24 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
-					onClick={() => setDirty(true)}
+					className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-8 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
+					onClick={() => setActive((prev) => ({ ...prev, 2: true }))}
 				/>
 			</div>
-			{dirty ? (
-				<menu className="mt-8">
-					<ButtonSubmit className="pointer-events-auto animate-puff-grow text-lg font-medium shadow-lg">
-						{m.submit()}
-						<ButtonIconLoading icon={Star} />
-					</ButtonSubmit>
-				</menu>
-			) : null}
+			<nav className="mt-8 flex w-full justify-between px-10">
+				{props.prevAnswerId ? (
+					<Link
+						href={`/surveys/labeling/${props.surveyId}/${props.chapterId}/${props.prevAnswerId}`}
+					>
+						<Button type="button" className="pointer-events-auto">
+							Previous
+						</Button>
+					</Link>
+				) : (
+					<div></div>
+				)}
+
+				{Object.values(active).some((value) => value) ? (
+					<menu className="flex gap-8">
+						<ButtonSubmit className="pointer-events-auto animate-puff-grow text-lg font-medium shadow-lg">
+							{m.submit()}
+							<ButtonIconLoading icon={Star} />
+						</ButtonSubmit>
+						<Dialog>
+							<DialogTrigger asChild>
+								<Button className="pointer-events-auto animate-puff-grow bg-secondary text-lg font-medium shadow-lg">
+									{m.add_comment()}
+									<ButtonIconLoading icon={MessageCircleMore} />
+								</Button>
+							</DialogTrigger>
+							<DialogPortal>
+								<DialogContent>
+									<DialogHeader>
+										<DialogTitle>{m.add_comment()}</DialogTitle>
+									</DialogHeader>
+									<textarea
+										name="comment"
+										className="h-64 w-full rounded-md border border-border/50 bg-background p-4 shadow-lg"
+										value={comment}
+										onChange={(e) => setComment(e.target.value)}
+										placeholder={m.write_comment()}
+									/>
+									<DialogFooter>
+										<DialogClose asChild>
+											<Button variant="destructive" onClick={() => setComment(undefined)}>
+												{m.cancel()}
+											</Button>
+										</DialogClose>
+										<DialogClose asChild>
+											<ButtonSubmit className="pointer-events-auto animate-puff-grow text-lg font-medium shadow-lg">
+												{m.save()}
+												<ButtonIconLoading icon={Save} />
+											</ButtonSubmit>
+										</DialogClose>
+									</DialogFooter>
+								</DialogContent>
+							</DialogPortal>
+						</Dialog>
+					</menu>
+				) : null}
+
+				{props.nextAnswerId ? (
+					<Link
+						href={`/surveys/labeling/${props.surveyId}/${props.chapterId}/${props.nextAnswerId}`}
+					>
+						<Button type="button" className="pointer-events-auto">
+							Next
+						</Button>
+					</Link>
+				) : (
+					<div></div>
+				)}
+			</nav>
 		</form>
 	);
-}
-
-// export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
-// 	const [formState, formAction] = useFormState(surveyAnswerUpdate, undefined);
-// 	const step = useMemo(
-// 		() => (props.sliderStepCount ? 1 / props.sliderStepCount : 0.01),
-// 		[props.sliderStepCount]
-// 	);
-// 	const [dirty, setDirty] = useState(false);
-// 	return (
-// 		<form
-// 			action={formAction}
-// 			className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center p-[inherit]"
-// 		>
-// 			<input type="hidden" value={props.surveyId} readOnly name="surveyId" />
-// 			<input type="hidden" value={props.chapterId} readOnly name="chapterId" />
-// 			<input type="hidden" value={props.id} readOnly name="id" />
-// 			<label className="pointer-events-auto w-full px-10">
-// 				<input
-// 					name="+score"
-// 					type="range"
-// 					step={step}
-// 					min={-1}
-// 					max={1}
-// 					defaultValue={props.score1 || 0}
-// 					className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-20 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-5 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
-// 					onClick={() => setDirty(true)}
-// 				/>
-// 			</label>
-// 			{dirty ? (
-// 				<menu className="absolute bottom-0">
-// 					<ButtonSubmit className="pointer-events-auto animate-puff-grow text-lg font-medium shadow-lg">
-// 						{m.submit()}
-// 						<ButtonIconLoading icon={Star} />
-// 					</ButtonSubmit>
-// 				</menu>
-// 			) : null}
-// 		</form>
-// 	);
-// }
-
-{
-	/* <Slider.Root
-				step={step}
-				min={-1}
-				max={1}
-				defaultValue={[props.score ?? 0]}
-				name="score"
-				onValueChange={() => {
-					setDirty(true);
-				}}
-				className="group/slider absolute z-10 flex h-full w-full touch-none select-none flex-row items-center aria-[disabled=true]:hidden data-[pending=true]:pointer-events-none data-[pending=true]:cursor-not-allowed"
-			>
-				<Slider.Track className="relative flex grow touch-none select-none flex-row items-center">
-					<div className="text-base-200 dark:text-base-900 pointer-events-none absolute flex w-full touch-none select-none flex-row items-center gap-4 p-4 opacity-0 transition-all duration-100 ease-out group-hover/slider:opacity-90 group-data-[disabled]/slider:opacity-0">
-						<ChevronLeft
-							size="2em"
-							stroke="3.5"
-							className="translate-x-2 opacity-0 transition-all delay-100 duration-100 ease-out group-hover/slider:translate-x-0 group-hover/slider:opacity-100"
-						/>
-						<div className="ease-out-expo h-1.5 flex-1 scale-x-75 rounded-full bg-current shadow-black/20 transition-transform duration-100 group-hover/slider:scale-x-100 group-hover/slider:shadow-sm"></div>
-						<ChevronRight
-							size="2em"
-							stroke="3.5"
-							className="-translate-x-2 opacity-0 transition-all delay-100 duration-100 ease-out group-hover/slider:translate-x-0 group-hover/slider:opacity-100"
-						/>
-					</div>
-					<div
-						className={cn(
-							'from-accent1-900/0 to-accent1-600/90 absolute h-16 rounded-full bg-gradient-to-r transition-all duration-100 ease-out group-data-[disabled]/slider:opacity-0',
-							{
-								'bg-gradient-to-l': (props.score ?? 0) < 0,
-							}
-						)}
-						style={{
-							width: `${(Math.abs(props.score ?? 0) / 2) * 100}%`,
-							left: (props.score ?? 0) >= 0 ? '50%' : undefined,
-							right: (props.score ?? 0) < 0 ? '50%' : undefined,
-						}}
-					/>
-					<Slider.Range className="bg-accent1-500 absolute rounded-full data-[orientation=horizontal]:h-6 data-[orientation=vertical]:w-6" />
-				</Slider.Track>
-				<Tooltip content={props.thumbLabel} delayDuration={1000}>
-          <Slider.Thumb
-            onKeyDownCapture={updateKeys}
-            onKeyUp={updateKeys}
-            className="animate-pop-in bg-accent1-500 outline-focus hover:bg-accent1-600 dark:bg-accent1-600 dark:hover:bg-accent1-500 text-accent1-100 shadow-accent1-900/30 hover:shadow-accent1-800/60 active:text-accent1-200 active:shadow-accent1-900/60 flex aspect-square w-20 flex-none cursor-move items-center justify-center rounded-full shadow-md transition-all duration-150 ease-out hover:text-white hover:shadow-lg active:scale-105 active:shadow-md active:outline-8 data-[disabled]:scale-90 data-[disabled]:opacity-0 group-data-[pending=true]/slider:scale-110"
-            aria-label="Representativeness"
-            style={{ scale: pending ? undefined : 1 + Math.abs(rating ?? 0 / 5) }}
-          >
-            <IconChevronLeft className="opacity-25" />
-            <IconStarFilled className="group-data-[pending=true]/slider:animate-spin" />
-            <IconChevronRight className="opacity-25" />
-          </Slider.Thumb>
-        </Tooltip>
-			</Slider.Root> */
 }

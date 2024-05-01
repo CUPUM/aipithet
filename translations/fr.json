@@ -156,5 +156,17 @@
 	"resume_labeling": "Poursuivre l'annotation",
 	"label_no_text": "Étiquette non défini",
 	"image_broken": "Image brisée ?",
-	"submit": "Soumettre"
+	"submit": "Soumettre",
+	"cancel": "Annuler",
+	"add_comment": "Ajouter un commentaire",
+	"write_comment": "Entrez un commentaire...",
+	"completed": "Complété",
+	"congratulations_title": "Félicitations!",
+	"congratulations_body": "Vous avez complété l'annotation de toutes les images de ce chapitre.",
+	"back_to_dashboard": "Retourner au tableau de bord",
+	"break_title": "Prends une pause!",
+	"break_body": "Merci pour ta contribution précieuse. Chaque image que tu étiquetes aide à adapter notre modèle IA pour mieux refléter les besoins diversifiés de Montréal en matière d'espaces publics. Prends un moment pour te détendre—ta participation est cruciale pour créer des environnements accueillants et inclusifs pour tous.",
+	"break_timer": "Temps restant",
+	"break_continue": "Continuer",
+	"help": "Aide"
 }

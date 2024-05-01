@@ -1,12 +1,13 @@
 'use client';
 
+import imagePairsUpload from '@lib/actions/image-pairs-upload';
 import surveyChapterConfigurationUpdate from '@lib/actions/survey-chapter-configuration-update';
 import surveyChapterEnd from '@lib/actions/survey-chapter-end';
 import surveyChapterPresentationUpdate from '@lib/actions/survey-chapter-presentation-update';
 import surveyChapterStart from '@lib/actions/survey-chapter-start';
 import ButtonSubmit from '@lib/components/button-submit';
 import LanguagesFieldsets from '@lib/components/languages-fieldset';
-import { ButtonIconLoading } from '@lib/components/primitives/button';
+import { Button, ButtonIconLoading } from '@lib/components/primitives/button';
 import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
@@ -14,7 +15,8 @@ import { Label } from '@lib/components/primitives/label';
 import { Textarea } from '@lib/components/primitives/textarea';
 import { toDateTimeLocalString } from '@lib/components/utilities';
 import * as m from '@translations/messages';
-import { Check } from 'lucide-react';
+import { Check, Upload } from 'lucide-react';
+import { useState } from 'react';
 import { useFormState } from 'react-dom';
 import type { EditorLabelingSurveyChapter } from './page';
 
@@ -153,6 +155,37 @@ export function SurveyChapterConfigurationForm(props: EditorLabelingSurveyChapte
 	);
 }
 
-export function SurveyChapterLeafPresetsForm() {
-	return <section>Leaf presets</section>;
+export function ImagePairsUploadForm(props: { chapterId: string }) {
+	const [formState, formAction] = useFormState(imagePairsUpload, undefined);
+	console.log(formState);
+	const [value, setValue] = useState(false);
+	return (
+		<form action={formAction} className="sticky bottom-0 flex flex-col items-start">
+			<input type="hidden" value={props.chapterId} name="chapterId" readOnly />
+			<fieldset className="flex flex-row gap-2">
+				<Button
+					asChild
+					variant="secondary"
+					className="cursor-pointer p-1 file:mr-4 file:h-full file:cursor-pointer file:rounded-sm file:border-none file:bg-input file:px-5"
+				>
+					<input
+						type="file"
+						required
+						accept="application/json"
+						name="file"
+						onChange={(e) => setValue(!!e.target.value)}
+					/>
+				</Button>
+				{value ? (
+					<ButtonSubmit className="animate-puff-grow">
+						{m.upload()}
+						<ButtonIconLoading icon={Upload} />
+					</ButtonSubmit>
+				) : null}
+				<ErrorMessages
+					errors={formState && 'errors' in formState ? formState.errors.file?._errors : undefined}
+				/>
+			</fieldset>
+		</form>
+	);
 }

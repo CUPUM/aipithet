@@ -85,6 +85,19 @@ export function SurveyPresentationForm(props: EditorLabelingSurvey) {
 							/>
 							<ErrorMessages errors={formState?.errors?.[fieldsetLang]?.description?._errors} />
 						</Field>
+						<Field>
+							<Label htmlFor={`help-${fieldsetLang}`}>
+								{m.help(undefined, { languageTag: fieldsetLang })}
+							</Label>
+							<Textarea
+								name={`${fieldsetLang}.help`}
+								id={`help-${fieldsetLang}`}
+								rows={5}
+								defaultValue={props.translations[fieldsetLang].help ?? ''}
+								className="leading-relaxed text-foreground/80"
+							/>
+							<ErrorMessages errors={formState?.errors?.[fieldsetLang]?.help?._errors} />
+						</Field>
 					</>
 				)}
 			</LanguagesFieldsets>

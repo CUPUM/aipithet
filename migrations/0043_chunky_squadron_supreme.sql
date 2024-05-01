@@ -1,0 +1,1 @@
+ALTER TABLE "labeling_surveys_t" ADD COLUMN "help" text;
