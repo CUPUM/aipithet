@@ -1,0 +1,1 @@
+ALTER TABLE "labeling_surveys" ADD COLUMN "break_message" text;

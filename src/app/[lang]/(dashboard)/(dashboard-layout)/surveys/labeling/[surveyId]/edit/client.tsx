@@ -283,6 +283,17 @@ export function SurveyBreakForm(props: EditorLabelingSurvey) {
 					/>
 				</div>
 			</Field>
+			<hr />
+			<Field className="gap-4 px-8">
+				<Label htmlFor="break-message">Break Message</Label>
+				<Textarea
+					name="breakMessage"
+					id="break-message"
+					rows={5}
+					defaultValue={props.breakMessage ?? ''}
+					className="leading-relaxed text-foreground/80"
+				/>
+			</Field>
 			<div className="sticky bottom-0 my-8 flex flex-row justify-end px-8">
 				<ButtonSubmit className=" bottom-0">
 					<ButtonIconLoading icon={Check} />

@@ -1,11 +1,31 @@
 import { authorize } from '@lib/auth/auth';
 import { db } from '@lib/database/db';
-import { labelingSurveysAnswers, labelingSurveysBreaks } from '@lib/database/schema/public';
+import {
+	labelingSurveys,
+	labelingSurveysAnswers,
+	labelingSurveysBreaks,
+} from '@lib/database/schema/public';
 import { redirect } from '@lib/i18n/utilities-server';
-import * as m from '@translations/messages';
 import { and, asc, eq, gt, isNull, lt } from 'drizzle-orm';
 import { cache } from 'react';
+import Markdown from 'react-markdown';
 import { TimerButton } from './client';
+
+const getSurvey = cache(async function (surveyId: string) {
+	const { user } = await authorize();
+
+	const [survey] = await db
+		.select()
+		.from(labelingSurveys)
+		.where(and(eq(labelingSurveys.id, surveyId)))
+		.limit(1);
+
+	if (!survey) {
+		throw new Error('Survey not Found');
+	}
+
+	return survey;
+});
 
 const getBreak = cache(async function (surveyId: string, chapterId: string, date: Date) {
 	const { user } = await authorize();
@@ -45,6 +65,7 @@ const getLastAnswer = cache(async function (surveyId: string, chapterId: string)
 });
 
 export default async function Page(props: { params: { surveyId: string; chapterId: string } }) {
+	const survey = await getSurvey(props.params.surveyId);
 	const answer = await getLastAnswer(props.params.surveyId, props.params.chapterId);
 
 	if (!answer) {
@@ -60,8 +81,7 @@ export default async function Page(props: { params: { surveyId: string; chapterI
 
 	return (
 		<div className="flex w-full max-w-screen-lg flex-1 flex-col items-stretch justify-center gap-4 self-center">
-			<h2 className="mb-4 animate-fly-up text-7xl font-semibold">{m.break_title()}</h2>
-			<p className="text-2xl font-light">{m.break_body()}</p>
+			<Markdown>{survey.breakMessage}</Markdown>
 			<TimerButton
 				url={`/surveys/labeling/${props.params.surveyId}/${props.params.chapterId}/${answer.id}`}
 				deadline={userBreak.endAt}
