@@ -420,6 +420,12 @@ export const labelingSurveysPairs = pgTable(
 			.notNull(),
 		index: integer('index'),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+		promptId: text('prompt_id')
+			.references(() => imagesPrompts.id, {
+				onDelete: 'cascade',
+				onUpdate: 'cascade',
+			})
+			.notNull(),
 		image1Id: text('image_1_id')
 			.references(() => images.id, {
 				onDelete: 'cascade',

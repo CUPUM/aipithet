@@ -316,6 +316,13 @@
       "when": 1714579342866,
       "tag": "0044_omniscient_blade",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "5",
+      "when": 1714625312928,
+      "tag": "0045_petite_rocket_racer",
+      "breakpoints": true
     }
   ]
 }

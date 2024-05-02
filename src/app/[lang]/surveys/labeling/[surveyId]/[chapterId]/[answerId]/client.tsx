@@ -104,10 +104,10 @@ export function AnswerImageClient({
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<div className="relative h-full w-full">
+				<div className="relative h-full w-full ">
 					<Image
 						{...imageProps}
-						className="aspect-square rounded-sm bg-border/50 object-cover"
+						className="aspect-square rounded-sm bg-border/50 object-contain"
 						fill
 						onError={() => {
 							setBroken(true);
@@ -122,7 +122,7 @@ export function AnswerImageClient({
 				</DialogHeader>
 				<Image
 					{...imageProps}
-					className="aspect-square rounded-sm bg-border/50 object-cover"
+					className="aspect-square rounded-sm bg-border/50 object-contain"
 					fill
 					onError={() => {
 						setBroken(true);

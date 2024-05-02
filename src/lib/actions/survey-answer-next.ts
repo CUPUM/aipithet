@@ -16,30 +16,64 @@ import { and, asc, count, eq, isNull, lt, or } from 'drizzle-orm';
 import { random } from 'drizzle-orm-helpers/pg';
 
 async function createNewPair(surveyId: string, chapterId: string) {
+	// Select a random prompt, two random images, and three random labels to create a new pair.
+	// The sampling mechansim ensures that all prompts are sampled equally, and that all images are sampled equally.
+
 	const [prompt] = await db
-		.select({ id: imagesPrompts.id })
+		.select({
+			id: imagesPrompts.id,
+			count: count(labelingSurveysAnswers.id),
+		})
 		.from(imagesPrompts)
-		.limit(1)
-		.orderBy(random());
+		.leftJoin(
+			labelingSurveys,
+			and(eq(imagesPrompts.poolId, labelingSurveys.imagePoolId), eq(labelingSurveys.id, surveyId))
+		)
+		.leftJoin(labelingSurveysPairs, eq(imagesPrompts.id, labelingSurveysPairs.promptId))
+		.leftJoin(labelingSurveysAnswers, eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId))
+		.groupBy(imagesPrompts.id)
+		.orderBy(asc(count(labelingSurveysAnswers.id)), random())
+		.limit(1);
+
 	if (!prompt) {
 		throw new Error('Could not pick random prompt');
 	}
+
 	const [image1, image2] = await db
-		.select({ id: images.id })
+		.select({ id: images.id, count: count(labelingSurveysAnswers.id) })
 		.from(images)
-		.leftJoin(labelingSurveys, and(eq(images.poolId, labelingSurveys.imagePoolId)))
+		.leftJoin(labelingSurveys, eq(images.poolId, labelingSurveys.imagePoolId))
 		.where(and(eq(labelingSurveys.id, surveyId), eq(images.promptId, prompt.id)))
-		.orderBy(random())
+		.leftJoin(
+			labelingSurveysPairs,
+			or(eq(images.id, labelingSurveysPairs.image1Id), eq(images.id, labelingSurveysPairs.image2Id))
+		)
+		.leftJoin(labelingSurveysAnswers, eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId))
+		.groupBy(images.id)
+		.orderBy(asc(count(labelingSurveysAnswers.id)), random())
 		.limit(2);
+
 	if (!image1 || !image2) {
 		throw new Error('Too few images were gathered to build an answer leaf.');
 	}
+
 	const [label1, label2, label3] = await db
-		.select()
+		.select({ id: labels.id, count: count(labelingSurveysAnswers.id) })
 		.from(labels)
 		.where(eq(labels.surveyId, surveyId))
-		.orderBy(random())
+		.leftJoin(
+			labelingSurveysPairs,
+			or(
+				eq(labels.id, labelingSurveysPairs.label1Id),
+				eq(labels.id, labelingSurveysPairs.label2Id),
+				eq(labels.id, labelingSurveysPairs.label3Id)
+			)
+		)
+		.leftJoin(labelingSurveysAnswers, eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId))
+		.groupBy(labels.id)
+		.orderBy(asc(count(labelingSurveysAnswers.id)), random())
 		.limit(3);
+
 	if (!label1 || !label2 || !label3) {
 		throw new Error('No label found to generate image.');
 	}
@@ -47,6 +81,7 @@ async function createNewPair(surveyId: string, chapterId: string) {
 		.insert(labelingSurveysPairs)
 		.values({
 			chapterId: chapterId,
+			promptId: prompt.id,
 			image1Id: image1.id,
 			image2Id: image2.id,
 			label1Id: label1.id,
