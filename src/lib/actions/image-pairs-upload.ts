@@ -34,6 +34,7 @@ export default async function imagePairsUpload(state: unknown, formData: FormDat
 					z.object({
 						pairs: z
 							.object({
+								promptId: z.string(),
 								image1: z.string(),
 								image2: z.string(),
 								criteria1: z.string(),
@@ -55,6 +56,7 @@ export default async function imagePairsUpload(state: unknown, formData: FormDat
 			.insert(labelingSurveysPairs)
 			.values(
 				parsed.data.file.pairs.map((p) => ({
+					promptId: p.promptId,
 					image1Id: p.image1,
 					image2Id: p.image2,
 					label1Id: p.criteria1,
