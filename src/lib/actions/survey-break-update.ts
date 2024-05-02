@@ -26,6 +26,7 @@ export default async function surveyBreakUpdate(state: unknown, formData: FormDa
 				breakDuration: true,
 				breakFrequency: true,
 				sessionDuration: true,
+				breakMessage: true,
 			})
 			.strip()
 	);
