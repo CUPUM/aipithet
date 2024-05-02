@@ -233,9 +233,26 @@ export function SurveyBreakForm(props: EditorLabelingSurvey) {
 			<input type="hidden" name="id" value={props.id} readOnly />
 			<Field className="gap-4 px-8 md:flex-row">
 				<div className="flex flex-1 flex-col gap-4">
-					<Label>Frequency</Label>
+					<Label>Session Duration</Label>
 					<p className="my-4 text-sm leading-relaxed text-muted-foreground">
-						How often should there be a break ?
+						How long should a session last ? (in minutes)
+					</p>
+				</div>
+				<div className="flex flex-1 flex-col md:pt-6">
+					<Input
+						type="number"
+						name="+sessionDuration"
+						className="w-auto min-w-60 self-center"
+						defaultValue={props.sessionDuration}
+						min={0}
+					/>
+				</div>
+			</Field>
+			<Field className="gap-4 px-8 md:flex-row">
+				<div className="flex flex-1 flex-col gap-4">
+					<Label>Break Frequency</Label>
+					<p className="my-4 text-sm leading-relaxed text-muted-foreground">
+						How many answers are allowed for a user in a given session ?
 					</p>
 				</div>
 				<div className="flex flex-1 flex-col md:pt-6">
@@ -251,7 +268,7 @@ export function SurveyBreakForm(props: EditorLabelingSurvey) {
 			<hr />
 			<Field className="gap-4 px-8 md:flex-row">
 				<div className="flex flex-1 flex-col gap-4">
-					<Label>Duration</Label>
+					<Label>Break Duration</Label>
 					<p className="my-4 text-sm leading-relaxed text-muted-foreground">
 						How long should the break last ? (in minutes)
 					</p>

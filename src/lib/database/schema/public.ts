@@ -259,7 +259,8 @@ export const labelingSurveys = pgTable('labeling_surveys', {
 	}),
 	breakDuration: integer('break_duration').notNull().default(15),
 	allowBreaks: boolean('allow_breaks').notNull().default(true),
-	breakFrequency: integer('break_frequency').notNull().default(100),
+	breakFrequency: integer('break_frequency').notNull().default(150),
+	sessionDuration: integer('session_duration').notNull().default(45),
 });
 export const labelingSurveysTranslations = pgTable(
 	'labeling_surveys_t',

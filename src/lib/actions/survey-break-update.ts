@@ -20,7 +20,13 @@ export default async function surveyBreakUpdate(state: unknown, formData: FormDa
 	const parsed = validateFormData(
 		formData,
 		labelingSurveysSchema
-			.pick({ id: true, allowBreaks: true, breakDuration: true, breakFrequency: true })
+			.pick({
+				id: true,
+				allowBreaks: true,
+				breakDuration: true,
+				breakFrequency: true,
+				sessionDuration: true,
+			})
 			.strip()
 	);
 	if (!parsed.success) {

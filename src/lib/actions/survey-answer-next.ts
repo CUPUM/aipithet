@@ -12,7 +12,7 @@ import {
 	labels,
 } from '@lib/database/schema/public';
 import { redirect } from '@lib/i18n/utilities-server';
-import { and, asc, count, eq, isNull, lt, or } from 'drizzle-orm';
+import { and, asc, count, eq, gt, isNull, lt, or } from 'drizzle-orm';
 import { random } from 'drizzle-orm-helpers/pg';
 
 async function createNewPair(surveyId: string, chapterId: string) {
@@ -96,6 +96,29 @@ async function createNewPair(surveyId: string, chapterId: string) {
 	}
 
 	return newPair;
+}
+
+async function createBreak(
+	userId: string,
+	chapterId: string,
+	surveyId: string,
+	breakDuration: number
+) {
+	const now = new Date();
+	const [newBreak] = await db
+		.insert(labelingSurveysBreaks)
+		.values({
+			userId: userId,
+			chapterId,
+			startAt: now,
+			endAt: new Date(now.getTime() + 1000 * 60 * breakDuration),
+		})
+		.returning();
+	if (!newBreak) {
+		throw new Error('New break could not be inserted for an unknown reason.');
+	}
+
+	return newBreak;
 }
 
 export default async function surveyAnswerNext(
@@ -269,40 +292,56 @@ export default async function surveyAnswerNext(
 	}
 
 	if (survey.allowBreaks) {
-		// Check if the user has answered 5 questions, if so, insert a new break.
-		const [answersCount] = await db
-			.select({
-				chapterId: labelingSurveysAnswers.chapterId,
-				count: count(labelingSurveysAnswers.id),
-			})
+		// Create a break event
+		// Look if there was a break event in the last t minutes.
+		// Look if user answered more than n questions in the last t minutes.
+		const now = new Date();
+
+		// Find if there was a break in the last t (survey.sessionDuration) minutes.
+		const [lastBreak] = await db
+			.select()
+			.from(labelingSurveysBreaks)
+			.where(
+				and(
+					eq(labelingSurveysBreaks.userId, user.id),
+					eq(labelingSurveysBreaks.chapterId, chapterId),
+					gt(
+						labelingSurveysBreaks.endAt,
+						new Date(now.getTime() - 1000 * 60 * survey.sessionDuration)
+					)
+				)
+			)
+			.orderBy(asc(labelingSurveysBreaks.startAt))
+			.limit(1);
+
+		console.log('lastBreak', lastBreak);
+
+		// Find the number of answers the user answered in the last t (survey.sessionDuration) minutes since last break if one was found
+		const [answeredCountInBreak] = await db
+			.select({ count: count(labelingSurveysAnswers.id) })
 			.from(labelingSurveysAnswers)
 			.where(
 				and(
 					eq(labelingSurveysAnswers.userId, user.id),
-					eq(labelingSurveysAnswers.chapterId, chapterId)
+					eq(labelingSurveysAnswers.chapterId, chapterId),
+					gt(
+						labelingSurveysAnswers.createdAt,
+						lastBreak
+							? lastBreak.startAt
+							: new Date(now.getTime() - 1000 * 60 * survey.sessionDuration)
+					)
 				)
-			)
-			.groupBy(labelingSurveysAnswers.chapterId)
-			.limit(1);
+			);
 
-		const answerCount = answersCount?.count ?? 0;
-		const now = new Date();
+		console.log('answeredCountInBreak', answeredCountInBreak);
 
-		// If the user has answered 5 questions, insert a new break.
-		if (answerCount > 0 && answerCount % survey.breakFrequency === 0) {
-			const [newBreak] = await db
-				.insert(labelingSurveysBreaks)
-				.values({
-					userId: user.id,
-					chapterId,
-					startAt: now,
-					endAt: new Date(now.getTime() + 1000 * 60 * survey.breakDuration),
-				})
-				.returning();
-			if (!newBreak) {
-				throw new Error('New break could not be inserted for an unknown reason.');
-			}
+		if (!answeredCountInBreak) {
+			throw new Error('Could not count the number of answers for the current chapter and user.');
+		}
 
+		if (answeredCountInBreak.count > survey.breakFrequency) {
+			console.log('Creating break');
+			const newBreak = await createBreak(user.id, chapterId, surveyId, survey.breakDuration);
 			redirect(`/surveys/labeling/${surveyId}/${chapterId}/break`);
 		}
 	}
