@@ -27,7 +27,7 @@ export default function VerifyEmailTemplate(props: { code: string; expiresAt: Da
 				</code>
 				<Button
 					className="rounded-[1em] bg-violet-700 px-5 py-4 font-sans text-sm font-medium text-gray-50"
-					href={`${process.env.VERCEL_URL}/${withLang('/verify-email')}`}
+					href={`${process.env.VERCEL_PROJECT_PRODUCTION_URL}/${withLang('/verify-email')}`}
 					hrefLang={lang}
 				>
 					🔐&emsp;{m.email_verification_code_email_button()}
