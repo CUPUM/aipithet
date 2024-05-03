@@ -4,6 +4,7 @@ import { ButtonIcon, ButtonIconSpace } from '@lib/components/primitives/button';
 import { redirect } from '@lib/i18n/utilities-server';
 import * as m from '@translations/messages';
 import { Undo } from 'lucide-react';
+import Link from 'next/link';
 import { EmailVerifyForm } from './client';
 
 export default async function Page() {
@@ -16,11 +17,13 @@ export default async function Page() {
 			<article className="flex flex-col items-center gap-8">
 				<div className="absolute -z-10 -translate-y-1/2 text-9xl opacity-10">🎉</div>
 				<p className="text-center">{m.email_already_verified()}</p>
-				<ButtonBack>
-					<ButtonIcon icon={Undo} />
-					{m.go_back()}
-					<ButtonIconSpace />
-				</ButtonBack>
+				<Link href="/surveys">
+					<ButtonBack>
+						<ButtonIcon icon={Undo} />
+						{m.go_back()}
+						<ButtonIconSpace />
+					</ButtonBack>
+				</Link>
 			</article>
 		);
 	}
