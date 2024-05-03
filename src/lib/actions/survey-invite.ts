@@ -82,7 +82,7 @@ export default async function surveyInvite(state: unknown, formData: FormData) {
 	revalidateTag(CACHE_TAGS.SURVEY_INVITATIONS);
 	await transporter.sendMail({
 		from: SENDERS.SURVEY,
-		to: [user.email],
+		to: parsed.data.email,
 		subject: m.survey_invitation_email_title(),
 		html: render(
 			SurveyInvitationTemplate({
