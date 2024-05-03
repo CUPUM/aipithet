@@ -31,7 +31,7 @@ export default function SurveyJoinedTemplate(props: {
 				</Text>
 				<Button
 					className="rounded-[1em] bg-violet-700 px-5 py-4 font-sans text-sm font-medium text-gray-50"
-					href={`${process.env.VERCEL_URL}/${withLang('/surveys', props.lang)}`}
+					href={`${process.env.VERCEL_PROJECT_PRODUCTION_URL}/${withLang('/surveys', props.lang)}`}
 					hrefLang={props.lang}
 				>
 					{m.my_surveys(undefined, { languageTag: props.lang })}

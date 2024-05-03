@@ -37,7 +37,7 @@ export default function SurveyInvitationTemplate(props: {
 				</code>
 				<Button
 					className="rounded-[1em] bg-violet-700 px-5 py-4 font-sans text-sm font-medium text-gray-50"
-					href={`${process.env.VERCEL_URL}/${withLang('/verify-email', props.lang)}`}
+					href={`${process.env.VERCEL_PROJECT_PRODUCTION_URL}/${withLang('/verify-email', props.lang)}`}
 					hrefLang={props.lang}
 				>
 					🎟️&emsp;{m.survey_invitation_email_button(undefined, { languageTag: props.lang })}&emsp;🎟️
