@@ -16,7 +16,6 @@ import { transporter } from '@lib/email/email';
 import SurveyInvitationTemplate from '@lib/email/templates/survey-invitation';
 import SurveyJoinedTemplate from '@lib/email/templates/survey-joined';
 import { languageTagServer } from '@lib/i18n/utilities-server';
-import { langSchema } from '@lib/i18n/validation';
 import { render } from '@react-email/render';
 import * as m from '@translations/messages';
 import { setLanguageTag } from '@translations/runtime';
@@ -27,10 +26,7 @@ import { validateFormData } from './validation';
 export default async function surveyInvite(state: unknown, formData: FormData) {
 	setLanguageTag(languageTagServer);
 	const { user } = await authorize('surveys.invitations.create');
-	const parsed = validateFormData(
-		formData,
-		labelingSurveysInvitationsSchema.extend({ preferredLang: langSchema })
-	);
+	const parsed = validateFormData(formData, labelingSurveysInvitationsSchema);
 	if (!parsed.success) {
 		return parsed.fail;
 	}
@@ -80,14 +76,43 @@ export default async function surveyInvite(state: unknown, formData: FormData) {
 		throw new Error('Invitation may have failed. No invitation code was returned.');
 	}
 	revalidateTag(CACHE_TAGS.SURVEY_INVITATIONS);
+	await sendInvite(parsed.data.surveyId, parsed.data.email);
+}
+
+export async function sendInvite(surveyId: string, email: string) {
+	const [invited] = await db
+		.select()
+		.from(labelingSurveysInvitations)
+		.where(
+			and(
+				eq(labelingSurveysInvitations.surveyId, surveyId),
+				eq(labelingSurveysInvitations.email, email)
+			)
+		)
+		.limit(1);
+
+	if (!invited) {
+		throw new Error('Could not find the user to send the invitation to.');
+	}
+
+	const lang = invited.preferredLang ?? languageTagServer();
+
+	const [surveyText] = await db
+		.select({ title: labelingSurveysTranslations.title })
+		.from(labelingSurveysTranslations)
+		.where(
+			and(eq(labelingSurveysTranslations.id, surveyId), eq(labelingSurveysTranslations.lang, lang))
+		)
+		.limit(1);
+
 	await transporter.sendMail({
 		from: SENDERS.SURVEY,
-		to: parsed.data.email,
+		to: email,
 		subject: m.survey_invitation_email_title(),
 		html: render(
 			SurveyInvitationTemplate({
 				...invited,
-				lang: parsed.data.preferredLang,
+				lang: lang,
 				surveyTitle: surveyText?.title ?? m.untitled(),
 			})
 		),

@@ -102,7 +102,7 @@ export default async function Page(props: { params: { surveyId: string } }) {
 				<h2 className="text-xl font-semibold">{m.editors()}</h2>
 				<ul className="flex flex-col gap-3">
 					{editors.map((u) => (
-						<SurveyUser {...u} key={u.id} />
+						<SurveyUser {...u} key={u.id} surveyId={props.params.surveyId} />
 					))}
 				</ul>
 				<CreateEditorInvitationForm surveyId={props.params.surveyId} />
@@ -111,7 +111,7 @@ export default async function Page(props: { params: { surveyId: string } }) {
 				<h2 className="text-xl font-semibold">{m.participants()}</h2>
 				<ul className="flex flex-col gap-3">
 					{participants.map((u) => (
-						<SurveyUser {...u} key={u.id} />
+						<SurveyUser {...u} key={u.id} surveyId={props.params.surveyId} />
 					))}
 				</ul>
 				<CreateParticipantInvitationForm surveyId={props.params.surveyId} />

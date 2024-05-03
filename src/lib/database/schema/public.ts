@@ -12,8 +12,9 @@ import {
 	unique,
 	type AnyPgColumn,
 } from 'drizzle-orm/pg-core';
+import { lang } from '../custom-types';
 import { users } from './auth';
-import { LANG_COLUMN } from './i18n';
+import { LANG_COLUMN, languages } from './i18n';
 
 /**
  * Collections of images created by users.
@@ -344,6 +345,10 @@ export const labelingSurveysInvitations = pgTable(
 		editor: boolean('editor').default(false).notNull(),
 		pending: boolean('pending').default(true).notNull(),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+		preferredLang: lang('preferred_lang').references(() => languages.lang, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
 	},
 	(table) => {
 		return {
