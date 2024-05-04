@@ -9,6 +9,7 @@ export default function SurveyInvitationTemplate(props: {
 	expiresAt: Date;
 	surveyTitle: string;
 	lang: AvailableLanguageTag;
+	surveyId: string;
 }) {
 	return (
 		<Template>
@@ -20,7 +21,20 @@ export default function SurveyInvitationTemplate(props: {
 			<Section className="w-full max-w-[60ch] text-center">
 				<Text className="m-0 p-0 text-4xl">🎉</Text>
 				<Text className="whitespace-pre-line text-left font-sans text-sm">
-					{m.survey_invitation_email_body(
+					{m.survey_invitation_email_p1()}
+				</Text>
+				<Text className="whitespace-pre-line text-left font-sans text-sm">
+					{m.survey_invitation_email_p2()}
+				</Text>
+				<Button
+					className="rounded-[1em] bg-violet-700 px-5 py-4 font-sans text-sm font-medium text-gray-50"
+					href={`${process.env.VERCEL_PROJECT_PRODUCTION_URL}/${withLang('/signup', props.lang)}`}
+					hrefLang={props.lang}
+				>
+					{m.signup(undefined, { languageTag: props.lang })}
+				</Button>
+				<Text className="whitespace-pre-line text-left font-sans text-sm">
+					{m.survey_invitation_email_p3(
 						{
 							date: (props.expiresAt ?? new Date()).toLocaleDateString(`${props.lang}-CA`, {
 								weekday: 'long',
@@ -37,7 +51,7 @@ export default function SurveyInvitationTemplate(props: {
 				</code>
 				<Button
 					className="rounded-[1em] bg-violet-700 px-5 py-4 font-sans text-sm font-medium text-gray-50"
-					href={`${process.env.VERCEL_PROJECT_PRODUCTION_URL}/${withLang('/verify-email', props.lang)}`}
+					href={`${process.env.VERCEL_PROJECT_PRODUCTION_URL}/${withLang(`/surveys/${props.surveyId}`, props.lang)}`}
 					hrefLang={props.lang}
 				>
 					🎟️&emsp;{m.survey_invitation_email_button(undefined, { languageTag: props.lang })}&emsp;🎟️

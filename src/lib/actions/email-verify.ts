@@ -52,5 +52,5 @@ export default async function emailVerify(state: unknown, formData: FormData) {
 			message: 'Email could not be verified.',
 		};
 	}
-	return redirect('/');
+	return redirect('/surveys');
 }

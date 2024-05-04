@@ -4,6 +4,10 @@ import { auth } from '@lib/auth/auth';
 import { emailPasswordSignupSchema } from '@lib/auth/validation';
 import { db } from '@lib/database/db';
 import { emailVerificationCodes, users } from '@lib/database/schema/auth';
+import {
+	labelingSurveysInvitations,
+	labelingSurveysParticipants,
+} from '@lib/database/schema/public';
 import { SENDERS } from '@lib/email/constants';
 import { transporter } from '@lib/email/email';
 import VerifyEmailTemplate from '@lib/email/templates/verify-email';
@@ -51,6 +55,22 @@ export default async function signup(state: unknown, formData: FormData) {
 		if (!inserted) {
 			return tx.rollback();
 		}
+
+		const invitationPending = await tx
+			.select()
+			.from(labelingSurveysInvitations)
+			.where(eq(labelingSurveysInvitations.email, parsed.data.email));
+
+		await Promise.all(
+			invitationPending.map(async (invitation) => {
+				await tx
+					.insert(labelingSurveysParticipants)
+					.values({ userId: inserted.id, surveyId: invitation.surveyId });
+
+				await tx.update(labelingSurveysInvitations).set({ pending: false });
+			})
+		);
+
 		const [verification] = await tx
 			.insert(emailVerificationCodes)
 			.values({ userId: inserted.id, email: parsed.data.email })
