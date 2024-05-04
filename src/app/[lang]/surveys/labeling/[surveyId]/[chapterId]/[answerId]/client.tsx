@@ -239,7 +239,10 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 						</ButtonSubmit>
 						<Dialog>
 							<DialogTrigger asChild>
-								<Button className="pointer-events-auto animate-puff-grow bg-secondary text-lg font-medium shadow-lg">
+								<Button
+									variant="secondary"
+									className="pointer-events-auto animate-puff-grow text-lg font-medium shadow-lg"
+								>
 									{m.add_comment()}
 									<ButtonIconLoading icon={MessageCircleMore} />
 								</Button>
