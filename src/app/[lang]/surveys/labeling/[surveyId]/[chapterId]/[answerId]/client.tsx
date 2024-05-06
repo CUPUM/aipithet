@@ -19,7 +19,7 @@ import { CircleHelp, MessageCircleMore, RefreshCcw, Save, Star } from 'lucide-re
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ComponentProps } from 'react';
 import { useFormState } from 'react-dom';
 import Markdown from 'react-markdown';
 import type { ImageIndex, SurveyAnswer } from './page';
@@ -134,19 +134,81 @@ export function AnswerImageClient({
 	);
 }
 
+function StepsDatalist(props: { count: number | null; max: number }) {
+	const options = useMemo(() => {
+		if (!props.count) {
+			return [];
+		}
+		const step = props.max / props.count;
+		return Array.from({ length: props.count }, (_, i) => (step * i).toFixed(1));
+	}, [props.count]);
+	return (
+		<datalist id="steps">
+			{options.map((o, i) => (
+				<option value={`-${o}`} key={`step-left-${i}`}></option>
+			))}
+			<option value={0}></option>
+			{options.map((o, i) => (
+				<option value={o} key={`step-right-${i}`}></option>
+			))}
+		</datalist>
+	);
+}
+
+function Slider({
+	stepCount,
+	...inputProps
+}: Omit<ComponentProps<'input'>, 'className' | 'step'> & {
+	stepCount: number | null;
+	max: number;
+	min: number;
+}) {
+	const step = useMemo(() => {
+		if (!stepCount) {
+			return 0.001;
+		}
+		return (inputProps.max ?? 1) / stepCount;
+	}, [stepCount, inputProps.max]);
+	const ticks = useMemo(() => {
+		if (!stepCount) {
+			return [inputProps.min, 0, inputProps.max];
+		}
+		const positives = Array.from({ length: stepCount }, (_, i) => step * i);
+		const negatives = [...positives.map((v) => -1 * v)];
+		return [...negatives, 0, ...positives];
+	}, [stepCount, step]);
+	return (
+		<div className="relative">
+			<div className="pointer-events-none absolute inset-0 flex flex-row items-center justify-between px-3.5 opacity-10">
+				{ticks.map((v) => (
+					<div
+						className="h-1.5 w-0.5 rounded-full bg-foreground"
+						key={`tick-${v}`}
+						data-step={v}
+					></div>
+				))}
+			</div>
+			<input
+				{...inputProps}
+				step={step}
+				type="range"
+				className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-8 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
+			/>
+		</div>
+	);
+}
+
 export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 	const [comment, setComment] = useState<string>();
 	const surveyAnswerUpdateWithComment = surveyAnswerUpdate.bind(null, comment); // Currently this is a hack because calling submit inside the dialog doesn't work.
 	const [formState, formAction] = useFormState(surveyAnswerUpdateWithComment, undefined);
-
-	const step = useMemo(
-		() => (props.sliderStepCount ? 1 / props.sliderStepCount : 0.01),
-		[props.sliderStepCount]
-	);
+	const min = -1;
+	const max = 1;
 	const [active, setActive] = useState({ 0: false, 1: false, 2: false });
 	return (
 		<form
 			action={formAction}
+			noValidate
 			className="pointer-events-none inset-0 flex flex-col items-center justify-center p-[inherit]"
 		>
 			<input type="hidden" value={props.surveyId} readOnly name="surveyId" />
@@ -163,14 +225,12 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 						onCheckedChange={() => setActive((prev) => ({ ...prev, 0: !prev[0] }))}
 					/>
 				</div>
-				<input
+				<Slider
 					name="+score1"
-					type="range"
-					step={step}
-					min={-1}
-					max={1}
+					stepCount={props.sliderStepCount}
+					min={min}
+					max={max}
 					defaultValue={props.score1 || 0}
-					className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-8 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
 					onClick={() => setActive((prev) => ({ ...prev, 0: true }))}
 				/>
 			</div>
@@ -185,14 +245,12 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 						onCheckedChange={() => setActive((prev) => ({ ...prev, 1: !prev[1] }))}
 					/>
 				</div>
-				<input
+				<Slider
 					name="+score2"
-					type="range"
-					step={step}
-					min={-1}
-					max={1}
+					stepCount={props.sliderStepCount}
+					min={min}
+					max={max}
 					defaultValue={props.score2 || 0}
-					className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-8 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
 					onClick={() => setActive((prev) => ({ ...prev, 1: true }))}
 				/>
 			</div>
@@ -207,14 +265,12 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 						onCheckedChange={() => setActive((prev) => ({ ...prev, 2: !prev[2] }))}
 					/>
 				</div>
-				<input
+				<Slider
 					name="+score3"
-					type="range"
-					step={step}
-					min={-1}
-					max={1}
+					stepCount={props.sliderStepCount}
+					min={min}
+					max={max}
 					defaultValue={props.score3 || 0}
-					className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-8 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
 					onClick={() => setActive((prev) => ({ ...prev, 2: true }))}
 				/>
 			</div>
