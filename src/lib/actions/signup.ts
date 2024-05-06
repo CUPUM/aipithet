@@ -56,20 +56,33 @@ export default async function signup(state: unknown, formData: FormData) {
 			return tx.rollback();
 		}
 
-		const invitationPending = await tx
-			.select()
-			.from(labelingSurveysInvitations)
-			.where(eq(labelingSurveysInvitations.email, parsed.data.email));
+		const pendingInvitations = await tx
+			.update(labelingSurveysInvitations)
+			.set({ pending: false })
+			.where(eq(labelingSurveysInvitations.email, parsed.data.email))
+			.returning();
 
-		await Promise.all(
-			invitationPending.map(async (invitation) => {
+		if (pendingInvitations.length) {
+			const pendingParticipants = pendingInvitations
+				.filter((inv) => !inv.editor)
+				.map(({ surveyId }) => ({ surveyId, userId: inserted.id }));
+			if (pendingParticipants) {
 				await tx
 					.insert(labelingSurveysParticipants)
-					.values({ userId: inserted.id, surveyId: invitation.surveyId });
+					.values(pendingParticipants)
+					.onConflictDoNothing();
+			}
 
-				await tx.update(labelingSurveysInvitations).set({ pending: false });
-			})
-		);
+			const pendingEditors = pendingInvitations
+				.filter((inv) => inv.editor)
+				.map(({ surveyId }) => ({ surveyId, userId: inserted.id }));
+			if (pendingEditors) {
+				await tx
+					.insert(labelingSurveysParticipants)
+					.values(pendingParticipants)
+					.onConflictDoNothing();
+			}
+		}
 
 		const [verification] = await tx
 			.insert(emailVerificationCodes)

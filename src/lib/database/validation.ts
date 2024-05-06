@@ -1,3 +1,4 @@
+import { emailSchema } from '@lib/auth/validation';
 import { LANG_COLUMN_SCHEMA, withTranslationsSchema } from '@lib/i18n/validation';
 import * as m from '@translations/messages';
 import { createInsertSchema } from 'drizzle-zod';
@@ -37,7 +38,9 @@ export const imagesPoolsWithTranslationsSchema = withTranslationsSchema(
 	imagesPoolsTranslationsSchema
 );
 
-export const imagesPoolsInvitationsSchema = createInsertSchema(imagesPoolsInvitations);
+export const imagesPoolsInvitationsSchema = createInsertSchema(imagesPoolsInvitations, {
+	email: (s) => emailSchema,
+});
 
 export const imagesPromptsSchema = createInsertSchema(imagesPrompts);
 
@@ -72,7 +75,9 @@ export const labelingSurveysWithTranslationsSchema = withTranslationsSchema(
 	labelingSurveysTranslationsSchema
 );
 
-export const labelingSurveysInvitationsSchema = createInsertSchema(labelingSurveysInvitations);
+export const labelingSurveysInvitationsSchema = createInsertSchema(labelingSurveysInvitations, {
+	email: (s) => emailSchema,
+});
 
 export const labelingSurveysChaptersSchema = createInsertSchema(labelingSurveysChapters, {
 	start: z.string().pipe(z.coerce.date().nullable().catch(null)),

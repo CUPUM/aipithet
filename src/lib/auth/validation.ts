@@ -2,7 +2,7 @@ import * as m from '@translations/messages';
 import { ZodIssueCode, z } from 'zod';
 import { USER_PASSWORD_MIN } from './constants';
 
-export const emailSchema = z.string().trim().email(m.email_invalid());
+export const emailSchema = z.string().trim().toLowerCase().email(m.email_invalid());
 export const hintlessPasswordSchema = z.string().trim().min(1, m.password_missing());
 export const passwordSchema = z.string().trim().min(USER_PASSWORD_MIN, m.password_too_short());
 export const passwordConfirmSchema = z.string().trim().min(1, m.password_confirmation_missing());
