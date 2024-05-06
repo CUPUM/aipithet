@@ -8,6 +8,6 @@ export function appUrl(
 	const relativeLangPath = lang
 		? withLang(relativePath, lang === true ? undefined : lang)
 		: relativePath;
-	const base = process.env.VERCEL_URL ?? `http://localhost:${process.env.PORT}`;
+	const base = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? `http://localhost:${process.env.PORT}`;
 	return `${base}${relativeLangPath}`;
 }
