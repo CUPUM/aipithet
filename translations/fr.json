@@ -169,9 +169,10 @@
 	"break_timer": "Temps restant",
 	"break_continue": "Continuer",
 	"help": "Aide",
-	"survey_invitation_email_p1": "Vous avez été invité à rejoindre un sondage sur la plateforme d'annotation Aipithet. Pour vous connectez au sondage veullez suivre les étapes suivantes:",
-	"survey_invitation_email_p2": "1. Si c'est la première fois que vous utilisez la plateforme, créez un compte en cliquant sur le bouton ci-dessous.",
-	"survey_invitation_email_p3": "2. Si vous avez déjà un compte. Utilisez le code d'invitation ci-dessous pour joindre le sondage. Le code à usage unique sera valide jusqu’au {date} et fonctionnera peu importe l'adresse courriel que vous avez utilisée pour créer votre compte!",
+	"survey_invitation_email_p0": "Vous avez été invité à rejoindre un sondage sur la plateforme d'annotation Aipithet. Pour vous connectez au sondage veullez suivre les étapes suivantes:",
+	"survey_invitation_email_p1": "1. Si c'est la première fois que vous utilisez la plateforme, vous pouvez regarder ce tutoriel pour vous familiarisez avec la plateforme d'annotations:",
+	"survey_invitation_email_p2": "2. Créez un compte en cliquant sur le bouton ci-dessous:",
+	"survey_invitation_email_p3": "3. Utilisez le code d'invitation ci-dessous pour joindre le sondage. Le code à usage unique sera valide jusqu’au {date} et fonctionnera peu importe l'adresse courriel que vous avez utilisée pour créer votre compte!",
 	"go_to_my_surveys": "Aller à ma liste de sondage",
 	"survey_not_found_instructions": "Il est possible que vous deviez réclamer votre participation au sondage manuellement. Pour ce faire, veuillez visiter votre liste où vous pourrez entrer votre code d'invitation."
 }

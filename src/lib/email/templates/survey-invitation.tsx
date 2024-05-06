@@ -21,8 +21,17 @@ export default function SurveyInvitationTemplate(props: {
 			<Section className="w-full max-w-[60ch] text-center">
 				<Text className="m-0 p-0 text-4xl">🎉</Text>
 				<Text className="whitespace-pre-line text-left font-sans text-sm">
+					{m.survey_invitation_email_p0()}
+				</Text>
+				<Text className="whitespace-pre-line text-left font-sans text-sm">
 					{m.survey_invitation_email_p1()}
 				</Text>
+				<a
+					href="https://www.loom.com/share/5e3b4574e06847149a9882b349e78768?sid=61d36f78-81d7-4123-a491-e8d55b1103b2"
+					className="text-primary"
+				>
+					Tutoriel
+				</a>
 				<Text className="whitespace-pre-line text-left font-sans text-sm">
 					{m.survey_invitation_email_p2()}
 				</Text>
