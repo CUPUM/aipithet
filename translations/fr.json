@@ -57,9 +57,7 @@
 	"user_dashboard": "Tableau de bord",
 	"user_surveys": "Mes sondages",
 	"invitation_code": "Code d'invitation",
-	"survey_invitation_email_p1": "Vous avez été invité à rejoindre un sondage sur la plateforme d'annotation Aipithet. Pour vous connectez au sondage veullez suivre les étapes suivantes:",
-	"survey_invitation_email_p2": "1. Si c'est la première fois que vous utilisez la plateforme, créez un compte en cliquant sur le bouton ci-dessous.",
-	"survey_invitation_email_p3": "2. Si vous avez déjà un compte. Utilisez le code d'invitation ci-dessous pour joindre le sondage. Le code à usage unique sera valide jusqu’au {date} et fonctionnera peu importe l'adresse courriel que vous avez utilisée pour créer votre compte!",
+	"survey_invitation_email_body": "Utilisez le code d'invitation ci-dessous pour joindre le sondage. Le code à usage unique sera valide jusqu’au {date} et fonctionnera peu importe l'adresse courriel que vous avez utilisée pour créer votre compte!",
 	"survey_invitation_email_title": "Vous avez reçu une invitation pour rejoindre un sondage!",
 	"survey_invitation_email_button": "Utiliser le code d'invitation dès maintenant",
 	"password_current": "Mot de passe actuel",
@@ -170,5 +168,10 @@
 	"break_body": "Merci pour ta contribution précieuse. Chaque image que tu étiquetes aide à adapter notre modèle IA pour mieux refléter les besoins diversifiés de Montréal en matière d'espaces publics. Prends un moment pour te détendre—ta participation est cruciale pour créer des environnements accueillants et inclusifs pour tous.",
 	"break_timer": "Temps restant",
 	"break_continue": "Continuer",
-	"help": "Aide"
+	"help": "Aide",
+	"survey_invitation_email_p1": "Vous avez été invité à rejoindre un sondage sur la plateforme d'annotation Aipithet. Pour vous connectez au sondage veullez suivre les étapes suivantes:",
+	"survey_invitation_email_p2": "1. Si c'est la première fois que vous utilisez la plateforme, créez un compte en cliquant sur le bouton ci-dessous.",
+	"survey_invitation_email_p3": "2. Si vous avez déjà un compte. Utilisez le code d'invitation ci-dessous pour joindre le sondage. Le code à usage unique sera valide jusqu’au {date} et fonctionnera peu importe l'adresse courriel que vous avez utilisée pour créer votre compte!",
+	"go_to_my_surveys": "Aller à ma liste de sondage",
+	"survey_not_found_instructions": "Il est possible que vous deviez réclamer votre participation au sondage manuellement. Pour ce faire, veuillez visiter votre liste où vous pourrez entrer votre code d'invitation."
 }

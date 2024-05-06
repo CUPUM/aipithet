@@ -171,6 +171,7 @@ export default async function Page(props: { params: { surveyId: string } }) {
 	const survey = await getSurvey(props.params.surveyId);
 	if (!survey) {
 		notFound();
+		// return redirect('/surveys');
 	}
 	return (
 		<article className="flex w-full flex-col gap-10 px-2 pb-20 md:px-6">
