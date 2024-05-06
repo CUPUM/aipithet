@@ -39,6 +39,7 @@ export default async function surveyInvitationClaim(state: unknown, formData: Fo
 						)
 						.returning();
 					if (!invitation) {
+						tx.rollback();
 						ctx.addIssue({
 							code: 'custom',
 							path: ['code'],
@@ -46,7 +47,7 @@ export default async function surveyInvitationClaim(state: unknown, formData: Fo
 						});
 						return NEVER;
 					}
-					const [participant] = await tx
+					const [surveyUser] = await tx
 						.insert(invitation.editor ? labelingSurveysEditors : labelingSurveysParticipants)
 						.values({
 							userId: user.id,
@@ -56,7 +57,8 @@ export default async function surveyInvitationClaim(state: unknown, formData: Fo
 							target: [labelingSurveysParticipants.userId, labelingSurveysParticipants.surveyId],
 						})
 						.returning();
-					if (!participant) {
+					if (!surveyUser) {
+						tx.rollback();
 						ctx.addIssue({
 							code: 'custom',
 							path: ['code'],
