@@ -179,10 +179,10 @@ function Slider({
 	}, [stepCount, step]);
 	return (
 		<div className="relative">
-			<div className="pointer-events-none absolute inset-0 flex flex-row items-center justify-between px-3.5 opacity-10">
+			<div className="pointer-events-none absolute inset-0 flex flex-row items-center justify-between px-1.5 opacity-15">
 				{ticks.map((v) => (
 					<div
-						className="h-1.5 w-0.5 rounded-full bg-foreground"
+						className="h-1 w-0.5 rounded-full bg-foreground"
 						key={`tick-${v}`}
 						data-step={v}
 					></div>
@@ -192,7 +192,7 @@ function Slider({
 				{...inputProps}
 				step={step}
 				type="range"
-				className="w-full cursor-pointer appearance-none bg-transparent transition-all slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:transition-all hover:slider-thumb:size-8 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-500 hover:slider-track:bg-input"
+				className="w-full cursor-pointer appearance-none bg-transparent outline-none transition-all focus:outline-none focus-visible:outline-none slider-thumb:mt-1.5 slider-thumb:size-5 slider-thumb:-translate-y-1/2 slider-thumb:appearance-none slider-thumb:rounded-full slider-thumb:bg-primary slider-thumb:shadow-[0_0.5em_1em_-0.35em_black] slider-thumb:outline slider-thumb:outline-0 slider-thumb:outline-primary/0 slider-thumb:transition-all slider-thumb:hover:outline-[6px] slider-thumb:hover:outline-primary/35 slider-thumb:focus:outline-8 slider-thumb:focus:outline-primary/25 slider-track:h-3 slider-track:rounded-full slider-track:bg-input/25 slider-track:transition-all slider-track:duration-300 hover:slider-track:bg-input/50"
 			/>
 		</div>
 	);
