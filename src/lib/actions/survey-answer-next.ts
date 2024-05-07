@@ -12,7 +12,7 @@ import {
 	labels,
 } from '@lib/database/schema/public';
 import { redirect } from '@lib/i18n/utilities-server';
-import { and, asc, count, eq, gt, isNull, lt, or } from 'drizzle-orm';
+import { and, asc, count, eq, exists, gt, isNull, lt, or } from 'drizzle-orm';
 import { random } from 'drizzle-orm-helpers/pg';
 
 async function createNewPair(surveyId: string, chapterId: string) {
@@ -39,19 +39,33 @@ async function createNewPair(surveyId: string, chapterId: string) {
 		throw new Error('Could not pick random prompt');
 	}
 
-	const [image1, image2] = await db
-		.select({ id: images.id, count: count(labelingSurveysAnswers.id) })
+	const randomImages = db
+		.select({ id: images.id })
 		.from(images)
-		.leftJoin(labelingSurveys, eq(images.poolId, labelingSurveys.imagePoolId))
-		.where(and(eq(labelingSurveys.id, surveyId), eq(images.promptId, prompt.id)))
+		.where(
+			and(
+				exists(
+					db
+						.select()
+						.from(labelingSurveys)
+						.where(
+							and(eq(labelingSurveys.id, surveyId), eq(labelingSurveys.imagePoolId, images.poolId))
+						)
+				),
+				eq(images.promptId, prompt.id)
+			)
+		)
 		.leftJoin(
 			labelingSurveysPairs,
 			or(eq(images.id, labelingSurveysPairs.image1Id), eq(images.id, labelingSurveysPairs.image2Id))
 		)
 		.leftJoin(labelingSurveysAnswers, eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId))
 		.groupBy(images.id)
-		.orderBy(asc(count(labelingSurveysAnswers.id)), random())
-		.limit(2);
+		.orderBy(random(), asc(count(labelingSurveysAnswers.id)))
+		.limit(2)
+		.as('random_images');
+
+	const [image1, image2] = await db.select().from(randomImages).orderBy(random());
 
 	if (!image1 || !image2) {
 		throw new Error('Too few images were gathered to build an answer leaf.');
