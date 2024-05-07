@@ -139,7 +139,7 @@ const getNextSurveyAnswer = cache(async function (answerId: string) {
 async function AnswerImage(props: { answerId: string; index: ImageIndex }) {
 	const surveyAnswer = await getSurveyAnswer(props.answerId);
 	const image = surveyAnswer.images[props.index];
-	const src = `https://storage.googleapis.com/${image.bucket}${image.path}`;
+	const src = `https://storage.googleapis.com/${image.bucket}/${image.path}`;
 	return (
 		<AnswerImageClient
 			imageId={image.id}

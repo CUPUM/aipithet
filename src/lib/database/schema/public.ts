@@ -171,6 +171,7 @@ export const images = pgTable(
 	'images',
 	{
 		id: text('id').default(nanoid()).primaryKey(),
+		externalId: text('external_id'),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 		createdById: text('created_by_id').references(() => users.id, {
 			onDelete: 'set null',
@@ -205,6 +206,7 @@ export const images = pgTable(
 
 export const labels = pgTable('labels', {
 	id: text('id').default(nanoid()).primaryKey(),
+	externalId: text('external_id'),
 	surveyId: text('survey_id')
 		.references(() => labelingSurveys.id, {
 			onDelete: 'cascade',

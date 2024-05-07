@@ -317,6 +317,19 @@ function SurveyLabelFieldset(
 			<span className="flex h-11 w-6 items-center font-mono text-[.75rem] font-medium text-muted-foreground">
 				{props.index + 1}.
 			</span>
+			<input
+				type="hidden"
+				name={`labels[${props.index}].id`}
+				value={props.id}
+				readOnly
+				form="labels-form"
+			/>
+			<Input
+				className="flex-[0.25] duration-500 animate-in fade-in slide-in-from-left-2"
+				defaultValue={props.externalId || ''}
+				name={`labels[${props.index}].externalId`}
+				form="labels-form"
+			/>
 			{availableLanguageTags.map((lang) => (
 				<fieldset
 					key={lang}

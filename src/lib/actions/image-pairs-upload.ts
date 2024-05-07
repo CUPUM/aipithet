@@ -2,9 +2,10 @@
 
 import { authorize } from '@lib/auth/auth';
 import { db } from '@lib/database/db';
-import { labelingSurveysPairs } from '@lib/database/schema/public';
+import { images, labelingSurveysPairs, labels } from '@lib/database/schema/public';
 import { languageTagServer } from '@lib/i18n/utilities-server';
 import { setLanguageTag } from '@translations/runtime';
+import { inArray } from 'drizzle-orm';
 import { NEVER, z } from 'zod';
 import { validateFormDataAsync } from './validation';
 
@@ -15,6 +16,7 @@ export default async function imagePairsUpload(state: unknown, formData: FormDat
 		formData,
 		z.object({
 			chapterId: z.string(),
+			surveyId: z.string(),
 			file: z
 				.instanceof(Blob)
 				.transform(async (d, ctx) => {
@@ -34,7 +36,6 @@ export default async function imagePairsUpload(state: unknown, formData: FormDat
 					z.object({
 						pairs: z
 							.object({
-								promptId: z.string(),
 								image1: z.string(),
 								image2: z.string(),
 								criteria1: z.string(),
@@ -51,21 +52,61 @@ export default async function imagePairsUpload(state: unknown, formData: FormDat
 		return parsed.fail;
 	}
 
+	const allImages = await db
+		.select({ id: images.id, externalId: images.externalId, promptId: images.promptId })
+		.from(images)
+		.where(
+			inArray(images.externalId, [
+				...new Set(parsed.data.file.pairs.flatMap((p) => [p.image1, p.image2])),
+			])
+		);
+
+	const allCriterias = await db
+		.select({ id: labels.id, externalId: labels.externalId })
+		.from(labels)
+		.where(
+			inArray(labels.externalId, [
+				...new Set(parsed.data.file.pairs.flatMap((p) => [p.criteria1, p.criteria2, p.criteria3])),
+			])
+		);
+
 	const addedPairs = await db.transaction(async (tx) => {
 		await tx
 			.insert(labelingSurveysPairs)
 			.values(
-				parsed.data.file.pairs.map((p) => ({
-					promptId: p.promptId,
-					image1Id: p.image1,
-					image2Id: p.image2,
-					label1Id: p.criteria1,
-					label2Id: p.criteria2,
-					label3Id: p.criteria3,
-					maxAnswersCount: p.numAnnotators,
-					chapterId: parsed.data.chapterId,
-					generationMethod: 'static',
-				}))
+				parsed.data.file.pairs.map((p) => {
+					const image1 = allImages.find((i) => i.externalId === p.image1);
+					const image2 = allImages.find((i) => i.externalId === p.image2);
+
+					if (!image1 || !image2) {
+						throw new Error('Image not found');
+					}
+
+					const criteria1 = allCriterias.find((c) => c.externalId === p.criteria1);
+					const criteria2 = allCriterias.find((c) => c.externalId === p.criteria2);
+					const criteria3 = allCriterias.find((c) => c.externalId === p.criteria3);
+
+					if (!criteria1 || !criteria2 || !criteria3) {
+						throw new Error('Criteria not found');
+					}
+
+					const promptId = image1.promptId;
+					if (!promptId) {
+						throw new Error('Prompt not found');
+					}
+
+					return {
+						promptId: promptId,
+						image1Id: image1.id,
+						image2Id: image2.id,
+						label1Id: criteria1.id,
+						label2Id: criteria2.id,
+						label3Id: criteria3.id,
+						maxAnswersCount: p.numAnnotators,
+						chapterId: parsed.data.chapterId,
+						generationMethod: 'static',
+					};
+				})
 			)
 			.returning({
 				id: labelingSurveysPairs.id,

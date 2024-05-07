@@ -155,13 +155,14 @@ export function SurveyChapterConfigurationForm(props: EditorLabelingSurveyChapte
 	);
 }
 
-export function ImagePairsUploadForm(props: { chapterId: string }) {
+export function ImagePairsUploadForm(props: { chapterId: string, surveyId: string}) {
 	const [formState, formAction] = useFormState(imagePairsUpload, undefined);
 	console.log(formState);
 	const [value, setValue] = useState(false);
 	return (
 		<form action={formAction} className="sticky bottom-0 flex flex-col items-start">
 			<input type="hidden" value={props.chapterId} name="chapterId" readOnly />
+			<input type="hidden" value={props.surveyId} name="surveyId" readOnly />
 			<fieldset className="flex flex-row gap-2">
 				<Button
 					asChild

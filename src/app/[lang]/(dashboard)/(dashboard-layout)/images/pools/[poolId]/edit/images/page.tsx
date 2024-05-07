@@ -64,7 +64,15 @@ export default async function Page(props: { params: { poolId: string } }) {
 										'text': 'string',
 										'scenarioId?': 'string',
 										'method': 'string',
-										'images': [{ path: 'string', width: 'number', height: 'number' }],
+										'images': [
+											{
+												id: 'string',
+												name: 'string',
+												path: 'string',
+												width: 'number',
+												height: 'number',
+											},
+										],
 									},
 								],
 							},

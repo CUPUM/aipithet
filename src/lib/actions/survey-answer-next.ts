@@ -12,8 +12,9 @@ import {
 	labels,
 } from '@lib/database/schema/public';
 import { redirect } from '@lib/i18n/utilities-server';
-import { and, asc, count, eq, gt, isNull, lt, or } from 'drizzle-orm';
+import { and, asc, count, eq, getTableColumns, gt, isNull, lt, or } from 'drizzle-orm';
 import { random } from 'drizzle-orm-helpers/pg';
+import { unionAll } from 'drizzle-orm/pg-core';
 
 async function createNewPair(surveyId: string, chapterId: string) {
 	// Select a random prompt, two random images, and three random labels to create a new pair.
@@ -21,57 +22,52 @@ async function createNewPair(surveyId: string, chapterId: string) {
 
 	const [prompt] = await db
 		.select({
-			id: imagesPrompts.id,
-			count: count(labelingSurveysAnswers.id),
+			...getTableColumns(imagesPrompts),
+			count: count(labelingSurveysPairs.id),
 		})
 		.from(imagesPrompts)
-		.leftJoin(
-			labelingSurveys,
-			and(eq(imagesPrompts.poolId, labelingSurveys.imagePoolId), eq(labelingSurveys.id, surveyId))
-		)
+		.leftJoin(labelingSurveys, eq(imagesPrompts.poolId, labelingSurveys.imagePoolId))
+		.where(eq(labelingSurveys.id, surveyId))
 		.leftJoin(labelingSurveysPairs, eq(imagesPrompts.id, labelingSurveysPairs.promptId))
-		.leftJoin(labelingSurveysAnswers, eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId))
 		.groupBy(imagesPrompts.id)
-		.orderBy(asc(count(labelingSurveysAnswers.id)), random())
+		.orderBy(asc(count(labelingSurveysPairs.id)), random())
 		.limit(1);
 
 	if (!prompt) {
 		throw new Error('Could not pick random prompt');
 	}
 
+	const sq = unionAll(
+		db.select({ id: labelingSurveysPairs.image1Id }).from(labelingSurveysPairs),
+		db.select({ id: labelingSurveysPairs.image2Id }).from(labelingSurveysPairs)
+	).as('sq');
+
 	const [image1, image2] = await db
-		.select({ id: images.id, count: count(labelingSurveysAnswers.id) })
+		.select({ id: images.id, ext: images.externalId, count: count(sq.id) })
 		.from(images)
-		.leftJoin(labelingSurveys, eq(images.poolId, labelingSurveys.imagePoolId))
-		.where(and(eq(labelingSurveys.id, surveyId), eq(images.promptId, prompt.id)))
-		.leftJoin(
-			labelingSurveysPairs,
-			or(eq(images.id, labelingSurveysPairs.image1Id), eq(images.id, labelingSurveysPairs.image2Id))
-		)
-		.leftJoin(labelingSurveysAnswers, eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId))
+		.leftJoin(sq, eq(images.id, sq.id))
+		.where(eq(images.promptId, prompt.id))
 		.groupBy(images.id)
-		.orderBy(asc(count(labelingSurveysAnswers.id)), random())
+		.orderBy(asc(count(sq.id)), random())
 		.limit(2);
 
 	if (!image1 || !image2) {
 		throw new Error('Too few images were gathered to build an answer leaf.');
 	}
 
+	const sq_label = unionAll(
+		db.select({ id: labelingSurveysPairs.label1Id }).from(labelingSurveysPairs),
+		db.select({ id: labelingSurveysPairs.label2Id }).from(labelingSurveysPairs),
+		db.select({ id: labelingSurveysPairs.label3Id }).from(labelingSurveysPairs)
+	).as('sq');
+
 	const [label1, label2, label3] = await db
-		.select({ id: labels.id, count: count(labelingSurveysAnswers.id) })
+		.select({ id: labels.id, count: count(sq_label.id) })
 		.from(labels)
 		.where(eq(labels.surveyId, surveyId))
-		.leftJoin(
-			labelingSurveysPairs,
-			or(
-				eq(labels.id, labelingSurveysPairs.label1Id),
-				eq(labels.id, labelingSurveysPairs.label2Id),
-				eq(labels.id, labelingSurveysPairs.label3Id)
-			)
-		)
-		.leftJoin(labelingSurveysAnswers, eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId))
+		.leftJoin(sq_label, eq(labels.id, sq_label.id))
 		.groupBy(labels.id)
-		.orderBy(asc(count(labelingSurveysAnswers.id)), random())
+		.orderBy(asc(count(sq_label.id)), random())
 		.limit(3);
 
 	if (!label1 || !label2 || !label3) {
@@ -165,9 +161,10 @@ export default async function surveyAnswerNext(
 
 	// TODO: The logic here should not be hardcoded. It should be configurable in the database.
 	let pair: { id: string } | undefined = undefined;
-	if ((answeredCount.count + 1) % 3 === 0) {
+	if ((answeredCount.count + 1) % 30 === 0) {
 		// If the user has answered 10, 20, 30, ... questions, select a pair with a maxCount not defined.
 		// Must check that the pair has not been answered by the user yet.
+		console.log('Creating a dynamic pair with maxCount not defined.');
 		[pair] = await db
 			.select({ id: labelingSurveysPairs.id })
 			.from(labelingSurveysPairs)
@@ -187,7 +184,8 @@ export default async function surveyAnswerNext(
 			)
 			.orderBy(asc(labelingSurveysPairs.createdAt))
 			.limit(1);
-	} else if ((answeredCount.count + 1) % 2 === 0) {
+	} else if ((answeredCount.count + 1) % 5 === 0) {
+		console.log('Creating a dynamic pair with maxCount not defined.');
 		// If the user has answered 5, 15, 25, ... questions, select a pair with a maxCount of 3.
 		// Must check that the pair has not been answered by the user yet, and that the pair has not reached the maxCount.
 		const sq = db
@@ -255,12 +253,12 @@ export default async function surveyAnswerNext(
 	}
 
 	if (!pair) {
+		console.log('Creating a new pair.');
 		const newPair = await createNewPair(surveyId, chapterId);
 		pair = { id: newPair.id };
 	}
 
 	// Create an empty answer associated to the pair
-	console.log('answerId', answerId);
 	const [newLeaf] = await db
 		.insert(labelingSurveysAnswers)
 		.values({
@@ -314,8 +312,6 @@ export default async function surveyAnswerNext(
 			.orderBy(asc(labelingSurveysBreaks.startAt))
 			.limit(1);
 
-		console.log('lastBreak', lastBreak);
-
 		// Find the number of answers the user answered in the last t (survey.sessionDuration) minutes since last break if one was found
 		const [answeredCountInBreak] = await db
 			.select({ count: count(labelingSurveysAnswers.id) })
@@ -333,14 +329,11 @@ export default async function surveyAnswerNext(
 				)
 			);
 
-		console.log('answeredCountInBreak', answeredCountInBreak);
-
 		if (!answeredCountInBreak) {
 			throw new Error('Could not count the number of answers for the current chapter and user.');
 		}
 
 		if (answeredCountInBreak.count > survey.breakFrequency) {
-			console.log('Creating break');
 			const newBreak = await createBreak(user.id, chapterId, surveyId, survey.breakDuration);
 			redirect(`/surveys/labeling/${surveyId}/${chapterId}/break`);
 		}

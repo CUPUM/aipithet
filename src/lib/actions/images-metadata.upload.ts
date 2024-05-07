@@ -6,6 +6,7 @@ import { images, imagesPrompts, workshopScenarios } from '@lib/database/schema/p
 import { languageTagServer } from '@lib/i18n/utilities-server';
 import { setLanguageTag } from '@translations/runtime';
 import { toExcluded } from 'drizzle-orm-helpers/pg';
+import path from 'node:path';
 import { NEVER, z } from 'zod';
 import { validateFormDataAsync } from './validation';
 
@@ -50,6 +51,8 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 								method: z.string(),
 								images: z
 									.object({
+										id: z.string(),
+										name: z.string(),
 										path: z.string(),
 										width: z.coerce.number(),
 										height: z.coerce.number(),
@@ -127,12 +130,13 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 			.values(
 				parsed.data.file.prompts.flatMap((p) =>
 					p.images.map((img) => ({
+						externalId: img.id,
 						poolId: parsed.data.poolId,
 						createdById: user.id,
 						updatedById: user.id,
 						width: img.width,
 						height: img.height,
-						path: (parsed.data.file.prefix ?? '') + img.path,
+						path: path.join(parsed.data.file.prefix ?? '', `${img.id}.${path.extname(img.name)}`),
 						bucket: parsed.data.file.bucket,
 						promptId: promptIds[p.text],
 					}))
