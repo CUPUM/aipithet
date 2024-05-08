@@ -34,7 +34,7 @@ const getSurvey = async (surveyId: string) => {
 	return survey;
 };
 
-export async function Chapters(props: { surveyId: string }) {
+async function Chapters(props: { surveyId: string }) {
 	const { user } = await authorize();
 	const { title, summary } = getColumns(labelingSurveysChaptersTranslations);
 	// TODO: Merge both queries into one
