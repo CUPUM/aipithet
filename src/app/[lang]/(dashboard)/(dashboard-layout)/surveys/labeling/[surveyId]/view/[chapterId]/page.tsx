@@ -5,6 +5,7 @@ import {
 	labelingSurveysAnswers,
 	labelingSurveysChapters,
 	labelingSurveysChaptersTranslations,
+	labelingSurveysParticipants,
 } from '@lib/database/schema/public';
 import { canEditLabelingSurvey } from '@lib/queries/queries';
 import * as m from '@translations/messages';
@@ -14,8 +15,11 @@ import { getColumns } from 'drizzle-orm-helpers';
 import { notFound } from 'next/navigation';
 
 const getParticipants = async (surveyId: string, chapterId: string) => {
-	const participants = await db
-		.select({ userEmail: users.email, count: count(labelingSurveysAnswers.id) })
+	const sq = db
+		.select({
+			userId: labelingSurveysAnswers.userId,
+			count: count(labelingSurveysAnswers.id).as('count'),
+		})
 		.from(labelingSurveysAnswers)
 		.where(
 			and(
@@ -23,8 +27,15 @@ const getParticipants = async (surveyId: string, chapterId: string) => {
 				eq(labelingSurveysAnswers.chapterId, chapterId)
 			)
 		)
-		.leftJoin(users, eq(users.id, labelingSurveysAnswers.userId))
-		.groupBy(users.email);
+		.groupBy(labelingSurveysAnswers.userId)
+		.as('sq');
+
+	const participants = await db
+		.select({ userEmail: users.email, count: sq.count })
+		.from(labelingSurveysParticipants)
+		.where(eq(labelingSurveysParticipants.surveyId, surveyId))
+		.leftJoin(sq, eq(sq.userId, labelingSurveysParticipants.userId))
+		.leftJoin(users, eq(users.id, labelingSurveysParticipants.userId));
 
 	return participants;
 };
@@ -86,12 +97,12 @@ export default async function Page(props: { params: { surveyId: string; chapterI
 						<li key={participant.userEmail} className="flex items-center gap-6">
 							<span>{participant.userEmail}</span>
 							<progress
-								value={chapter.maxAnswersCount ? participant.count : undefined}
+								value={participant.count ? participant.count : 0}
 								max={chapter.maxAnswersCount || undefined}
 								className="h-3 flex-1 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-border [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-500"
 							/>
 							<span>
-								{participant.count} / {chapter.maxAnswersCount}
+								{participant.count ?? 0} / {chapter.maxAnswersCount}
 							</span>
 						</li>
 					))}
