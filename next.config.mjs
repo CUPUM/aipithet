@@ -3,13 +3,14 @@
  */
 const nextConfig = {
 	images: {
-		remotePatterns: [
-			{
-				protocol: 'https',
-				hostname: 'storage.googleapis.com',
-				port: '',
-			},
-		],
+		unoptimized: true,
+		// remotePatterns: [
+		// 	{
+		// 		protocol: 'https',
+		// 		hostname: 'storage.googleapis.com',
+		// 		port: '',
+		// 	},
+		// ],
 	},
 	webpack: (config) => {
 		// https://lucia-auth.com/getting-started/nextjs-app
