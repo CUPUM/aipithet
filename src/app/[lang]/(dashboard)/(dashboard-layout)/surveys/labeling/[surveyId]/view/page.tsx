@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import Markdown from 'react-markdown';
+import { DownloadButton } from './client';
 
 const getSurvey = async (surveyId: string) => {
 	const lang = languageTag();
@@ -84,10 +85,11 @@ export default async function Page(props: { params: { surveyId: string } }) {
 
 	return (
 		<div className="flex w-full max-w-screen-lg flex-1 flex-col items-stretch justify-start gap-6 self-center">
-			<header className="flex flex-col gap-6">
+			<header className="flex flex-row justify-between gap-6">
 				<h1 className="text-5xl font-semibold">
 					{survey.title || <span className="italic opacity-50">{m.untitled()}</span>}
 				</h1>
+				<DownloadButton surveyId={props.params.surveyId} />
 			</header>
 			<section className="flex w-full max-w-screen-xl flex-col self-center rounded-lg border border-border">
 				<h2 className="text-md p-8 px-12 pb-0 font-semibold">{m.survey_chapters()}</h2>
