@@ -1,5 +1,11 @@
 import { db } from '@lib/database/db';
-import { labelingSurveysAnswers, labelingSurveysPairs } from '@lib/database/schema/public';
+import {
+	images,
+	imagesPrompts,
+	labelingSurveysAnswers,
+	labelingSurveysPairs,
+	labelsTranslations,
+} from '@lib/database/schema/public';
 import { eq, inArray } from 'drizzle-orm';
 import { parse } from 'json2csv';
 import JSZip from 'jszip';
@@ -14,6 +20,7 @@ export async function GET(request: Request, route: { params: { surveyId: string 
 			.where(eq(labelingSurveysAnswers.surveyId, route.params.surveyId));
 		const csv = parse(answers);
 		zip.file('answers.csv', csv);
+
 		const list_id = [...new Set(answers.map((answer) => answer.pairId))];
 		const pairs = await db
 			.select()
@@ -21,6 +28,31 @@ export async function GET(request: Request, route: { params: { surveyId: string 
 			.where(inArray(labelingSurveysPairs.id, list_id));
 		const csv2 = parse(pairs);
 		zip.file('pairs.csv', csv2);
+
+		const list_images = [...new Set(pairs.map((pair) => [pair.image1Id, pair.image2Id]).flat())];
+		const all_images = await db.select().from(images).where(inArray(images.id, list_images));
+		const csv3 = parse(all_images);
+		zip.file('images.csv', csv3);
+
+		const list_prompts = [...new Set(pairs.map((pair) => pair.promptId))];
+		const all_prompts = await db
+			.select()
+			.from(imagesPrompts)
+			.where(inArray(imagesPrompts.id, list_prompts));
+		const csv4 = parse(all_prompts);
+		zip.file('prompts.csv', csv4);
+
+		const list_criteria = [
+			...new Set(pairs.map((pair) => [pair.label1Id, pair.label2Id, pair.label3Id]).flat()),
+		];
+		const all_criteria = await db
+			.select()
+			.from(labelsTranslations)
+			.where(inArray(labelsTranslations.id, list_criteria));
+
+		const csv5 = parse(all_criteria);
+		zip.file('criteria.csv', csv5);
+
 		const zipContent = await zip.generateAsync({ type: 'nodebuffer' });
 		return new NextResponse(zipContent, {
 			headers: {
