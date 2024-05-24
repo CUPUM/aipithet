@@ -366,6 +366,10 @@ export const labelingSurveysChapters = pgTable('labeling_surveys_chapters', {
 		onDelete: 'set null',
 		onUpdate: 'cascade',
 	}),
+	imagePoolId: text('image_pool_id').references(() => imagesPools.id, {
+		onDelete: 'set null',
+		onUpdate: 'cascade',
+	}),
 	surveyId: text('survey_id')
 		.references(() => labelingSurveys.id, {
 			onDelete: 'cascade',

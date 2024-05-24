@@ -8,6 +8,7 @@ import {
 	labelingSurveys,
 	labelingSurveysAnswers,
 	labelingSurveysBreaks,
+	labelingSurveysChapters,
 	labelingSurveysPairs,
 	labels,
 } from '@lib/database/schema/public';
@@ -26,8 +27,8 @@ async function createNewPair(surveyId: string, chapterId: string) {
 			count: count(labelingSurveysPairs.id),
 		})
 		.from(imagesPrompts)
-		.leftJoin(labelingSurveys, eq(imagesPrompts.poolId, labelingSurveys.imagePoolId))
-		.where(eq(labelingSurveys.id, surveyId))
+		.leftJoin(labelingSurveysChapters, eq(imagesPrompts.poolId, labelingSurveysChapters.imagePoolId))
+		.where(eq(labelingSurveysChapters.id, chapterId))
 		.leftJoin(labelingSurveysPairs, eq(imagesPrompts.id, labelingSurveysPairs.promptId))
 		.groupBy(imagesPrompts.id)
 		.orderBy(asc(count(labelingSurveysPairs.id)), random())

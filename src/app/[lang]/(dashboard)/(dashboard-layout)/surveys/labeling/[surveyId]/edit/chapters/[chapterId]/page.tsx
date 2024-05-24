@@ -2,11 +2,14 @@ import { authorize } from '@lib/auth/auth';
 import { CACHE_TAGS } from '@lib/constants';
 import { db } from '@lib/database/db';
 import {
+	imagesPools,
+	imagesPoolsTranslations,
 	labelingSurveysChapters,
 	labelingSurveysChaptersTranslations,
 } from '@lib/database/schema/public';
 import { aggTranslations, joinTranslations } from '@lib/i18n/aggregation';
 import { canEditLabelingSurvey, isActiveChapter } from '@lib/queries/queries';
+import { languageTag } from '@translations/runtime';
 import { and, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { unstable_cache as cache } from 'next/cache';
@@ -53,15 +56,31 @@ export type EditorLabelingSurveyChapter = NonNullable<
 	Awaited<ReturnType<typeof getEditorLabelingSurveyChapter>>
 >;
 
+async function getSelectableImagesPools() {
+	const lang = languageTag();
+	const { id } = getColumns(imagesPools);
+	const { title, description } = getColumns(imagesPoolsTranslations);
+	return await db
+		.select({ id, title, description })
+		.from(imagesPools)
+		.leftJoin(
+			imagesPoolsTranslations,
+			and(eq(imagesPools.id, imagesPoolsTranslations.id), eq(imagesPoolsTranslations.lang, lang))
+		);
+}
+
+export type SelectableImagesPools = Awaited<ReturnType<typeof getSelectableImagesPools>>;
+
 export default async function Page(props: { params: { surveyId: string; chapterId: string } }) {
 	const chapter = await getEditorLabelingSurveyChapter(props.params.chapterId);
+	const pools = await getSelectableImagesPools();
 	if (!chapter) {
 		notFound();
 	}
 	return (
 		<>
 			<SurveyChapterPresentationForm {...chapter} />
-			<SurveyChapterConfigurationForm {...chapter} />
+			<SurveyChapterConfigurationForm {...chapter} selectableImagesPools={pools} />
 			<section className="border-boder flex animate-fly-up flex-col gap-6 rounded-lg border bg-background p-6 delay-200 fill-mode-both">
 				<h2 className="text-xl font-semibold">Upload fixed pairs</h2>
 				<p className="text-sm leading-relaxed text-muted-foreground">

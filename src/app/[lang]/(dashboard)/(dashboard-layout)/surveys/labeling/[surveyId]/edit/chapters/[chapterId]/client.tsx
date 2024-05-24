@@ -12,13 +12,20 @@ import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@lib/components/primitives/select';
 import { Textarea } from '@lib/components/primitives/textarea';
 import { toDateTimeLocalString } from '@lib/components/utilities';
 import * as m from '@translations/messages';
 import { Check, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
-import type { EditorLabelingSurveyChapter } from './page';
+import type { EditorLabelingSurveyChapter, SelectableImagesPools } from './page';
 
 export function SurveyChapterPresentationForm(props: EditorLabelingSurveyChapter) {
 	const [formState, formAction] = useFormState(surveyChapterPresentationUpdate, undefined);
@@ -80,8 +87,11 @@ export function SurveyChapterPresentationForm(props: EditorLabelingSurveyChapter
 	);
 }
 
-export function SurveyChapterConfigurationForm(props: EditorLabelingSurveyChapter) {
+export function SurveyChapterConfigurationForm(
+	props: EditorLabelingSurveyChapter & { selectableImagesPools: SelectableImagesPools }
+) {
 	const [formState, formAction] = useFormState(surveyChapterConfigurationUpdate, undefined);
+
 	return (
 		<form
 			action={formAction}
@@ -130,6 +140,31 @@ export function SurveyChapterConfigurationForm(props: EditorLabelingSurveyChapte
 				)}
 			</Field>
 			<hr />
+			<Field className="gap-4 px-8 md:flex-row">
+				<div className="flex flex-1 flex-col gap-4">
+					<Label>{m.image_pool()}</Label>
+					<p className="text-sm leading-relaxed text-muted-foreground">
+						{m.survey_image_pool_select_long()}
+					</p>
+				</div>
+				<div className="flex flex-1 flex-col md:pt-6">
+					<Select name="imagePoolId" defaultValue={props.imagePoolId || undefined}>
+						<SelectTrigger className="w-auto min-w-60 self-center">
+							<SelectValue placeholder="Select an image pool" />
+						</SelectTrigger>
+						<SelectContent>
+							{props.selectableImagesPools.map((pool) => (
+								<SelectItem key={pool.id} value={pool.id} textValue={pool.title || m.untitled()}>
+									{pool.title || (
+										<span className="italic text-muted-foreground">{m.untitled()}</span>
+									)}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
+			</Field>
+			<hr />
 			<Field className="p-8">
 				<Label>{m.answer_quota()}</Label>
 				<p className="my-4 text-sm leading-relaxed text-muted-foreground">
@@ -155,7 +190,7 @@ export function SurveyChapterConfigurationForm(props: EditorLabelingSurveyChapte
 	);
 }
 
-export function ImagePairsUploadForm(props: { chapterId: string, surveyId: string}) {
+export function ImagePairsUploadForm(props: { chapterId: string; surveyId: string }) {
 	const [formState, formAction] = useFormState(imagePairsUpload, undefined);
 	console.log(formState);
 	const [value, setValue] = useState(false);

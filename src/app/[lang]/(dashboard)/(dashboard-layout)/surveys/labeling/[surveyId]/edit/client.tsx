@@ -13,13 +13,6 @@ import { ErrorMessages } from '@lib/components/primitives/error-messages';
 import Field from '@lib/components/primitives/field';
 import { Input } from '@lib/components/primitives/input';
 import { Label } from '@lib/components/primitives/label';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@lib/components/primitives/select';
 import { Slider } from '@lib/components/primitives/slider';
 import { Switch } from '@lib/components/primitives/switch';
 import { Textarea } from '@lib/components/primitives/textarea';
@@ -183,31 +176,6 @@ export function SurveyConfigurationForm(
 					</div>
 				</div>
 				<ErrorMessages errors={formState?.errors?.sliderStepCount?._errors} />
-			</Field>
-			<hr />
-			<Field className="gap-4 px-8 md:flex-row">
-				<div className="flex flex-1 flex-col gap-4">
-					<Label>{m.image_pool()}</Label>
-					<p className="text-sm leading-relaxed text-muted-foreground">
-						{m.survey_image_pool_select_long()}
-					</p>
-				</div>
-				<div className="flex flex-1 flex-col md:pt-6">
-					<Select name="imagePoolId" defaultValue={props.imagePoolId || undefined}>
-						<SelectTrigger className="w-auto min-w-60 self-center">
-							<SelectValue placeholder="Select an image pool" />
-						</SelectTrigger>
-						<SelectContent>
-							{props.selectableImagesPools.map((pool) => (
-								<SelectItem key={pool.id} value={pool.id} textValue={pool.title || m.untitled()}>
-									{pool.title || (
-										<span className="italic text-muted-foreground">{m.untitled()}</span>
-									)}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div>
 			</Field>
 			<div className="sticky bottom-0 my-8 flex flex-row justify-end px-8">
 				<ButtonSubmit className=" bottom-0">
