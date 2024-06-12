@@ -1,6 +1,7 @@
 import { checkIfChapterCompleted } from '@lib/actions/check-if-chapter-completed';
 import { checkIfUserBreak } from '@lib/actions/check-if-user-break';
 import { authorize } from '@lib/auth/auth';
+import { Button } from '@lib/components/primitives/button';
 import { Skeleton } from '@lib/components/primitives/skeleton';
 import { Spinner } from '@lib/components/primitives/spinner';
 import { db } from '@lib/database/db';
@@ -19,6 +20,7 @@ import { and, count, eq } from 'drizzle-orm';
 import { getColumns } from 'drizzle-orm-helpers';
 import { jsonBuildObject } from 'drizzle-orm-helpers/pg';
 import { alias } from 'drizzle-orm/pg-core';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense, cache } from 'react';
 import { AnswerImageClient, HelpClient, LabelingFormClient } from './client';
@@ -159,14 +161,42 @@ async function LabelingForm(props: { answerId: string; surveyId: string }) {
 	return <LabelingFormClient {...surveyAnswer} surveyId={props.surveyId} />;
 }
 
-async function Progress(props: { chapterId: string }) {
+async function Progress(props: { answerId: string; chapterId: string }) {
 	const chapter = await getChapter(props.chapterId);
+	const surveyAnswer = await getSurveyAnswer(props.answerId);
 	return (
-		<progress
-			value={chapter.maxAnswersCount ? chapter.progress : undefined}
-			max={chapter.maxAnswersCount || undefined}
-			className="h-3 w-full [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-border [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-500"
-		/>
+		<div className="flex w-full flex-1 items-center gap-6">
+			{surveyAnswer.prevAnswerId ? (
+				<Link
+					href={`/surveys/labeling/${surveyAnswer.surveyId}/${props.chapterId}/${surveyAnswer.prevAnswerId}`}
+				>
+					<Button type="button" className="pointer-events-auto">
+						Previous
+					</Button>
+				</Link>
+			) : (
+				<div></div>
+			)}
+			<progress
+				value={chapter.maxAnswersCount ? chapter.progress : undefined}
+				max={chapter.maxAnswersCount || undefined}
+				className="h-3 flex-1 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-border [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-500"
+			/>
+			<div>
+				{chapter.progress} / {chapter.maxAnswersCount}
+			</div>
+			{surveyAnswer.nextAnswerId ? (
+				<Link
+					href={`/surveys/labeling/${surveyAnswer.surveyId}/${props.chapterId}/${surveyAnswer.nextAnswerId}`}
+				>
+					<Button type="button" className="pointer-events-auto">
+						Next
+					</Button>
+				</Link>
+			) : (
+				<div></div>
+			)}
+		</div>
 	);
 }
 
@@ -216,7 +246,7 @@ export default async function Page(props: {
 				</Suspense>
 			</section>
 			<footer className="flex flex-none flex-col items-center gap-2 px-8 py-4">
-				<Progress chapterId={props.params.chapterId} />
+				<Progress chapterId={props.params.chapterId} answerId={props.params.answerId} />
 			</footer>
 		</article>
 	);

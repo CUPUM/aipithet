@@ -18,7 +18,6 @@ import * as m from '@translations/messages';
 import { CircleHelp, MessageCircleMore, RefreshCcw, Save, Star } from 'lucide-react';
 import type { ImageProps } from 'next/image';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useMemo, useState, type ComponentProps } from 'react';
 import { useFormState } from 'react-dom';
 import Markdown from 'react-markdown';
@@ -262,19 +261,7 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 					onClick={() => setActive((prev) => ({ ...prev, 2: true }))}
 				/>
 			</div>
-			<nav className="mt-8 flex w-full justify-between px-10">
-				{props.prevAnswerId ? (
-					<Link
-						href={`/surveys/labeling/${props.surveyId}/${props.chapterId}/${props.prevAnswerId}`}
-					>
-						<Button type="button" className="pointer-events-auto">
-							Previous
-						</Button>
-					</Link>
-				) : (
-					<div></div>
-				)}
-
+			<nav className="mt-8 flex w-full justify-center px-10">
 				{Object.values(active).some((value) => value) ? (
 					<menu className="flex gap-8">
 						<ButtonSubmit className="pointer-events-auto animate-puff-grow text-lg font-medium shadow-lg">
@@ -321,18 +308,6 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 						</Dialog>
 					</menu>
 				) : null}
-
-				{props.nextAnswerId ? (
-					<Link
-						href={`/surveys/labeling/${props.surveyId}/${props.chapterId}/${props.nextAnswerId}`}
-					>
-						<Button type="button" className="pointer-events-auto">
-							Next
-						</Button>
-					</Link>
-				) : (
-					<div></div>
-				)}
 			</nav>
 		</form>
 	);
