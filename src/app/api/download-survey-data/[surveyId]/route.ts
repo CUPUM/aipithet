@@ -3,6 +3,7 @@ import {
 	images,
 	imagesPrompts,
 	labelingSurveysAnswers,
+	labelingSurveysChapters,
 	labelingSurveysPairs,
 	labelsTranslations,
 } from '@lib/database/schema/public';
@@ -14,6 +15,14 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request, route: { params: { surveyId: string } }) {
 	try {
 		const zip = new JSZip();
+
+		const allChapters = await db
+			.select()
+			.from(labelingSurveysChapters)
+			.where(eq(labelingSurveysChapters.surveyId, route.params.surveyId));
+
+		const poolIds = [...new Set(allChapters.map((chapter) => chapter.imagePoolId as string))]; // TODO: Fix type
+
 		const answers = await db
 			.select()
 			.from(labelingSurveysAnswers)
@@ -34,11 +43,10 @@ export async function GET(request: Request, route: { params: { surveyId: string 
 		const csv3 = parse(all_images);
 		zip.file('images.csv', csv3);
 
-		const list_prompts = [...new Set(pairs.map((pair) => pair.promptId))];
 		const all_prompts = await db
 			.select()
 			.from(imagesPrompts)
-			.where(inArray(imagesPrompts.id, list_prompts));
+			.where(inArray(imagesPrompts.poolId, poolIds));
 		const csv4 = parse(all_prompts);
 		zip.file('prompts.csv', csv4);
 

@@ -41,11 +41,13 @@ export default async function surveyInvite(state: unknown, formData: FormData) {
 			)
 		)
 		.limit(1);
+
 	const [existingUser] = await db
 		.select({ id: users.id })
 		.from(users)
 		.where(eq(users.email, parsed.data.email))
 		.limit(1);
+
 	if (existingUser) {
 		const [added] = await db
 			.insert(surveysUsers)
