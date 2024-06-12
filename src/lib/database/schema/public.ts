@@ -164,6 +164,26 @@ export const imagesPrompts = pgTable(
 	}
 );
 
+export const imagesPromptsRelation = pgTable(
+	'images_prompts_relation',
+	{
+		parentPromptId: text('parent_prompt_id').references(() => imagesPrompts.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		childPromptId: text('child_prompt_id').references(() => imagesPrompts.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade',
+		}),
+		modification: text('modification'),
+	},
+	(table) => {
+		return {
+			pk: primaryKey({ columns: [table.parentPromptId, table.childPromptId] }),
+		};
+	}
+);
+
 /**
  * Images uploaded by users (can be used across multiple pools).
  */
@@ -433,12 +453,6 @@ export const labelingSurveysPairs = pgTable(
 			.notNull(),
 		index: integer('index'),
 		createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-		promptId: text('prompt_id')
-			.references(() => imagesPrompts.id, {
-				onDelete: 'cascade',
-				onUpdate: 'cascade',
-			})
-			.notNull(),
 		image1Id: text('image_1_id')
 			.references(() => images.id, {
 				onDelete: 'cascade',
@@ -509,6 +523,9 @@ export const labelingSurveysAnswers = pgTable('labeling_surveys_answers', {
 	score1: real('score_1'),
 	score2: real('score_2'),
 	score3: real('score_3'),
+	score1Answered: boolean('score_1_answered'),
+	score2Answered: boolean('score_2_answered'),
+	score3Answered: boolean('score_3_answered'),
 	comment: text('comment'),
 	timeToAnswerServer: interval('time_to_answer_server'),
 	timeToAnswerClient: interval('time_to_answer_client'),

@@ -358,6 +358,20 @@
       "when": 1716588329593,
       "tag": "0050_normal_the_renegades",
       "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "5",
+      "when": 1718166780874,
+      "tag": "0051_pink_malcolm_colcord",
+      "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "5",
+      "when": 1718173519856,
+      "tag": "0052_empty_puppet_master",
+      "breakpoints": true
     }
   ]
 }

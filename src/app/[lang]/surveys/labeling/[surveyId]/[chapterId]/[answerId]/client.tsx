@@ -200,11 +200,11 @@ function Slider({
 
 export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 	const [comment, setComment] = useState<string>();
-	const surveyAnswerUpdateWithComment = surveyAnswerUpdate.bind(null, comment); // Currently this is a hack because calling submit inside the dialog doesn't work.
+	const [active, setActive] = useState({ 0: false, 1: false, 2: false });
+	const surveyAnswerUpdateWithComment = surveyAnswerUpdate.bind(null, comment, active); // Currently this is a hack because calling submit inside the dialog doesn't work.
 	const [formState, formAction] = useFormState(surveyAnswerUpdateWithComment, undefined);
 	const min = -1;
 	const max = 1;
-	const [active, setActive] = useState({ 0: false, 1: false, 2: false });
 	return (
 		<form
 			action={formAction}
@@ -219,11 +219,7 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 					<label>
 						<LabelClient {...props.labels[1]}></LabelClient>
 					</label>
-					<Checkbox
-						name="&checked1"
-						checked={active[0]}
-						onCheckedChange={() => setActive((prev) => ({ ...prev, 0: !prev[0] }))}
-					/>
+					<Checkbox name="&checked1" checked={active[0]} />
 				</div>
 				<Slider
 					name="+score1"
@@ -239,11 +235,7 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 					<label>
 						<LabelClient {...props.labels[2]}></LabelClient>
 					</label>
-					<Checkbox
-						name="&checked2"
-						checked={active[1]}
-						onCheckedChange={() => setActive((prev) => ({ ...prev, 1: !prev[1] }))}
-					/>
+					<Checkbox name="&checked2" checked={active[1]} />
 				</div>
 				<Slider
 					name="+score2"
@@ -259,11 +251,7 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 					<label>
 						<LabelClient {...props.labels[3]}></LabelClient>
 					</label>
-					<Checkbox
-						name="&checked3"
-						checked={active[2]}
-						onCheckedChange={() => setActive((prev) => ({ ...prev, 2: !prev[2] }))}
-					/>
+					<Checkbox name="&checked3" checked={active[2]} />
 				</div>
 				<Slider
 					name="+score3"

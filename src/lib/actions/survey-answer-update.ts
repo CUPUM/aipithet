@@ -11,6 +11,7 @@ import { validateFormData } from './validation';
 
 export default async function surveyAnswerUpdate(
 	comment: string | undefined,
+	active: { 0: boolean; 1: boolean; 2: boolean },
 	state: unknown,
 	formData: FormData
 ) {
@@ -41,6 +42,9 @@ export default async function surveyAnswerUpdate(
 			score1: parsed.data.score1,
 			score2: parsed.data.score2,
 			score3: parsed.data.score3,
+			score1Answered: active[0],
+			score2Answered: active[1],
+			score3Answered: active[2],
 			answeredAt: now(),
 			comment: comment,
 		})

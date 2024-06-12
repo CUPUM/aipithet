@@ -5,6 +5,7 @@ import { db } from '@lib/database/db';
 import {
 	images,
 	imagesPrompts,
+	imagesPromptsRelation,
 	labelingSurveys,
 	labelingSurveysAnswers,
 	labelingSurveysBreaks,
@@ -12,48 +13,81 @@ import {
 	labelingSurveysPairs,
 	labels,
 } from '@lib/database/schema/public';
-import { redirect } from '@lib/i18n/utilities-server';
-import { and, asc, count, eq, getTableColumns, gt, isNull, lt, or } from 'drizzle-orm';
+import { and, asc, count, eq, gt, isNull, lt, not, or } from 'drizzle-orm';
 import { random } from 'drizzle-orm-helpers/pg';
 import { unionAll } from 'drizzle-orm/pg-core';
+import { redirect } from 'next/navigation';
 
 async function createNewPair(surveyId: string, chapterId: string) {
 	// Select a random prompt, two random images, and three random labels to create a new pair.
 	// The sampling mechansim ensures that all prompts are sampled equally, and that all images are sampled equally.
 
-	const [prompt] = await db
-		.select({
-			...getTableColumns(imagesPrompts),
-			count: count(labelingSurveysPairs.id),
-		})
+	const imagesUnionSq = unionAll(
+		db
+			.select({ id: labelingSurveysPairs.image1Id })
+			.from(labelingSurveysPairs)
+			.where(eq(labelingSurveysPairs.chapterId, chapterId)),
+		db
+			.select({ id: labelingSurveysPairs.image2Id })
+			.from(labelingSurveysPairs)
+			.where(eq(labelingSurveysPairs.chapterId, chapterId))
+	).as('imagesUnionSq');
+
+	// Select only the prompts from the proper poolId, and order them by the number of occurrences.
+	const [parentPrompt] = await db
+		.select({ id: imagesPrompts.id, count: count(imagesUnionSq.id).as('count') })
 		.from(imagesPrompts)
-		.leftJoin(labelingSurveysChapters, eq(imagesPrompts.poolId, labelingSurveysChapters.imagePoolId))
+		.leftJoin(
+			labelingSurveysChapters,
+			eq(imagesPrompts.poolId, labelingSurveysChapters.imagePoolId)
+		)
 		.where(eq(labelingSurveysChapters.id, chapterId))
-		.leftJoin(labelingSurveysPairs, eq(imagesPrompts.id, labelingSurveysPairs.promptId))
+		.leftJoin(images, eq(images.promptId, imagesPrompts.id))
+		.leftJoin(imagesUnionSq, eq(images.id, imagesUnionSq.id))
 		.groupBy(imagesPrompts.id)
-		.orderBy(asc(count(labelingSurveysPairs.id)), random())
+		.orderBy(asc(count(imagesUnionSq.id)), random())
 		.limit(1);
 
-	if (!prompt) {
+	if (!parentPrompt) {
 		throw new Error('Could not pick random prompt');
 	}
 
-	const sq = unionAll(
-		db.select({ id: labelingSurveysPairs.image1Id }).from(labelingSurveysPairs),
-		db.select({ id: labelingSurveysPairs.image2Id }).from(labelingSurveysPairs)
-	).as('sq');
+	let [childPrompt] = await db
+		.select({ id: imagesPrompts.id })
+		.from(imagesPrompts)
+		.leftJoin(imagesPromptsRelation, eq(imagesPrompts.id, imagesPromptsRelation.childPromptId))
+		.where(eq(imagesPromptsRelation.parentPromptId, parentPrompt.id))
+		.orderBy(random())
+		.limit(1);
 
-	const [image1, image2] = await db
-		.select({ id: images.id, ext: images.externalId, count: count(sq.id) })
+	if (!childPrompt) {
+		childPrompt = parentPrompt;
+	}
+
+	const [image1] = await db
+		.select({ id: images.id, ext: images.externalId, count: count(imagesUnionSq.id) })
 		.from(images)
-		.leftJoin(sq, eq(images.id, sq.id))
-		.where(eq(images.promptId, prompt.id))
+		.leftJoin(imagesUnionSq, eq(images.id, imagesUnionSq.id))
+		.where(eq(images.promptId, parentPrompt.id))
 		.groupBy(images.id)
-		.orderBy(asc(count(sq.id)), random())
-		.limit(2);
+		.orderBy(asc(count(imagesUnionSq.id)), random())
+		.limit(1);
 
-	if (!image1 || !image2) {
-		throw new Error('Too few images were gathered to build an answer leaf.');
+	if (!image1) {
+		throw new Error('Could not find a first image.');
+	}
+
+	const [image2] = await db
+		.select({ id: images.id, ext: images.externalId, count: count(imagesUnionSq.id) })
+		.from(images)
+		.leftJoin(imagesUnionSq, eq(images.id, imagesUnionSq.id))
+		.where(and(eq(images.promptId, childPrompt.id), not(eq(images.id, image1.id))))
+		.groupBy(images.id)
+		.orderBy(asc(count(imagesUnionSq.id)), random())
+		.limit(1);
+
+	if (!image2) {
+		throw new Error('Could not find a second image.');
 	}
 
 	const sq_label = unionAll(
@@ -74,11 +108,11 @@ async function createNewPair(surveyId: string, chapterId: string) {
 	if (!label1 || !label2 || !label3) {
 		throw new Error('No label found to generate image.');
 	}
+
 	const [newPair] = await db
 		.insert(labelingSurveysPairs)
 		.values({
 			chapterId: chapterId,
-			promptId: prompt.id,
 			image1Id: image1.id,
 			image2Id: image2.id,
 			label1Id: label1.id,
