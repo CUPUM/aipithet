@@ -1,0 +1,1 @@
+ALTER TABLE "images_prompts" ADD COLUMN "external_id" text;

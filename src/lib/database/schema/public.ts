@@ -138,6 +138,7 @@ export const imagesPrompts = pgTable(
 	'images_prompts',
 	{
 		id: text('id').default(nanoid()).primaryKey(),
+		externalId: text('external_id'),
 		scenarioId: text('scenario_id').references(() => workshopScenarios.id, {
 			onDelete: 'set null',
 			onUpdate: 'cascade',
@@ -485,6 +486,7 @@ export const labelingSurveysPairs = pgTable(
 			.notNull(),
 		maxAnswersCount: integer('max_answers_count').default(1).notNull(),
 		generationMethod: text('generation_method').notNull(),
+		type: text('type'),
 	}
 	// (table) => {
 	// 	return {

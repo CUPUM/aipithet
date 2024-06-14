@@ -64,6 +64,9 @@ async function createNewPair(surveyId: string, chapterId: string) {
 		childPrompt = parentPrompt;
 	}
 
+	console.log('Parent prompt:', parentPrompt);
+	console.log('Child prompt:', childPrompt);
+
 	const [image1] = await db
 		.select({ id: images.id, ext: images.externalId, count: count(imagesUnionSq.id) })
 		.from(images)
@@ -196,7 +199,7 @@ export default async function surveyAnswerNext(
 
 	// TODO: The logic here should not be hardcoded. It should be configurable in the database.
 	let pair: { id: string } | undefined = undefined;
-	if ((answeredCount.count + 1) % 30 === 0) {
+	if ((answeredCount.count + 1) % 10 === 0) {
 		// If the user has answered 10, 20, 30, ... questions, select a pair with a maxCount not defined.
 		// Must check that the pair has not been answered by the user yet.
 		console.log('Creating a dynamic pair with maxCount not defined.');

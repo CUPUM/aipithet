@@ -1,0 +1,1 @@
+ALTER TABLE "labeling_surveys_pairs" ADD COLUMN "type" text;

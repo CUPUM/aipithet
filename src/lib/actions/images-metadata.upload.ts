@@ -2,7 +2,12 @@
 
 import { authorize } from '@lib/auth/auth';
 import { db } from '@lib/database/db';
-import { images, imagesPrompts, workshopScenarios } from '@lib/database/schema/public';
+import {
+	images,
+	imagesPrompts,
+	imagesPromptsRelation,
+	workshopScenarios,
+} from '@lib/database/schema/public';
 import { languageTagServer } from '@lib/i18n/utilities-server';
 import { setLanguageTag } from '@translations/runtime';
 import { toExcluded } from 'drizzle-orm-helpers/pg';
@@ -46,18 +51,27 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 							.optional(),
 						prompts: z
 							.object({
+								id: z.string(),
 								text: z.string(),
 								scenarioId: z.string().optional(),
 								method: z.string(),
-								images: z
-									.object({
-										id: z.string(),
-										name: z.string(),
-										path: z.string(),
-										width: z.coerce.number(),
-										height: z.coerce.number(),
-									})
-									.array(),
+							})
+							.array(),
+						relations: z
+							.object({
+								parentId: z.string(),
+								childId: z.string(),
+								modification: z.string().optional(),
+							})
+							.array(),
+						images: z
+							.object({
+								id: z.string(),
+								promptId: z.string(),
+								name: z.string(),
+								path: z.string(),
+								width: z.coerce.number(),
+								height: z.coerce.number(),
 							})
 							.array(),
 					})
@@ -67,9 +81,9 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 	if (!parsed.success) {
 		return parsed.fail;
 	}
-	const scenarioIds: Record<string, string> = {};
-	const promptIds: Record<string, string> = {};
+
 	const addedImages = await db.transaction(async (tx) => {
+		const scenarioIds: Record<string, string> = {};
 		if (parsed.data.file.scenarios) {
 			const insertedScenarios = await tx
 				.insert(workshopScenarios)
@@ -94,17 +108,24 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 					id: workshopScenarios.id,
 					externalId: workshopScenarios.externalId,
 				});
+
 			insertedScenarios.forEach((s) => {
-				if (s.externalId) {
-					scenarioIds[s.externalId] = s.id;
+				if (!s.externalId) {
+					throw new Error('Scenario id is missing');
 				}
+				if (s.externalId in insertedScenarios) {
+					throw new Error('Duplicate scenario id');
+				}
+				scenarioIds[s.externalId] = s.id;
 			});
 		}
 		console.log('scenarios ok');
+
 		const insertedPrompts = await tx
 			.insert(imagesPrompts)
 			.values(
 				parsed.data.file.prompts.map((p) => ({
+					externalId: p.id,
 					createdById: user.id,
 					updatedById: user.id,
 					method: p.method,
@@ -118,29 +139,57 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 			})
 			.returning({
 				id: imagesPrompts.id,
+				externalId: imagesPrompts.externalId,
 				prompt: imagesPrompts.prompt,
 				method: imagesPrompts.method,
 			});
+
+		const promptIds: Record<string, string> = {};
 		insertedPrompts.forEach((p) => {
-			promptIds[p.prompt] = p.id;
+			if (!p.externalId) {
+				throw new Error('Prompt id is missing');
+			}
+			if (p.externalId in promptIds) {
+				throw new Error('Duplicate prompt id');
+			}
+			promptIds[p.externalId] = p.id;
 		});
+
 		console.log('prompts ok');
+
+		const insertedRelations = await tx
+			.insert(imagesPromptsRelation)
+			.values(
+				parsed.data.file.relations.map((r) => ({
+					parentPromptId: promptIds[r.parentId],
+					childPromptId: promptIds[r.childId],
+					modification: r.modification,
+				}))
+			)
+			.onConflictDoNothing({
+				target: [imagesPromptsRelation.parentPromptId, imagesPromptsRelation.childPromptId],
+			})
+			.returning({
+				parentPromptId: imagesPromptsRelation.parentPromptId,
+				childPromptId: imagesPromptsRelation.childPromptId,
+			});
+
+		console.log('relations ok');
+
 		return await tx
 			.insert(images)
 			.values(
-				parsed.data.file.prompts.flatMap((p) =>
-					p.images.map((img) => ({
-						externalId: img.id,
-						poolId: parsed.data.poolId,
-						createdById: user.id,
-						updatedById: user.id,
-						width: img.width,
-						height: img.height,
-						path: path.join(parsed.data.file.prefix ?? '', `${img.id}.${path.extname(img.name)}`),
-						bucket: parsed.data.file.bucket,
-						promptId: promptIds[p.text],
-					}))
-				)
+				parsed.data.file.images.map((img) => ({
+					externalId: img.id,
+					poolId: parsed.data.poolId,
+					createdById: user.id,
+					updatedById: user.id,
+					width: img.width,
+					height: img.height,
+					path: path.join(parsed.data.file.prefix ?? '', `${img.id}.${path.extname(img.name)}`),
+					bucket: parsed.data.file.bucket,
+					promptId: promptIds[img.promptId],
+				}))
 			)
 			.onConflictDoUpdate({
 				target: [images.poolId, images.path, images.bucket],
@@ -153,5 +202,5 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 			})
 			.returning({ id: images.id });
 	});
-	return { addedImages, scenarioIds, promptIds };
+	return { addedImages };
 }

@@ -42,6 +42,7 @@ export default async function imagePairsUpload(state: unknown, formData: FormDat
 								criteria2: z.string(),
 								criteria3: z.string(),
 								numAnnotators: z.number(),
+								type: z.string(),
 							})
 							.array(),
 					})
@@ -105,6 +106,7 @@ export default async function imagePairsUpload(state: unknown, formData: FormDat
 						maxAnswersCount: p.numAnnotators,
 						chapterId: parsed.data.chapterId,
 						generationMethod: 'static',
+						type: p.type,
 					};
 				})
 			)
