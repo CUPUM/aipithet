@@ -34,7 +34,11 @@ export const passwordResetSchema = z.object({
 
 export const passwordResetFinalizeSchema = z
 	.object({
-		token: z.string().trim().min(1, m.password_reset_token_invalid()),
+		token: z
+			.string()
+			.trim()
+			.min(1, m.password_reset_token_invalid())
+			.transform((d) => decodeURIComponent(d)),
 		newPassword: passwordSchema,
 		newPasswordConfirm: passwordConfirmSchema,
 	})
