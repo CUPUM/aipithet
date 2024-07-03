@@ -2,8 +2,6 @@ import { checkIfChapterCompleted } from '@lib/actions/check-if-chapter-completed
 import { checkIfUserBreak } from '@lib/actions/check-if-user-break';
 import { authorize } from '@lib/auth/auth';
 import { Button } from '@lib/components/primitives/button';
-import { Skeleton } from '@lib/components/primitives/skeleton';
-import { Spinner } from '@lib/components/primitives/spinner';
 import { db } from '@lib/database/db';
 import {
 	images,
@@ -23,7 +21,7 @@ import { alias } from 'drizzle-orm/pg-core';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Suspense, cache } from 'react';
-import { AnswerImageClient, HelpClient, LabelingFormClient } from './client';
+import { AnswerImagesClient, HelpClient, LabelingFormClient } from './client';
 
 export type ImageIndex = 1 | 2;
 export type LabelIndex = 1 | 2 | 3;
@@ -138,22 +136,9 @@ const getNextSurveyAnswer = cache(async function (answerId: string) {
 	const { user } = await authorize();
 });
 
-async function AnswerImage(props: { answerId: string; index: ImageIndex }) {
+async function AnswerImages(props: { answerId: string }) {
 	const surveyAnswer = await getSurveyAnswer(props.answerId);
-	const image = surveyAnswer.images[props.index];
-	const src = `https://storage.googleapis.com/${image.bucket}/${image.path}`;
-	return (
-		<AnswerImageClient
-			imageId={image.id}
-			index={props.index}
-			answerId={props.answerId}
-			key={src}
-			src={src}
-			alt={`Image ${props.index}`}
-			// width={image.width}
-			// height={image.height}
-		/>
-	);
+	return <AnswerImagesClient {...surveyAnswer} />;
 }
 
 async function LabelingForm(props: { answerId: string; surveyId: string }) {
@@ -170,7 +155,7 @@ async function Progress(props: { answerId: string; chapterId: string }) {
 				<Link
 					href={`/surveys/labeling/${surveyAnswer.surveyId}/${props.chapterId}/${surveyAnswer.prevAnswerId}`}
 				>
-					<Button type="button" className="pointer-events-auto">
+					<Button type="button" size="sm" className="pointer-events-auto">
 						Previous
 					</Button>
 				</Link>
@@ -189,7 +174,7 @@ async function Progress(props: { answerId: string; chapterId: string }) {
 				<Link
 					href={`/surveys/labeling/${surveyAnswer.surveyId}/${props.chapterId}/${surveyAnswer.nextAnswerId}`}
 				>
-					<Button type="button" className="pointer-events-auto">
+					<Button type="button" size="sm" className="pointer-events-auto">
 						Next
 					</Button>
 				</Link>
@@ -214,30 +199,15 @@ export default async function Page(props: {
 	await checkIfUserBreak(props.params.surveyId, props.params.chapterId);
 
 	return (
-		<article className="flex h-[calc(100vh-72px)] w-full flex-col items-stretch">
+		<article className="flex h-[calc(100vh-48px)] w-full flex-col items-stretch">
 			<header className="flex justify-end px-8">
 				<Suspense>
 					<Help surveyId={props.params.surveyId} />
 				</Suspense>
 			</header>
-			<section className="relative grid flex-1 grid-cols-2 grid-rows-1 items-center justify-center gap-6 px-12 py-6">
-				<Suspense
-					fallback={
-						<Skeleton className="flex aspect-square flex-1 items-center justify-center rounded-sm bg-border/50">
-							<Spinner />
-						</Skeleton>
-					}
-				>
-					<AnswerImage index={1} answerId={props.params.answerId} />
-				</Suspense>
-				<Suspense
-					fallback={
-						<Skeleton className="flex aspect-square flex-1 items-center justify-center rounded-sm bg-border/50 delay-300 fill-mode-both">
-							<Spinner />
-						</Skeleton>
-					}
-				>
-					<AnswerImage index={2} answerId={props.params.answerId} />
+			<section className="flex flex-1 px-8 pb-4">
+				<Suspense>
+					<AnswerImages answerId={props.params.answerId} />
 				</Suspense>
 			</section>
 			<section>
@@ -245,7 +215,7 @@ export default async function Page(props: {
 					<LabelingForm answerId={props.params.answerId} surveyId={props.params.surveyId} />
 				</Suspense>
 			</section>
-			<footer className="flex flex-none flex-col items-center gap-2 px-8 py-4">
+			<footer className="flex flex-none flex-col items-center gap-2 px-8 pb-4">
 				<Progress chapterId={props.params.chapterId} answerId={props.params.answerId} />
 			</footer>
 		</article>

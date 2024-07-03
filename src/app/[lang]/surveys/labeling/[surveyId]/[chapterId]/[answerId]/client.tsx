@@ -13,12 +13,13 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@lib/components/primitives/dialog';
+import { Skeleton } from '@lib/components/primitives/skeleton';
+import { Spinner } from '@lib/components/primitives/spinner';
 import { DialogPortal } from '@radix-ui/react-dialog';
 import * as m from '@translations/messages';
 import { CircleHelp, MessageCircleMore, RefreshCcw, Save, Star } from 'lucide-react';
-import type { ImageProps } from 'next/image';
 import Image from 'next/image';
-import { useMemo, useState, type ComponentProps } from 'react';
+import { Suspense, useMemo, useState, type ComponentProps } from 'react';
 import { useFormState } from 'react-dom';
 import Markdown from 'react-markdown';
 import type { ImageIndex, SurveyAnswer } from './page';
@@ -60,7 +61,7 @@ export function LabelClient(props: {
 	return (
 		<hgroup>
 			<Dialog>
-				<DialogTrigger className="cursor-help rounded-md px-5 py-2 text-2xl font-semibold text-foreground transition-all hover:bg-primary/10 hover:text-primary">
+				<DialogTrigger className="cursor-help rounded-md px-5 py-2 text-xl font-semibold text-foreground transition-all hover:bg-primary/10 hover:text-primary">
 					{props.text || <span className="italic text-muted-foreground">{m.label_no_text()}</span>}
 				</DialogTrigger>
 				<DialogContent className="border-none">
@@ -93,43 +94,65 @@ function ImageErrorForm() {
 	);
 }
 
-export function AnswerImageClient({
-	imageId,
-	index,
-	answerId,
-	...imageProps
-}: ImageProps & { imageId: string; index: ImageIndex; answerId: string }) {
-	const [broken, setBroken] = useState(false);
+export function AnswerImagesClient(props: SurveyAnswer) {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<div className="relative h-full w-full ">
-					<Image
-						{...imageProps}
-						className="aspect-square rounded-sm bg-border/50 object-contain"
-						fill
-						onError={() => {
-							setBroken(true);
-						}}
-					/>
-					{broken ? <ImageErrorForm /> : null}
-				</div>
+				<section className="flex flex-1 gap-2">
+					<Suspense
+						fallback={
+							<Skeleton className="flex aspect-square flex-1 items-center justify-center rounded-sm bg-border/50">
+								<Spinner />
+							</Skeleton>
+						}
+					>
+						<div className="relative flex-1">
+							<AnswerImageClient index={1} {...props} />
+						</div>
+					</Suspense>
+					<Suspense
+						fallback={
+							<Skeleton className="flex aspect-square flex-1 items-center justify-center rounded-sm bg-border/50 delay-300 fill-mode-both">
+								<Spinner />
+							</Skeleton>
+						}
+					>
+						<div className="relative flex-1">
+							<AnswerImageClient index={2} {...props} />
+						</div>
+					</Suspense>
+				</section>
 			</DialogTrigger>
-			<DialogContent className="h-full max-w-screen-lg">
-				<DialogHeader>
-					<DialogTitle></DialogTitle>
-				</DialogHeader>
-				<Image
-					{...imageProps}
-					className="aspect-square rounded-sm bg-border/50 object-contain"
-					fill
-					onError={() => {
-						setBroken(true);
-					}}
-				/>
-				{broken ? <ImageErrorForm /> : null}
+			<DialogContent className="flex h-5/6 w-11/12 max-w-full">
+				<div className="relative flex-1">
+					<AnswerImageClient index={1} {...props} />
+				</div>
+				<div className="relative flex-1">
+					<AnswerImageClient index={2} {...props} />
+				</div>
 			</DialogContent>
 		</Dialog>
+	);
+}
+
+export function AnswerImageClient(props: SurveyAnswer & { index: ImageIndex }) {
+	const [broken, setBroken] = useState(false);
+	const image = props.images[props.index];
+	const src = `https://storage.googleapis.com/${image.bucket}/${image.path}`;
+	return (
+		<>
+			<Image
+				key={src}
+				src={src}
+				alt={`Image ${props.index}`}
+				className="aspect-square rounded-sm bg-border/50 object-contain"
+				fill
+				onError={() => {
+					setBroken(true);
+				}}
+			/>
+			{broken ? <ImageErrorForm /> : null}
+		</>
 	);
 }
 
@@ -199,8 +222,12 @@ function Slider({
 
 export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 	const [comment, setComment] = useState<string>();
-	const [active, setActive] = useState({ 0: false, 1: false, 2: false });
-	const surveyAnswerUpdateWithComment = surveyAnswerUpdate.bind(null, comment, active); // Currently this is a hack because calling submit inside the dialog doesn't work.
+	const [active, setActive] = useState({
+		0: props.scoreAnswered1 ?? false,
+		1: props.scoreAnswered2 ?? false,
+		2: props.scoreAnswered3 ?? false,
+	});
+	const surveyAnswerUpdateWithComment = surveyAnswerUpdate.bind(null, comment); // Currently this is a hack because calling submit inside the dialog doesn't work.
 	const [formState, formAction] = useFormState(surveyAnswerUpdateWithComment, undefined);
 	const min = -1;
 	const max = 1;
@@ -214,54 +241,75 @@ export function LabelingFormClient(props: SurveyAnswer & { surveyId: string }) {
 			<input type="hidden" value={props.chapterId} readOnly name="chapterId" />
 			<input type="hidden" value={props.id} readOnly name="id" />
 			<div className="pointer-events-auto w-full px-10">
-				<div className="flex items-center">
-					<label>
-						<LabelClient {...props.labels[1]}></LabelClient>
-					</label>
-					<Checkbox name="&checked1" checked={active[0]} />
+				<div className="flex items-center gap-4">
+					<div className="flex w-1/6 flex-none items-center">
+						<label>
+							<LabelClient {...props.labels[1]}></LabelClient>
+						</label>
+						<Checkbox name="&scoreAnswered1" checked={active[0]} />
+					</div>
+
+					<div className="flex-grow">
+						<Slider
+							name="+score1"
+							stepCount={props.sliderStepCount}
+							min={min}
+							max={max}
+							defaultValue={props.score1 || 0}
+							onClick={() => setActive((prev) => ({ ...prev, 0: true }))}
+						/>
+					</div>
+
+					<div className="w-1/6 flex-none"></div>
 				</div>
-				<Slider
-					name="+score1"
-					stepCount={props.sliderStepCount}
-					min={min}
-					max={max}
-					defaultValue={props.score1 || 0}
-					onClick={() => setActive((prev) => ({ ...prev, 0: true }))}
-				/>
 			</div>
 			<div className="pointer-events-auto w-full px-10">
-				<div className="flex items-center">
-					<label>
-						<LabelClient {...props.labels[2]}></LabelClient>
-					</label>
-					<Checkbox name="&checked2" checked={active[1]} />
+				<div className="flex items-center gap-4">
+					<div className="flex w-1/6 flex-none items-center">
+						<label>
+							<LabelClient {...props.labels[2]}></LabelClient>
+						</label>
+						<Checkbox name="&scoreAnswered2" checked={active[1]} />
+					</div>
+
+					<div className="flex-grow">
+						<Slider
+							name="+score2"
+							stepCount={props.sliderStepCount}
+							min={min}
+							max={max}
+							defaultValue={props.score2 || 0}
+							onClick={() => setActive((prev) => ({ ...prev, 1: true }))}
+						/>
+					</div>
+
+					<div className="w-1/6 flex-none"></div>
 				</div>
-				<Slider
-					name="+score2"
-					stepCount={props.sliderStepCount}
-					min={min}
-					max={max}
-					defaultValue={props.score2 || 0}
-					onClick={() => setActive((prev) => ({ ...prev, 1: true }))}
-				/>
 			</div>
 			<div className="pointer-events-auto w-full px-10">
-				<div className="flex items-center">
-					<label>
-						<LabelClient {...props.labels[3]}></LabelClient>
-					</label>
-					<Checkbox name="&checked3" checked={active[2]} />
+				<div className="flex items-center gap-4">
+					<div className="flex w-1/6 flex-none items-center">
+						<label>
+							<LabelClient {...props.labels[3]}></LabelClient>
+						</label>
+						<Checkbox name="&scoreAnswered3" checked={active[2]} />
+					</div>
+
+					<div className="flex-grow">
+						<Slider
+							name="+score3"
+							stepCount={props.sliderStepCount}
+							min={min}
+							max={max}
+							defaultValue={props.score3 || 0}
+							onClick={() => setActive((prev) => ({ ...prev, 2: true }))}
+						/>
+					</div>
+
+					<div className="w-1/6 flex-none"></div>
 				</div>
-				<Slider
-					name="+score3"
-					stepCount={props.sliderStepCount}
-					min={min}
-					max={max}
-					defaultValue={props.score3 || 0}
-					onClick={() => setActive((prev) => ({ ...prev, 2: true }))}
-				/>
 			</div>
-			<nav className="mt-8 flex w-full justify-center px-10">
+			<nav className="mt-4 flex w-full justify-center px-10">
 				{Object.values(active).some((value) => value) ? (
 					<menu className="flex gap-8">
 						<ButtonSubmit className="pointer-events-auto animate-puff-grow text-lg font-medium shadow-lg">
