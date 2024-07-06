@@ -5,7 +5,7 @@ import { db } from '@lib/database/db';
 import { images, labelingSurveysPairs, labels } from '@lib/database/schema/public';
 import { languageTagServer } from '@lib/i18n/utilities-server';
 import { setLanguageTag } from '@translations/runtime';
-import { inArray } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { NEVER, z } from 'zod';
 import { validateFormDataAsync } from './validation';
 
@@ -66,9 +66,14 @@ export default async function imagePairsUpload(state: unknown, formData: FormDat
 		.select({ id: labels.id, externalId: labels.externalId })
 		.from(labels)
 		.where(
-			inArray(labels.externalId, [
-				...new Set(parsed.data.file.pairs.flatMap((p) => [p.criteria1, p.criteria2, p.criteria3])),
-			])
+			and(
+				eq(labels.surveyId, parsed.data.surveyId),
+				inArray(labels.externalId, [
+					...new Set(
+						parsed.data.file.pairs.flatMap((p) => [p.criteria1, p.criteria2, p.criteria3])
+					),
+				])
+			)
 		);
 
 	const addedPairs = await db.transaction(async (tx) => {

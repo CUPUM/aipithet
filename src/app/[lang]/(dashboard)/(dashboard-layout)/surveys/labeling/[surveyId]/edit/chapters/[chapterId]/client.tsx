@@ -26,6 +26,7 @@ import { Check, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
 import type { EditorLabelingSurveyChapter, SelectableImagesPools } from './page';
+import fixCriteriaBug from '@lib/actions/fix-criteria-bug';
 
 export function SurveyChapterPresentationForm(props: EditorLabelingSurveyChapter) {
 	const [formState, formAction] = useFormState(surveyChapterPresentationUpdate, undefined);
@@ -222,6 +223,20 @@ export function ImagePairsUploadForm(props: { chapterId: string; surveyId: strin
 					errors={formState && 'errors' in formState ? formState.errors.file?._errors : undefined}
 				/>
 			</fieldset>
+		</form>
+	);
+}
+
+export function FixCriteriaBug(props: { chapterId: string; surveyId: string }) {
+	const [formState, formAction] = useFormState(fixCriteriaBug, undefined);
+	return (
+		<form action={formAction}>
+			<input type="hidden" value={props.chapterId} name="chapterId" readOnly />
+			<input type="hidden" value={props.surveyId} name="surveyId" readOnly />
+			<ButtonSubmit className="sticky bottom-0 self-end">
+				Fix Criteria Bug
+				<ButtonIconLoading icon={Check} />
+			</ButtonSubmit>
 		</form>
 	);
 }

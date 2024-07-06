@@ -131,6 +131,7 @@ export default async function Page(props: { params: { surveyId: string; chapterI
 					</code>
 				</section>
 				<ImagePairsUploadForm chapterId={props.params.chapterId} surveyId={props.params.surveyId} />
+				
 			</section>
 		</>
 	);
