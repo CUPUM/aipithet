@@ -16,6 +16,7 @@ import { getColumns } from 'drizzle-orm-helpers';
 import { unstable_cache as cache } from 'next/cache';
 import { notFound } from 'next/navigation';
 import {
+	FixCriteriaBug,
 	ImagePairsUploadForm,
 	SurveyChapterConfigurationForm,
 	SurveyChapterPresentationForm,
@@ -131,7 +132,7 @@ export default async function Page(props: { params: { surveyId: string; chapterI
 					</code>
 				</section>
 				<ImagePairsUploadForm chapterId={props.params.chapterId} surveyId={props.params.surveyId} />
-				
+				<FixCriteriaBug chapterId={props.params.chapterId} surveyId={props.params.surveyId} />
 			</section>
 		</>
 	);
