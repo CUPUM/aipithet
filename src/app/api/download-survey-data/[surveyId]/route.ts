@@ -43,10 +43,13 @@ export async function GET(request: Request, route: { params: { surveyId: string 
 		const csv3 = parse(all_images);
 		zip.file('images.csv', csv3);
 
+		const list_prompts = [
+			...new Set(all_images.map((pair) => pair.promptId).filter((x) => x !== null)),
+		];
 		const all_prompts = await db
 			.select()
 			.from(imagesPrompts)
-			.where(inArray(imagesPrompts.poolId, poolIds));
+			.where(inArray(imagesPrompts.id, list_prompts));
 		const csv4 = parse(all_prompts);
 		zip.file('prompts.csv', csv4);
 
