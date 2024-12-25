@@ -42,13 +42,14 @@ export default async function imagePairsUpload(state: unknown, formData: FormDat
 								criteria2: z.string(),
 								criteria3: z.string(),
 								numAnnotators: z.number(),
-								type: z.string(),
+								type: z.optional(z.string()),
 							})
 							.array(),
 					})
 				),
 		})
 	);
+
 	if (!parsed.success) {
 		return parsed.fail;
 	}

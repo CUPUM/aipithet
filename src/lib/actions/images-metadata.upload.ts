@@ -72,6 +72,7 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 								path: z.string(),
 								width: z.coerce.number(),
 								height: z.coerce.number(),
+								method: z.string(),
 							})
 							.array(),
 					})
@@ -157,24 +158,26 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 
 		console.log('prompts ok');
 
-		const insertedRelations = await tx
-			.insert(imagesPromptsRelation)
-			.values(
-				parsed.data.file.relations.map((r) => ({
-					parentPromptId: promptIds[r.parentId],
-					childPromptId: promptIds[r.childId],
-					modification: r.modification,
-				}))
-			)
-			.onConflictDoNothing({
-				target: [imagesPromptsRelation.parentPromptId, imagesPromptsRelation.childPromptId],
-			})
-			.returning({
-				parentPromptId: imagesPromptsRelation.parentPromptId,
-				childPromptId: imagesPromptsRelation.childPromptId,
-			});
+		if (parsed.data.file.relations.length !== 0) {
+			const insertedRelations = await tx
+				.insert(imagesPromptsRelation)
+				.values(
+					parsed.data.file.relations.map((r) => ({
+						parentPromptId: promptIds[r.parentId],
+						childPromptId: promptIds[r.childId],
+						modification: r.modification,
+					}))
+				)
+				.onConflictDoNothing({
+					target: [imagesPromptsRelation.parentPromptId, imagesPromptsRelation.childPromptId],
+				})
+				.returning({
+					parentPromptId: imagesPromptsRelation.parentPromptId,
+					childPromptId: imagesPromptsRelation.childPromptId,
+				});
 
-		console.log('relations ok');
+			console.log('relations ok');
+		}
 
 		return await tx
 			.insert(images)
@@ -189,6 +192,7 @@ export default async function imagesMetadataUpload(state: unknown, formData: For
 					path: path.join(parsed.data.file.prefix ?? '', `${img.id}.${path.extname(img.name)}`),
 					bucket: parsed.data.file.bucket,
 					promptId: promptIds[img.promptId],
+					method: img.method,
 				}))
 			)
 			.onConflictDoUpdate({

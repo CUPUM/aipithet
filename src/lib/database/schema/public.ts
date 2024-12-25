@@ -217,6 +217,7 @@ export const images = pgTable(
 			onUpdate: 'cascade',
 		}),
 		declaredNotFoundCount: integer('declared_not_found_count').notNull().default(0),
+		method: text('method'),
 	},
 	(table) => {
 		return {
@@ -401,6 +402,9 @@ export const labelingSurveysChapters = pgTable('labeling_surveys_chapters', {
 	end: timestamp('end', { withTimezone: true }),
 	maxAnswersCount: integer('max_answers_count'),
 	allowLateness: boolean('allow_lateness').notNull().default(false),
+	mode: text('mode', { enum: ['fixed', 'random'] })
+		.default('random')
+		.notNull(),
 });
 export const labelingSurveysChaptersTranslations = pgTable(
 	'labeling_surveys_chapters_t',

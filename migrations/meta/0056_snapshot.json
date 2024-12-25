@@ -1,0 +1,2304 @@
+{
+  "id": "c26adcaf-525b-445f-acbc-5e3e9c0ba98c",
+  "prevId": "6198328f-e260-45f6-8d2d-f680c94526cb",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {
+    "email_verification_codes": {
+      "name": "email_verification_codes",
+      "schema": "auth",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "nanoid(size => 6,alphabet => '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')"
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() + (interval '1 hours'))"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "email_verification_codes_user_id_users_id_fk": {
+          "name": "email_verification_codes_user_id_users_id_fk",
+          "tableFrom": "email_verification_codes",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "password_reset_tokens": {
+      "name": "password_reset_tokens",
+      "schema": "auth",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "nanoid(size => 16,alphabet => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789^çàèé.,ÉÀÈÙù!@#$%?&*()_+')"
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() + (interval '1 hours'))"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "password_reset_tokens_user_id_users_id_fk": {
+          "name": "password_reset_tokens_user_id_users_id_fk",
+          "tableFrom": "password_reset_tokens",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "roles": {
+      "name": "roles",
+      "schema": "auth",
+      "columns": {
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "user_roles_t": {
+      "name": "user_roles_t",
+      "schema": "auth",
+      "columns": {
+        "lang": {
+          "name": "lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_roles_t_lang_languages_lang_fk": {
+          "name": "user_roles_t_lang_languages_lang_fk",
+          "tableFrom": "user_roles_t",
+          "tableTo": "languages",
+          "schemaTo": "i18n",
+          "columnsFrom": [
+            "lang"
+          ],
+          "columnsTo": [
+            "lang"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "user_roles_t_role_roles_role_fk": {
+          "name": "user_roles_t_role_roles_role_fk",
+          "tableFrom": "user_roles_t",
+          "tableTo": "roles",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "role"
+          ],
+          "columnsTo": [
+            "role"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "user_roles_t_role_lang_pk": {
+          "name": "user_roles_t_role_lang_pk",
+          "columns": [
+            "role",
+            "lang"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "user_roles_t_lang_title_unique": {
+          "name": "user_roles_t_lang_title_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "lang",
+            "title"
+          ]
+        }
+      }
+    },
+    "sessions": {
+      "name": "sessions",
+      "schema": "auth",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exipires_at": {
+          "name": "exipires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "sessions_user_id_users_id_fk": {
+          "name": "sessions_user_id_users_id_fk",
+          "tableFrom": "sessions",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "users": {
+      "name": "users",
+      "schema": "auth",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nanoid(size => 15)"
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'participant'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email_verified": {
+          "name": "email_verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "hashed_password": {
+          "name": "hashed_password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "users_role_roles_role_fk": {
+          "name": "users_role_roles_role_fk",
+          "tableFrom": "users",
+          "tableTo": "roles",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "role"
+          ],
+          "columnsTo": [
+            "role"
+          ],
+          "onDelete": "set default",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
+    },
+    "languages": {
+      "name": "languages",
+      "schema": "i18n",
+      "columns": {
+        "lang": {
+          "name": "lang",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "regconfig": {
+          "name": "regconfig",
+          "type": "regconfig",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "languages_name_unique": {
+          "name": "languages_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "images": {
+      "name": "images",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nanoid()"
+        },
+        "external_id": {
+          "name": "external_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_by_id": {
+          "name": "updated_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pool_id": {
+          "name": "pool_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "path": {
+          "name": "path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bucket": {
+          "name": "bucket",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "width": {
+          "name": "width",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "height": {
+          "name": "height",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prompt_id": {
+          "name": "prompt_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "declared_not_found_count": {
+          "name": "declared_not_found_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "method": {
+          "name": "method",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "images_created_by_id_users_id_fk": {
+          "name": "images_created_by_id_users_id_fk",
+          "tableFrom": "images",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "images_updated_by_id_users_id_fk": {
+          "name": "images_updated_by_id_users_id_fk",
+          "tableFrom": "images",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "updated_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "images_pool_id_image_pools_id_fk": {
+          "name": "images_pool_id_image_pools_id_fk",
+          "tableFrom": "images",
+          "tableTo": "image_pools",
+          "columnsFrom": [
+            "pool_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "images_prompt_id_images_prompts_id_fk": {
+          "name": "images_prompt_id_images_prompts_id_fk",
+          "tableFrom": "images",
+          "tableTo": "images_prompts",
+          "columnsFrom": [
+            "prompt_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "images_pool_id_path_bucket_unique": {
+          "name": "images_pool_id_path_bucket_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "pool_id",
+            "path",
+            "bucket"
+          ]
+        }
+      }
+    },
+    "image_pools": {
+      "name": "image_pools",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nanoid(size => 15)"
+        },
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "image_pools_created_by_id_users_id_fk": {
+          "name": "image_pools_created_by_id_users_id_fk",
+          "tableFrom": "image_pools",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "image_pools_editors": {
+      "name": "image_pools_editors",
+      "schema": "",
+      "columns": {
+        "image_pool_id": {
+          "name": "image_pool_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "image_pools_editors_image_pool_id_image_pools_id_fk": {
+          "name": "image_pools_editors_image_pool_id_image_pools_id_fk",
+          "tableFrom": "image_pools_editors",
+          "tableTo": "image_pools",
+          "columnsFrom": [
+            "image_pool_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "image_pools_editors_user_id_users_id_fk": {
+          "name": "image_pools_editors_user_id_users_id_fk",
+          "tableFrom": "image_pools_editors",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "image_pools_editors_image_pool_id_user_id_pk": {
+          "name": "image_pools_editors_image_pool_id_user_id_pk",
+          "columns": [
+            "image_pool_id",
+            "user_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "images_pools_invitations": {
+      "name": "images_pools_invitations",
+      "schema": "",
+      "columns": {
+        "image_pool_id": {
+          "name": "image_pool_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "nanoid(size => 8)"
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() + (interval '1 months'))"
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pending": {
+          "name": "pending",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "images_pools_invitations_image_pool_id_image_pools_id_fk": {
+          "name": "images_pools_invitations_image_pool_id_image_pools_id_fk",
+          "tableFrom": "images_pools_invitations",
+          "tableTo": "image_pools",
+          "columnsFrom": [
+            "image_pool_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "images_pools_invitations_image_pool_id_email_pk": {
+          "name": "images_pools_invitations_image_pool_id_email_pk",
+          "columns": [
+            "image_pool_id",
+            "email"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "image_pools_t": {
+      "name": "image_pools_t",
+      "schema": "",
+      "columns": {
+        "lang": {
+          "name": "lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "image_pools_t_lang_languages_lang_fk": {
+          "name": "image_pools_t_lang_languages_lang_fk",
+          "tableFrom": "image_pools_t",
+          "tableTo": "languages",
+          "schemaTo": "i18n",
+          "columnsFrom": [
+            "lang"
+          ],
+          "columnsTo": [
+            "lang"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "image_pools_t_id_image_pools_id_fk": {
+          "name": "image_pools_t_id_image_pools_id_fk",
+          "tableFrom": "image_pools_t",
+          "tableTo": "image_pools",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "image_pools_t_lang_id_pk": {
+          "name": "image_pools_t_lang_id_pk",
+          "columns": [
+            "lang",
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "images_prompts": {
+      "name": "images_prompts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nanoid()"
+        },
+        "external_id": {
+          "name": "external_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scenario_id": {
+          "name": "scenario_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pool_id": {
+          "name": "pool_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prompt": {
+          "name": "prompt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "method": {
+          "name": "method",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_by_id": {
+          "name": "updated_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "images_prompts_scenario_id_workshop_scenarios_id_fk": {
+          "name": "images_prompts_scenario_id_workshop_scenarios_id_fk",
+          "tableFrom": "images_prompts",
+          "tableTo": "workshop_scenarios",
+          "columnsFrom": [
+            "scenario_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "images_prompts_pool_id_image_pools_id_fk": {
+          "name": "images_prompts_pool_id_image_pools_id_fk",
+          "tableFrom": "images_prompts",
+          "tableTo": "image_pools",
+          "columnsFrom": [
+            "pool_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "images_prompts_created_by_id_users_id_fk": {
+          "name": "images_prompts_created_by_id_users_id_fk",
+          "tableFrom": "images_prompts",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "images_prompts_updated_by_id_users_id_fk": {
+          "name": "images_prompts_updated_by_id_users_id_fk",
+          "tableFrom": "images_prompts",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "updated_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "images_prompts_pool_id_prompt_method_unique": {
+          "name": "images_prompts_pool_id_prompt_method_unique",
+          "nullsNotDistinct": true,
+          "columns": [
+            "pool_id",
+            "prompt",
+            "method"
+          ]
+        }
+      }
+    },
+    "images_prompts_relation": {
+      "name": "images_prompts_relation",
+      "schema": "",
+      "columns": {
+        "parent_prompt_id": {
+          "name": "parent_prompt_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "child_prompt_id": {
+          "name": "child_prompt_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "modification": {
+          "name": "modification",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "images_prompts_relation_parent_prompt_id_images_prompts_id_fk": {
+          "name": "images_prompts_relation_parent_prompt_id_images_prompts_id_fk",
+          "tableFrom": "images_prompts_relation",
+          "tableTo": "images_prompts",
+          "columnsFrom": [
+            "parent_prompt_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "images_prompts_relation_child_prompt_id_images_prompts_id_fk": {
+          "name": "images_prompts_relation_child_prompt_id_images_prompts_id_fk",
+          "tableFrom": "images_prompts_relation",
+          "tableTo": "images_prompts",
+          "columnsFrom": [
+            "child_prompt_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "images_prompts_relation_parent_prompt_id_child_prompt_id_pk": {
+          "name": "images_prompts_relation_parent_prompt_id_child_prompt_id_pk",
+          "columns": [
+            "parent_prompt_id",
+            "child_prompt_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "labeling_surveys": {
+      "name": "labeling_surveys",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nanoid()"
+        },
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "slider_step_count": {
+          "name": "slider_step_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "image_pool_id": {
+          "name": "image_pool_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_by_id": {
+          "name": "updated_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "break_duration": {
+          "name": "break_duration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 15
+        },
+        "allow_breaks": {
+          "name": "allow_breaks",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "break_frequency": {
+          "name": "break_frequency",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 150
+        },
+        "session_duration": {
+          "name": "session_duration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 45
+        },
+        "break_message": {
+          "name": "break_message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labeling_surveys_created_by_id_users_id_fk": {
+          "name": "labeling_surveys_created_by_id_users_id_fk",
+          "tableFrom": "labeling_surveys",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_image_pool_id_image_pools_id_fk": {
+          "name": "labeling_surveys_image_pool_id_image_pools_id_fk",
+          "tableFrom": "labeling_surveys",
+          "tableTo": "image_pools",
+          "columnsFrom": [
+            "image_pool_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_updated_by_id_users_id_fk": {
+          "name": "labeling_surveys_updated_by_id_users_id_fk",
+          "tableFrom": "labeling_surveys",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "updated_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "labeling_surveys_answers": {
+      "name": "labeling_surveys_answers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nanoid()"
+        },
+        "pair_id": {
+          "name": "pair_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "survey_id": {
+          "name": "survey_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chapter_id": {
+          "name": "chapter_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "score_1": {
+          "name": "score_1",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "score_2": {
+          "name": "score_2",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "score_3": {
+          "name": "score_3",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "score_1_answered": {
+          "name": "score_1_answered",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "score_2_answered": {
+          "name": "score_2_answered",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "score_3_answered": {
+          "name": "score_3_answered",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "comment": {
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "time_to_answer_server": {
+          "name": "time_to_answer_server",
+          "type": "interval",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "time_to_answer_client": {
+          "name": "time_to_answer_client",
+          "type": "interval",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "answered_at": {
+          "name": "answered_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "next_answer_id": {
+          "name": "next_answer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prev_answer_id": {
+          "name": "prev_answer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labeling_surveys_answers_pair_id_labeling_surveys_pairs_id_fk": {
+          "name": "labeling_surveys_answers_pair_id_labeling_surveys_pairs_id_fk",
+          "tableFrom": "labeling_surveys_answers",
+          "tableTo": "labeling_surveys_pairs",
+          "columnsFrom": [
+            "pair_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_answers_survey_id_labeling_surveys_id_fk": {
+          "name": "labeling_surveys_answers_survey_id_labeling_surveys_id_fk",
+          "tableFrom": "labeling_surveys_answers",
+          "tableTo": "labeling_surveys",
+          "columnsFrom": [
+            "survey_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_answers_chapter_id_labeling_surveys_chapters_id_fk": {
+          "name": "labeling_surveys_answers_chapter_id_labeling_surveys_chapters_id_fk",
+          "tableFrom": "labeling_surveys_answers",
+          "tableTo": "labeling_surveys_chapters",
+          "columnsFrom": [
+            "chapter_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_answers_user_id_users_id_fk": {
+          "name": "labeling_surveys_answers_user_id_users_id_fk",
+          "tableFrom": "labeling_surveys_answers",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_answers_next_answer_id_labeling_surveys_answers_id_fk": {
+          "name": "labeling_surveys_answers_next_answer_id_labeling_surveys_answers_id_fk",
+          "tableFrom": "labeling_surveys_answers",
+          "tableTo": "labeling_surveys_answers",
+          "columnsFrom": [
+            "next_answer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_answers_prev_answer_id_labeling_surveys_answers_id_fk": {
+          "name": "labeling_surveys_answers_prev_answer_id_labeling_surveys_answers_id_fk",
+          "tableFrom": "labeling_surveys_answers",
+          "tableTo": "labeling_surveys_answers",
+          "columnsFrom": [
+            "prev_answer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "labeling_surveys_breaks": {
+      "name": "labeling_surveys_breaks",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nanoid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chapter_id": {
+          "name": "chapter_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start": {
+          "name": "start",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end": {
+          "name": "end",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labeling_surveys_breaks_user_id_users_id_fk": {
+          "name": "labeling_surveys_breaks_user_id_users_id_fk",
+          "tableFrom": "labeling_surveys_breaks",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_breaks_chapter_id_labeling_surveys_chapters_id_fk": {
+          "name": "labeling_surveys_breaks_chapter_id_labeling_surveys_chapters_id_fk",
+          "tableFrom": "labeling_surveys_breaks",
+          "tableTo": "labeling_surveys_chapters",
+          "columnsFrom": [
+            "chapter_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "labeling_surveys_chapters": {
+      "name": "labeling_surveys_chapters",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nanoid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_pool_id": {
+          "name": "image_pool_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "survey_id": {
+          "name": "survey_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start": {
+          "name": "start",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end": {
+          "name": "end",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "max_answers_count": {
+          "name": "max_answers_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "allow_lateness": {
+          "name": "allow_lateness",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "mode": {
+          "name": "mode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'random'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labeling_surveys_chapters_created_by_id_users_id_fk": {
+          "name": "labeling_surveys_chapters_created_by_id_users_id_fk",
+          "tableFrom": "labeling_surveys_chapters",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_chapters_image_pool_id_image_pools_id_fk": {
+          "name": "labeling_surveys_chapters_image_pool_id_image_pools_id_fk",
+          "tableFrom": "labeling_surveys_chapters",
+          "tableTo": "image_pools",
+          "columnsFrom": [
+            "image_pool_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_chapters_survey_id_labeling_surveys_id_fk": {
+          "name": "labeling_surveys_chapters_survey_id_labeling_surveys_id_fk",
+          "tableFrom": "labeling_surveys_chapters",
+          "tableTo": "labeling_surveys",
+          "columnsFrom": [
+            "survey_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "labeling_surveys_chapters_t": {
+      "name": "labeling_surveys_chapters_t",
+      "schema": "",
+      "columns": {
+        "lang": {
+          "name": "lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "summary": {
+          "name": "summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labeling_surveys_chapters_t_lang_languages_lang_fk": {
+          "name": "labeling_surveys_chapters_t_lang_languages_lang_fk",
+          "tableFrom": "labeling_surveys_chapters_t",
+          "tableTo": "languages",
+          "schemaTo": "i18n",
+          "columnsFrom": [
+            "lang"
+          ],
+          "columnsTo": [
+            "lang"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_chapters_t_id_labeling_surveys_chapters_id_fk": {
+          "name": "labeling_surveys_chapters_t_id_labeling_surveys_chapters_id_fk",
+          "tableFrom": "labeling_surveys_chapters_t",
+          "tableTo": "labeling_surveys_chapters",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "labeling_surveys_chapters_t_lang_id_pk": {
+          "name": "labeling_surveys_chapters_t_lang_id_pk",
+          "columns": [
+            "lang",
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "labeling_surveys_editors": {
+      "name": "labeling_surveys_editors",
+      "schema": "",
+      "columns": {
+        "survey_id": {
+          "name": "survey_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labeling_surveys_editors_survey_id_labeling_surveys_id_fk": {
+          "name": "labeling_surveys_editors_survey_id_labeling_surveys_id_fk",
+          "tableFrom": "labeling_surveys_editors",
+          "tableTo": "labeling_surveys",
+          "columnsFrom": [
+            "survey_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_editors_user_id_users_id_fk": {
+          "name": "labeling_surveys_editors_user_id_users_id_fk",
+          "tableFrom": "labeling_surveys_editors",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "labeling_surveys_editors_survey_id_user_id_pk": {
+          "name": "labeling_surveys_editors_survey_id_user_id_pk",
+          "columns": [
+            "survey_id",
+            "user_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "labeling_surveys_invitations": {
+      "name": "labeling_surveys_invitations",
+      "schema": "",
+      "columns": {
+        "survey_id": {
+          "name": "survey_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "nanoid(size => 8)"
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "(now() + (interval '1 months'))"
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "editor": {
+          "name": "editor",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "pending": {
+          "name": "pending",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "preferred_lang": {
+          "name": "preferred_lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labeling_surveys_invitations_survey_id_labeling_surveys_id_fk": {
+          "name": "labeling_surveys_invitations_survey_id_labeling_surveys_id_fk",
+          "tableFrom": "labeling_surveys_invitations",
+          "tableTo": "labeling_surveys",
+          "columnsFrom": [
+            "survey_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_invitations_preferred_lang_languages_lang_fk": {
+          "name": "labeling_surveys_invitations_preferred_lang_languages_lang_fk",
+          "tableFrom": "labeling_surveys_invitations",
+          "tableTo": "languages",
+          "schemaTo": "i18n",
+          "columnsFrom": [
+            "preferred_lang"
+          ],
+          "columnsTo": [
+            "lang"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "labeling_surveys_invitations_survey_id_email_editor_pk": {
+          "name": "labeling_surveys_invitations_survey_id_email_editor_pk",
+          "columns": [
+            "survey_id",
+            "email",
+            "editor"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "labeling_surveys_pairs": {
+      "name": "labeling_surveys_pairs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nanoid()"
+        },
+        "chapter_id": {
+          "name": "chapter_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "index": {
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "image_1_id": {
+          "name": "image_1_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image_2_id": {
+          "name": "image_2_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label_1_id": {
+          "name": "label_1_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label_2_id": {
+          "name": "label_2_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label_3_id": {
+          "name": "label_3_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "max_answers_count": {
+          "name": "max_answers_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "generation_method": {
+          "name": "generation_method",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labeling_surveys_pairs_chapter_id_labeling_surveys_chapters_id_fk": {
+          "name": "labeling_surveys_pairs_chapter_id_labeling_surveys_chapters_id_fk",
+          "tableFrom": "labeling_surveys_pairs",
+          "tableTo": "labeling_surveys_chapters",
+          "columnsFrom": [
+            "chapter_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_pairs_image_1_id_images_id_fk": {
+          "name": "labeling_surveys_pairs_image_1_id_images_id_fk",
+          "tableFrom": "labeling_surveys_pairs",
+          "tableTo": "images",
+          "columnsFrom": [
+            "image_1_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_pairs_image_2_id_images_id_fk": {
+          "name": "labeling_surveys_pairs_image_2_id_images_id_fk",
+          "tableFrom": "labeling_surveys_pairs",
+          "tableTo": "images",
+          "columnsFrom": [
+            "image_2_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_pairs_label_1_id_labels_id_fk": {
+          "name": "labeling_surveys_pairs_label_1_id_labels_id_fk",
+          "tableFrom": "labeling_surveys_pairs",
+          "tableTo": "labels",
+          "columnsFrom": [
+            "label_1_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_pairs_label_2_id_labels_id_fk": {
+          "name": "labeling_surveys_pairs_label_2_id_labels_id_fk",
+          "tableFrom": "labeling_surveys_pairs",
+          "tableTo": "labels",
+          "columnsFrom": [
+            "label_2_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_pairs_label_3_id_labels_id_fk": {
+          "name": "labeling_surveys_pairs_label_3_id_labels_id_fk",
+          "tableFrom": "labeling_surveys_pairs",
+          "tableTo": "labels",
+          "columnsFrom": [
+            "label_3_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "labeling_surveys_participants": {
+      "name": "labeling_surveys_participants",
+      "schema": "",
+      "columns": {
+        "survey_id": {
+          "name": "survey_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labeling_surveys_participants_survey_id_labeling_surveys_id_fk": {
+          "name": "labeling_surveys_participants_survey_id_labeling_surveys_id_fk",
+          "tableFrom": "labeling_surveys_participants",
+          "tableTo": "labeling_surveys",
+          "columnsFrom": [
+            "survey_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_participants_user_id_users_id_fk": {
+          "name": "labeling_surveys_participants_user_id_users_id_fk",
+          "tableFrom": "labeling_surveys_participants",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "labeling_surveys_participants_survey_id_user_id_pk": {
+          "name": "labeling_surveys_participants_survey_id_user_id_pk",
+          "columns": [
+            "survey_id",
+            "user_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "labeling_surveys_t": {
+      "name": "labeling_surveys_t",
+      "schema": "",
+      "columns": {
+        "lang": {
+          "name": "lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "summary": {
+          "name": "summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "help": {
+          "name": "help",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labeling_surveys_t_lang_languages_lang_fk": {
+          "name": "labeling_surveys_t_lang_languages_lang_fk",
+          "tableFrom": "labeling_surveys_t",
+          "tableTo": "languages",
+          "schemaTo": "i18n",
+          "columnsFrom": [
+            "lang"
+          ],
+          "columnsTo": [
+            "lang"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labeling_surveys_t_id_labeling_surveys_id_fk": {
+          "name": "labeling_surveys_t_id_labeling_surveys_id_fk",
+          "tableFrom": "labeling_surveys_t",
+          "tableTo": "labeling_surveys",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "labeling_surveys_t_lang_id_pk": {
+          "name": "labeling_surveys_t_lang_id_pk",
+          "columns": [
+            "lang",
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "labels": {
+      "name": "labels",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nanoid()"
+        },
+        "external_id": {
+          "name": "external_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "survey_id": {
+          "name": "survey_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_by_id": {
+          "name": "updated_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labels_survey_id_labeling_surveys_id_fk": {
+          "name": "labels_survey_id_labeling_surveys_id_fk",
+          "tableFrom": "labels",
+          "tableTo": "labeling_surveys",
+          "columnsFrom": [
+            "survey_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labels_created_by_id_users_id_fk": {
+          "name": "labels_created_by_id_users_id_fk",
+          "tableFrom": "labels",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "labels_updated_by_id_users_id_fk": {
+          "name": "labels_updated_by_id_users_id_fk",
+          "tableFrom": "labels",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "updated_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "labels_t": {
+      "name": "labels_t",
+      "schema": "",
+      "columns": {
+        "lang": {
+          "name": "lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text": {
+          "name": "text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "labels_t_lang_languages_lang_fk": {
+          "name": "labels_t_lang_languages_lang_fk",
+          "tableFrom": "labels_t",
+          "tableTo": "languages",
+          "schemaTo": "i18n",
+          "columnsFrom": [
+            "lang"
+          ],
+          "columnsTo": [
+            "lang"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "labels_t_id_labels_id_fk": {
+          "name": "labels_t_id_labels_id_fk",
+          "tableFrom": "labels_t",
+          "tableTo": "labels",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "labels_t_lang_id_pk": {
+          "name": "labels_t_lang_id_pk",
+          "columns": [
+            "lang",
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "workshop_scenarios": {
+      "name": "workshop_scenarios",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nanoid(size => 12)"
+        },
+        "pool_id": {
+          "name": "pool_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "external_id": {
+          "name": "external_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_by_id": {
+          "name": "updated_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "workshop_scenarios_pool_id_image_pools_id_fk": {
+          "name": "workshop_scenarios_pool_id_image_pools_id_fk",
+          "tableFrom": "workshop_scenarios",
+          "tableTo": "image_pools",
+          "columnsFrom": [
+            "pool_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "workshop_scenarios_created_by_id_users_id_fk": {
+          "name": "workshop_scenarios_created_by_id_users_id_fk",
+          "tableFrom": "workshop_scenarios",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "workshop_scenarios_updated_by_id_users_id_fk": {
+          "name": "workshop_scenarios_updated_by_id_users_id_fk",
+          "tableFrom": "workshop_scenarios",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "updated_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "workshop_scenarios_pool_id_name_unique": {
+          "name": "workshop_scenarios_pool_id_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "pool_id",
+            "name"
+          ]
+        }
+      }
+    }
+  },
+  "enums": {},
+  "schemas": {
+    "auth": "auth",
+    "extensions": "extensions",
+    "i18n": "i18n"
+  },
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

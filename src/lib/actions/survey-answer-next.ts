@@ -155,40 +155,41 @@ async function createBreak(
 	return newBreak;
 }
 
-export default async function surveyAnswerNext(
-	surveyId: string,
-	chapterId: string,
-	answerId: string | null
-) {
-	// TODO: Refactor this function to be more readable and maintainable. There potential risk of bugs and conflicts in the current implementation.
-	// Potential conflicts include two users making a request at the same time, in that case the logic to select the next pair could be wrong.
-	// Because both users could be given the same pair, which could lead to an overcount of the maxCount.
-	const { user } = await authorize();
-
-	// Find wheter there is an empty answer for the current user and chapter. If found, redirect to it. If not, generate a new empty placeholder answer.
-	const [empty] = await db
-		.select({ id: labelingSurveysAnswers.id })
-		.from(labelingSurveysAnswers)
-		.where(
+async function getNextFixedPair(userId: string, chapterId: string) {
+	const [pair] = await db
+		.select({ id: labelingSurveysPairs.id })
+		.from(labelingSurveysPairs)
+		.leftJoin(
+			labelingSurveysAnswers,
 			and(
-				isNull(labelingSurveysAnswers.answeredAt),
-				eq(labelingSurveysAnswers.userId, user.id),
-				eq(labelingSurveysAnswers.chapterId, chapterId)
+				eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId),
+				eq(labelingSurveysAnswers.userId, userId)
 			)
 		)
-		.orderBy(asc(labelingSurveysAnswers.createdAt))
+		.where(
+			and(
+				eq(labelingSurveysPairs.maxAnswersCount, -1),
+				eq(labelingSurveysPairs.chapterId, chapterId),
+				isNull(labelingSurveysAnswers.id)
+			)
+		)
+		.orderBy(asc(labelingSurveysPairs.createdAt))
 		.limit(1);
-	if (empty) {
-		redirect(`/surveys/labeling/${surveyId}/${chapterId}/${empty.id}`);
-	}
 
+	if (!pair) {
+		throw new Error('No pair found.');
+	}
+	return pair;
+}
+
+async function getNextRandomPair(userId: string, chapterId: string) {
 	// Check how many answers for the current chapter the user has already answered.
 	const [answeredCount] = await db
 		.select({ count: count(labelingSurveysAnswers.id) })
 		.from(labelingSurveysAnswers)
 		.where(
 			and(
-				eq(labelingSurveysAnswers.userId, user.id),
+				eq(labelingSurveysAnswers.userId, userId),
 				eq(labelingSurveysAnswers.chapterId, chapterId)
 			)
 		);
@@ -196,32 +197,12 @@ export default async function surveyAnswerNext(
 	if (!answeredCount) {
 		throw new Error('Could not count the number of answers for the current chapter and user.');
 	}
-
-	// TODO: The logic here should not be hardcoded. It should be configurable in the database.
 	let pair: { id: string } | undefined = undefined;
 	if ((answeredCount.count + 1) % 10 === 0) {
 		// If the user has answered 10, 20, 30, ... questions, select a pair with a maxCount not defined.
 		// Must check that the pair has not been answered by the user yet.
 		console.log('Creating a dynamic pair with maxCount not defined.');
-		[pair] = await db
-			.select({ id: labelingSurveysPairs.id })
-			.from(labelingSurveysPairs)
-			.leftJoin(
-				labelingSurveysAnswers,
-				and(
-					eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId),
-					eq(labelingSurveysAnswers.userId, user.id)
-				)
-			)
-			.where(
-				and(
-					eq(labelingSurveysPairs.maxAnswersCount, -1),
-					eq(labelingSurveysPairs.chapterId, chapterId),
-					isNull(labelingSurveysAnswers.id)
-				)
-			)
-			.orderBy(asc(labelingSurveysPairs.createdAt))
-			.limit(1);
+		pair = await getNextFixedPair(userId, chapterId);
 	} else if ((answeredCount.count + 1) % 5 === 0) {
 		console.log('Creating a dynamic pair with maxCount not defined.');
 		// If the user has answered 5, 15, 25, ... questions, select a pair with a maxCount of 3.
@@ -243,7 +224,7 @@ export default async function surveyAnswerNext(
 				labelingSurveysAnswers,
 				and(
 					eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId),
-					eq(labelingSurveysAnswers.userId, user.id)
+					eq(labelingSurveysAnswers.userId, userId)
 				)
 			)
 			.where(
@@ -275,7 +256,7 @@ export default async function surveyAnswerNext(
 				labelingSurveysAnswers,
 				and(
 					eq(labelingSurveysPairs.id, labelingSurveysAnswers.pairId),
-					eq(labelingSurveysAnswers.userId, user.id)
+					eq(labelingSurveysAnswers.userId, userId)
 				)
 			)
 			.where(
@@ -288,6 +269,54 @@ export default async function surveyAnswerNext(
 			)
 			.orderBy(asc(labelingSurveysPairs.createdAt))
 			.limit(1);
+	}
+
+	return pair;
+}
+
+export default async function surveyAnswerNext(
+	surveyId: string,
+	chapterId: string,
+	answerId: string | null
+) {
+	// TODO: Refactor this function to be more readable and maintainable. There potential risk of bugs and conflicts in the current implementation.
+	// Potential conflicts include two users making a request at the same time, in that case the logic to select the next pair could be wrong.
+	// Because both users could be given the same pair, which could lead to an overcount of the maxCount.
+	const { user } = await authorize();
+
+	// Find wheter there is an empty answer for the current user and chapter. If found, redirect to it. If not, generate a new empty placeholder answer.
+	const [empty] = await db
+		.select({ id: labelingSurveysAnswers.id })
+		.from(labelingSurveysAnswers)
+		.where(
+			and(
+				isNull(labelingSurveysAnswers.answeredAt),
+				eq(labelingSurveysAnswers.userId, user.id),
+				eq(labelingSurveysAnswers.chapterId, chapterId)
+			)
+		)
+		.orderBy(asc(labelingSurveysAnswers.createdAt))
+		.limit(1);
+	if (empty) {
+		redirect(`/surveys/labeling/${surveyId}/${chapterId}/${empty.id}`);
+	}
+
+	const [chapter] = await db
+		.select()
+		.from(labelingSurveysChapters)
+		.where(eq(labelingSurveysChapters.id, chapterId))
+		.limit(1);
+	if (!chapter) {
+		throw new Error('Could not find chapter.');
+	}
+
+	let pair;
+	if (chapter.mode === 'fixed') {
+		pair = await getNextFixedPair(user.id, chapterId);
+	} else if (chapter.mode === 'random') {
+		pair = await getNextRandomPair(user.id, chapterId);
+	} else {
+		throw new Error('Mode not supported.');
 	}
 
 	if (!pair) {

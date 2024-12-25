@@ -1,5 +1,6 @@
 'use client';
 
+import fixCriteriaBug from '@lib/actions/fix-criteria-bug';
 import imagePairsUpload from '@lib/actions/image-pairs-upload';
 import surveyChapterConfigurationUpdate from '@lib/actions/survey-chapter-configuration-update';
 import surveyChapterEnd from '@lib/actions/survey-chapter-end';
@@ -26,7 +27,6 @@ import { Check, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
 import type { EditorLabelingSurveyChapter, SelectableImagesPools } from './page';
-import fixCriteriaBug from '@lib/actions/fix-criteria-bug';
 
 export function SurveyChapterPresentationForm(props: EditorLabelingSurveyChapter) {
 	const [formState, formAction] = useFormState(surveyChapterPresentationUpdate, undefined);
@@ -166,6 +166,26 @@ export function SurveyChapterConfigurationForm(
 				</div>
 			</Field>
 			<hr />
+			<Field className="gap-4 px-8 md:flex-row">
+				<div className="flex flex-1 flex-col gap-4">
+					<Label>Chapter Mode (Fixed or Random)</Label>
+				</div>
+				<div className="flex flex-1 flex-col md:pt-6">
+					<Select name="mode" defaultValue={props.mode}>
+						<SelectTrigger className="w-auto min-w-60 self-center">
+							<SelectValue placeholder="Select a mode" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem key="fixed" value="fixed" textValue="fixed">
+								fixed
+							</SelectItem>
+							<SelectItem key="random" value="random" textValue="random">
+								random
+							</SelectItem>
+						</SelectContent>
+					</Select>
+				</div>
+			</Field>
 			<Field className="p-8">
 				<Label>{m.answer_quota()}</Label>
 				<p className="my-4 text-sm leading-relaxed text-muted-foreground">
