@@ -6,6 +6,7 @@ import { Template } from '../template';
 
 export default function ResetPasswordTemplate(props: { token: string; expiresAt: Date }) {
 	const lang = languageTagServer();
+	console.log(encodeURIComponent(props.token))
 
 	return (
 		<Template>
